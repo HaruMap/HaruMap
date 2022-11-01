@@ -1,9 +1,9 @@
 import 'dart:async';
-
+import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harumap2/mainpage.dart';
+import 'package:harumap2/selectcase.dart';
 
 class StartPage extends StatefulWidget {
   
@@ -15,12 +15,13 @@ class _StartPageState extends State<StartPage>{
   @override
   void initState() {
     Timer(Duration(seconds: 3),(){
-      Get.offAll(MainPage());
+      Get.offAll(SelectCasePage());
     });
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       body: Center(
         child: Container(

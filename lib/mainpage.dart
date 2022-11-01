@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:harumap2/path_list.dart';
+import 'package:flutter/services.dart';
 
 class MainPage extends StatefulWidget{
   @override
@@ -15,6 +17,7 @@ class _MainPageState extends State<MainPage>{
 
   @override
   Widget build(BuildContext context){
+    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -68,7 +71,7 @@ class _MainPageState extends State<MainPage>{
                                 });
                           }
                           else{
-                            Get.to(page, arguments: startText,);
+                            Get.to(PathListPage(), arguments: [startText,stopText]);
                           }
                         },
                         decoration: InputDecoration(
