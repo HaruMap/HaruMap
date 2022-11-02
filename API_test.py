@@ -7,6 +7,8 @@ from haversine import haversine
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
 
+
+
 # 반경 내 대중교통 POI 검색
 # stationClass : 정류장 종류 (1 : 버스정류장, 2 : 지하철역, 3 : 기차역, 4 : 고속버스터미널, 5 : 공항, 6 : 시외버스터미널, 7 : 항만)
 print('== 반경 내 대중교통 POI 검색 ==')
@@ -14,7 +16,7 @@ print('== 반경 내 대중교통 POI 검색 ==')
 def get_transport_poi(x, y, stationClass):
 
     # radius = 200 으로 설정함
-    url = f'https://api.odsay.com/v1/api/pointSearch?lang=0&x={0}&y={1}&stationClass={2}&radius=200&&apiKey={API.api.get_transport_poi_key()}'.format(x, y, stationClass)
+    url = 'https://api.odsay.com/v1/api/pointSearch?lang=0&x={0}&y={1}&stationClass={2}&radius=200&&apiKey={3}'.format(x, y, stationClass, API.api.get_transport_poi_key())
     target = requests.get(url).json()
     print(target)
 
@@ -57,7 +59,7 @@ print('== 버스 정류장 코드 ==')
 
 def get_station_id(stationName):
 
-    url = f'https://api.odsay.com/v1/api/searchStation?lang=0&stationName={0}&&apiKey={API.api.get_station_id_key()}'.format(stationName)
+    url = 'https://api.odsay.com/v1/api/searchStation?lang=0&stationName={0}&&apiKey={1}'.format(stationName, API.api.get_station_id_key())
     print(requests.get(url).json())
 
 get_station_id('이대부고')
@@ -73,7 +75,7 @@ print('== 실시간 버스 도착정보 ==')
 
 def get_bus_wt(stationID, lowBus):
 
-    url = f'https://api.odsay.com/v1/api/realtimeStation?lang=0&stationID={0}&lowBus={1}&apiKey={API.api.get_bus_wt_key()}'.format(stationID, lowBus)
+    url = 'https://api.odsay.com/v1/api/realtimeStation?lang=0&stationID={0}&lowBus={1}&apiKey={2}'.format(stationID, lowBus, API.api.get_bus_wt_key())
     print(requests.get(url).json())
 
 get_bus_wt('102155', '0')
@@ -90,7 +92,7 @@ print('== 출발지, 도착지 위경도 기반 대중교통 경로 확인 ==')
 
 def path_transport(SX, SY, EX, EY):
 
-    url = f'https://api.odsay.com/v1/api/searchPubTransPathT?SX={0}&SY={1}&EX={2}&EY={3}&apiKey={API.api.path_transport_key()}'.format(SX, SY, EX, EY)
+    url = f'https://api.odsay.com/v1/api/searchPubTransPathT?SX={0}&SY={1}&EX={2}&EY={3}&apiKey={4}'.format(SX, SY, EX, EY, API.api.path_transport_key())
     print(requests.get(url).json())
 
 path_transport('126.9018223', '37.5339457', '126.9429', '37.55813')
