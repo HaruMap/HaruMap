@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:harumap2/mainpage.dart';
 
 
 class PathListPage extends StatefulWidget {
@@ -19,69 +20,96 @@ class Pathes{
   Pathes(this.time,this.start,this.stop,this.pathes);
 }
 
-String startText = Get.arguments[0];
-String stopText = Get.arguments[1];
+String startText = "";
+String stopText = "";
+bool Flag = false;
+String newstartText = "";
+String newstopText = "";
 List<String> pathdetail = <String>['a','b','c'];
-List pathes = [
-      Pathes(10, startText, stopText, pathdetail),
-      Pathes(10, startText, stopText, pathdetail),
-      Pathes(10, startText, stopText, pathdetail),
-      Pathes(10, startText, stopText, pathdetail),
-];
+List pathes = [];
 
 class _PathListPageState extends State<PathListPage>{
-
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-            Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+    print(newstopText);
+    print(newstartText);
+    print("AAAA");
+    print(stopText);
+    print(startText);
+    if (Flag){
+      pathes = [
+        Pathes(10, newstartText, newstopText, pathdetail),
+        Pathes(10, newstartText, newstopText, pathdetail),
+        Pathes(10, newstartText, newstopText, pathdetail),
+        Pathes(10, newstartText, newstopText, pathdetail),
+      ];
+    }else{
+      startText = Get.find<Controller>().startText;
+      stopText = Get.find<Controller>().stopText;
+      pathes = [
+        Pathes(10, startText, stopText, pathdetail),
+        Pathes(10, startText, stopText, pathdetail),
+        Pathes(10, startText, stopText, pathdetail),
+        Pathes(10, startText, stopText, pathdetail),
+      ];
+    }
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    return WillPopScope(
+        child:Scaffold(
+          body: SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Text('$startText'),
-                // Text('$stopText'),
-                // Default(),
-                Expanded(
-                  child: ListView.separated(
-                    padding: EdgeInsets.all(8),
-                    itemCount: pathes.length+1,
-                    itemBuilder: (context,int index){
-                      if (index == 0) return Default();
-                      return PathList(pathes[index-1]);
-                    },
-                    separatorBuilder: (context, int index){
-                      if (index==0) return SizedBox.shrink();
-                      return Divider();
-                    },
-                  ),
-                ),
-                  ],
-                ),
-              )
-            ],
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Text('$startText'),
+                        // Text('$stopText'),
+                        // Default(),
+                        Expanded(
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(8),
+                            itemCount: pathes.length+1,
+                            itemBuilder: (context,int index){
+                              if (index == 0) return Default();
+                              return PathList(pathes[index-1]);
+                            },
+                            separatorBuilder: (context, int index){
+                              if (index==0) return SizedBox.shrink();
+                              return Divider();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        onWillPop: (){
+          Flag = false;
+          Get.off(MainPage());
+          return Future(() => true);
+        }
     );
   }
 }
+
 
 class PathList extends StatelessWidget{
   PathList(this._pathes);
   final Pathes _pathes;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return Container(
         child: ListTile(
           title: Text("${_pathes.start} ~ ${_pathes.stop}"),
@@ -100,8 +128,6 @@ class Default extends StatefulWidget{
 }
 
 class _DefaultState extends State<Default> {
-  String newstartText = "";
-  String newstopText = "";
 
   void _anotherpath(){
     setState(() {
@@ -124,22 +150,14 @@ class _DefaultState extends State<Default> {
             });
       }
       else {
-        print("??");
-        startText = newstartText;
-        stopText = newstopText;
-        pathes = [
-          Pathes(10, startText, stopText, pathdetail),
-          Pathes(10, startText, stopText, pathdetail),
-          Pathes(10, startText, stopText, pathdetail),
-          Pathes(10, startText, stopText, pathdetail),
-        ];
+        Flag = true;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     var screenwidth = MediaQuery.of(context).size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +166,7 @@ class _DefaultState extends State<Default> {
         Padding(
           child: TextField(
             textInputAction: TextInputAction.next,
-            onSubmitted: (text) {
+            onChanged: (text) {
               newstartText = text;
             },
             decoration: InputDecoration(
