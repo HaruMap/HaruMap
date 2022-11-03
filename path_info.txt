@@ -1,0 +1,30 @@
+# path 별 데이터 형태
+
+# 특정 출발지/도착지에 대한 모든 path
+total_path = {
+
+    0 : {
+        info : {
+            time : ,
+            description : [],
+            ...
+        }
+        bus : {
+            congestion : ,
+            ...
+        }
+        subway : {
+            congestion : ,
+            ...
+        }
+        walk : {
+            ...
+        }
+    }
+
+    1 : {
+        path 1 information here
+    }
+    ...
+
+}

@@ -2,6 +2,7 @@ import API_bus_arrival
 
 # 지하철 대기시간 (단위 : sec)
 def get_sub_wt():
+    # 지하철 대기시간 받아오기
     return
 
 # 버스 대기시간 (단위 : sec)
