@@ -5,7 +5,7 @@ total_path = {
 
     0 : {
         info : {
-            time : ,
+            totaltime : ,
             description : [],
             ...
         }
