@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>경로 시각화</title>
+    
+</head>
+<body>
+    <div id="map" style="width:100%;height:350px;"></div>
+<p>
+    <button onclick="panTo()">출발지로 지도 이동</button> 
+</p>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f16ad3c1d0e46cbcdaf16089352ca53b"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+        mapOption = { 
+            center: new kakao.maps.LatLng(37.5666805, 126.9784147), // 지도의 중심좌표 - 서울시청
+            level: 3 // 지도의 확대 레벨
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    // 출발지
+    var markerPosition  = new kakao.maps.LatLng(37.560082628997854, 126.94607138162313); 
+    //도착지
+    var markerPosition_destin = new kakao.maps.LatLng(37.56215186346934, 126.94778227829299);
+
+    // 출발지 마커를 생성합니다
+    var marker1 = new kakao.maps.Marker({
+        position: markerPosition
+    });
+
+    var marker2 = new kakao.maps.Marker({
+        position: markerPosition_destin
+    });
+
+    function panTo() {    
+        // 지도 중심을 부드럽게 이동시킵니다
+        // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+        map.panTo(markerPosition);            
+    }
+
+    // 마커가 지도 위에 표시되도록 설정합니다
+    marker1.setMap(map);
+    marker2.setMap(map);
+
+    var iwContent_s = '<div style="padding:5px;">출발지</div>'; // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+    var iwContent_d = '<div style="padding:5px;">도착지</div>';
+    
+    // 인포윈도우를 생성합니다
+    var infowindow_s = new kakao.maps.InfoWindow({
+        content : iwContent_s
+    });
+
+    // 마커에 마우스오버 이벤트를 등록합니다
+    kakao.maps.event.addListener(marker1, 'mouseover', function() {
+    // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+        infowindow_s.open(map, marker1);
+    });
+
+    // 마커에 마우스아웃 이벤트를 등록합니다
+    kakao.maps.event.addListener(marker1, 'mouseout', function() {
+        // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
+        infowindow_s.close();
+    });
+
+    // 인포윈도우를 생성합니다
+    var infowindow_d = new kakao.maps.InfoWindow({
+        content : iwContent_d
+    });
+
+    // 마커에 마우스오버 이벤트를 등록합니다
+    kakao.maps.event.addListener(marker2, 'mouseover', function() {
+    // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+        infowindow_d.open(map, marker2);
+    });
+
+    // 마커에 마우스아웃 이벤트를 등록합니다
+    kakao.maps.event.addListener(marker2, 'mouseout', function() {
+        // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
+        infowindow_d.close();
+    });
+
+    //경로 표시할 부분 좌표
+    var linepath_1 = [];
+    var linepath_2 = [];
+    var linepath_3 = [];
+    var linepath_4 = [];
+    var linepath_5 = [];
+    var linepath_6 = [];
+    var linepath_7 = [];
+    var linepath_8 = [];
+    var linepath_9 = [];
+    var linepath_metro9 = [];
+    var linepath_airp = [];
+    var linepath_bus1 = [];
+    var linepath_bus2 = [];
+    var linepath_bus3 = [];
+    var linepath_bus4 = [];
+    var linepath_bus5 = [];
+    var linepath_walk = [];
+    
+    // 입력받은 경로에 맞는 linepath로 할당 - input을 어떻게 받느냐에 따라 상의 후 짜야할 듯
+    // 카톡 경로 지점별로 따온 경위도 이용해서 임의로 코드 짬
+    linepath_bus3 = [
+        new kakao.maps.LatLng(37.560082628997854,126.94607138162313),
+        new kakao.maps.LatLng(37.560140958384466,126.94622969887737),
+        new kakao.maps.LatLng(37.56018539885528,126.946296358212),
+        new kakao.maps.LatLng(37.56026316913195,126.94638245927682),
+        new kakao.maps.LatLng(37.5606075791987,126.9466990873478),
+        new kakao.maps.LatLng(37.560643686708104,126.94673241662254),
+        new kakao.maps.LatLng(37.56081312060549,126.94724347636179),
+        new kakao.maps.LatLng(37.56084367395164,126.94731846866267),
+        new kakao.maps.LatLng(37.561032546400675,126.94762676855572),
+        new kakao.maps.LatLng(37.56112975930879, 126.94773786679222),
+        new kakao.maps.LatLng(37.561313074111716,126.94789340298857)    // bus 내리는 지점
+    ];
+    
+    // 주의: 각 point를 잇는 line을 생성하는 것이므로 중간에 다른 이동수단을 이용하는 경우,
+    //      선을 연결시키기위한 동일한 point가 포함될 것
+
+    linepath_walk = [
+        new kakao.maps.LatLng(37.561313074111716,126.94789340298857),   // 걷기 시작하는 지점
+        new kakao.maps.LatLng(37.561421395744375,126.94794339536953),
+        new kakao.maps.LatLng(37.56166303510767,126.94798782893257),
+        new kakao.maps.LatLng(37.56171580679853,126.9479906049654),
+        new kakao.maps.LatLng(37.561768578439626,126.94799060347363),
+        new kakao.maps.LatLng(37.561876898878054,126.94797393526389),
+        new kakao.maps.LatLng(37.56204632187896,126.9478767171132),
+        new kakao.maps.LatLng(37.56215186346934, 126.94778227829299)
+    ];
+
+    var polyline_1 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_1,
+        strokeWeight: 3,
+        strokeColor: '#0052a4',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+       // 1호선의 path가 비어있지 않으면 polyline 지도에 출력
+    if (linepath_1.length){
+        polyline_1.setMap(map);
+    }
+
+    // 2호선
+    var polyline_2 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_2,
+        strokeWeight: 3,
+        strokeColor: '#00a84d',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_2.length){
+        polyline_2.setMap(map);
+    }
+
+    // 3호선
+    var polyline_3 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_3,
+        strokeWeight: 3,
+        strokeColor: '#ef7c1c',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_3.length){
+        polyline_3.setMap(map);
+    }
+
+    var polyline_4 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_4,
+        strokeWeight: 3,
+        strokeColor: '#00a5de',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_4.length){
+        polyline_4.setMap(map);
+    }
+
+    var polyline_5 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_5,
+        strokeWeight: 3,
+        strokeColor: '#996cac',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_5.length){
+        polyline_5.setMap(map);
+    }
+
+    var polyline_6 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_6,
+        strokeWeight: 3,
+        strokeColor: '#cd7c2f',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_6.length){
+        polyline_6.setMap(map);
+    }
+
+    var polyline_7 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_7,
+        strokeWeight: 3,
+        strokeColor: '#747f00',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_7.length){
+        polyline_7.setMap(map);
+    }
+
+    var polyline_8 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_8,
+        strokeWeight: 3,
+        strokeColor: '#e6186c',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_8.length){
+        polyline_8.setMap(map);
+    }
+
+    var polyline_9 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_9,
+        strokeWeight: 3,
+        strokeColor: '#bdb092',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_9.length){
+        polyline_9.setMap(map);
+    }
+
+    // 서울시 메트로 9호선
+    var polyline_metro9 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_metro9,
+        strokeWeight: 3,
+        strokeColor: '#bb8336',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_metro9.length){
+        polyline_metro9.setMap(map);
+    }
+
+    // 공항철도
+    var polyline_airp = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_airp,
+        strokeWeight: 3,
+        strokeColor: '#0065b3',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_airp.length){
+        polyline_airp.setMap(map);
+    }
+
+    // 보도 - 점선
+    var polyline_walk = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_walk,
+        strokeWeight: 3,
+        strokeColor: '#0066ff',
+        strokeOpacity: 1,
+        strokeStyle: 'dashed'
+    });
+
+    if (linepath_walk.length){
+        polyline_walk.setMap(map);
+    }
+
+    // 버스 - 간선 버스
+    var polyline_bus1 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_bus1,
+        strokeWeight: 3,
+        strokeColor: '#0068b7',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_bus1.length){
+        polyline_bus1.setMap(map);
+    }
+
+    // 버스 - 지선 버스, 마을버스(색상 같음)
+    var polyline_bus2 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_bus2,
+        strokeWeight: 3,
+        strokeColor: '#53b332',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_bus2.length){
+        polyline_bus2.setMap(map);
+    }
+
+    // 버스 - 순환 버스
+    var polyline_bus3 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_bus3,
+        strokeWeight: 3,
+        strokeColor: '#f2b70a',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_bus3.length){
+        polyline_bus3.setMap(map);
+    }
+
+    // 버스 - 광역 버스
+    var polyline_bus4 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_bus4,
+        strokeWeight: 3,
+        strokeColor: '#e60012',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_bus4.length){
+        polyline_bus4.setMap(map);
+    }
+
+    // 버스 - 심야 버스
+    var polyline_bus5 = new kakao.maps.Polyline({
+        map: map,
+        path: linepath_bus5,
+        strokeWeight: 3,
+        strokeColor: '#3d5bab',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    if (linepath_bus5.length){
+        polyline_bus5.setMap(map);
+    }
+
+
+</script>
+</body>
+</html>
