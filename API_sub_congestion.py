@@ -15,6 +15,20 @@ import API.api
 
 def sub_congestion(stationCode, dow, hh, updn, mm):
 
+    if mm == 0:
+        mm = '00'
+    
+    if hh == 5:
+        hh = '05'
+    elif hh == 6:
+        hh = '06'
+    elif hh == 7:
+        hh = '07'
+    elif hh == 8:
+        hh = '08'
+    elif hh == 9:
+        hh = '09'
+
     url = "https://apis.openapi.sk.com/puzzle/congestion-car/stat/stations/"+str(stationCode)+"?dow="+str(dow)+"&hh="+str(hh)
 
     headers = {
