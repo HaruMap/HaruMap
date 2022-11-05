@@ -95,7 +95,7 @@ class _MainPageState extends State<MainPage>{
                                       controller.change(startText, stopText);
                                       print(startText);
                                       print(stopText);
-                                      Get.to(PathListPage(), arguments: [startText,stopText]);
+                                      Get.to(TabPage(), arguments: [startText,stopText]);
                                     }
                                   },
                                   decoration: InputDecoration(
@@ -145,14 +145,6 @@ class KakaoMapshow extends StatelessWidget {
     return await rootBundle.loadString('assets/json/kakaojskey.json');
   }
 
-  // Future loadKey() async {
-  //   String jsonString = await _loadKeyAsset();
-  //   final jsonResponse = json.decode(jsonString);
-  //   KakaoKey key = new KakaoKey.fromJson(jsonResponse);
-  //   print("Aaaaaaaaaaaaa");
-  //   print(key.kakaokey);
-  //   kakaoMapKey = key.kakaokey;
-  // }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
