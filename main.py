@@ -126,7 +126,7 @@ for s in s_poi:
                     'roadtype' : 0,
                     'obstruction' : 0
                 },
-                'score' : {0} # 추후 이동불편지수 산출 후 값 넣기 & sort
+                'score' : 0 # 추후 이동불편지수 산출 후 값 넣기 & sort
             }
 
             cnt_path_sub += 1
@@ -164,7 +164,7 @@ for s in s_poi:
                     'roadtype' : 0,
                     'obstruction' : 0
                 },
-                'score' : {0}
+                'score' : 0
             }
 
             cnt_path_bus += 1
@@ -214,7 +214,7 @@ for s in s_poi:
                     'roadtype' : 0,
                     'obstruction' : 0
                 },
-                'score' : {0}
+                'score' : 0
             }
 
             cnt_path_subbus += 1
