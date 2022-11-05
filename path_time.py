@@ -18,4 +18,4 @@ def subtime(json):
         elif subpath['trafficType'] == 3: # 3) 도보
             walk_t += subpath['sectionTime']
 
-    return sub_t, bus_t, walk_t
+    return sub_t, bus_t, walk_t 

@@ -39,15 +39,15 @@ def weight_bus(wait_c):
 def weight_sub(wait_c):
     scon_weight = []
     for i in range(len(wait_c)):
-    if int(wait_c[i]) <= 80: # 여유
-        scon_weight.append(0.5)
-    elif int(wait_c[i]) > 80 and int(wait_c[i]) <= 130: # 보통
-        scon_weight.append(3)
-    elif int(wait_c[i]) > 130 and int(wait_c[i]) <= 150: # 주의
-        scon_weight.append(5)
-    elif int(wait_c[i]) > 150 and int(wait_c[i]) <= 170: # 혼잡1
-        scon_weight.append(7)
-    else: # 혼잡2
-        scon_weight.append(9.5)
+        if int(wait_c[i]) <= 80: # 여유
+            scon_weight.append(0.5)
+        elif int(wait_c[i]) > 80 and int(wait_c[i]) <= 130: # 보통
+            scon_weight.append(3)
+        elif int(wait_c[i]) > 130 and int(wait_c[i]) <= 150: # 주의
+            scon_weight.append(5)
+        elif int(wait_c[i]) > 150 and int(wait_c[i]) <= 170: # 혼잡1
+            scon_weight.append(7)
+        else: # 혼잡2
+            scon_weight.append(9.5)
     
     return scon_weight
