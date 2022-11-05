@@ -25,14 +25,17 @@ def getImage(x,y):
     soup = BeautifulSoup(html, 'html.parser')
     result = soup.findAll('img')
 
-    print(result)
-    for i in range(6):
-        #left,front,right,back,top,bottom
-        imgurl = result[i].get("src")
-        res = request.urlopen(imgurl).read()
-        img = Image.open(BytesIO(res))
-        image = np.array(img)
-        plt.imshow(image)
-        plt.show()
+    # print(result)
+    # result -> left,front,right,back,top,bottom 
+    Image = []
+    for i in range(2):
+        imgurl= result[i*2].get("src") #left, right만 출력
+        # res = request.urlopen(imgurl).read()
+        # img = Image.open(BytesIO(res))
+        # image = np.array(img)
+        # plt.imshow(image)
+        # plt.show()
+        Image.append(imgurl)
 
     driver.quit()
+    return Image
