@@ -10,7 +10,7 @@ import API.api
 # stationCode: 역사코드
 # dow: 요일
 # hh: 시간
-# updn: 상행/내선:0 or 하행/외선:1
+# updn: 상행/내선 : 0 or 하행/외선 : 1
 # mm: 분 (10분 단위)
 
 def sub_congestion(stationCode, dow, hh, updn, mm):
@@ -81,4 +81,4 @@ def sub_congestion(stationCode, dow, hh, updn, mm):
     for i in range(len(fin_avg)):
         fin_avg[i] = int(fin_avg[i] / len(r_pt))
 
-    return fin_avg
+    return fin_avg # 지하철 칸 혼잡도 리스트 (grading X)

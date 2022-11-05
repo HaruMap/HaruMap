@@ -1,10 +1,14 @@
 import geocoding
 import path_time
+import wait_time
 import path_description 
 import score
+import weight
+import path_loop
 import API_transport_poi
 import API_path_walk
 import API_path_transport
+import API_sub_congestion
 
 import sys
 import os
@@ -171,6 +175,9 @@ for s in s_poi:
             trans_descrip = []
             trans_t = []
 
+            # print(path['subPath'])
+            path_loop.sub_avg_congestion(path['subPath'])
+
             trans_description = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
@@ -181,21 +188,24 @@ for s in s_poi:
             # 도보 (출발) + 대중교통 + 도보 (도착)
             fin_descrip = s_descrip + trans_descrip + e_descrip
 
+            # 혼잡도 평균 산출
+            avg_congestion = path_loop.sub_avg_congestion(path['subPath'])
+
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t),
                     'description' : fin_descrip
                 },
                 'subway' : {
-                    'congestion' : 0,
-                    'waittime' : 0,
-                    'pathtime' : 0,
+                    'congestion' : weight.weight_sub(avg_congestion), # grading 해야함 
+                    'waittime' : 0, # (wait_time.get_sub_wt()), # (실제 대기시간, grading)
+                    'pathtime' : sub_t, # (실제 이동시간, grading)
                     'service' : 0
                 },
                 'bus' : {
                     'congestion' : 0,
                     'waittime' : 0,
-                    'pathtime' : 0
+                    'pathtime' : bus_t
                 },
                 'walk' : {
                     'pathtime' : 0,

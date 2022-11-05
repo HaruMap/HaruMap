@@ -32,7 +32,7 @@ def change_subway(df):
     return df
 
 # 지하철 대기시간 (단위 : sec)
-def get_sub_wt(stationName, subLine, updnline):
+def get_sub_wt(stationName, subLine, updnline): # ('이대역', 1002, 0 or 1)
 
     sub_arrival = API_sub_arrival.get_sub_real_time(stationName)
 

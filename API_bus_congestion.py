@@ -15,4 +15,4 @@ def bus_congestion(stId):
     response = requests.get(url, params=params)
     print(response.content)
 
-bus_congestion(100000001)
+# bus_congestion(100000001)
