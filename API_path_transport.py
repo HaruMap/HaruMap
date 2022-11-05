@@ -22,4 +22,4 @@ def path_transport(SX, SY, EX, EY):
     
     return requests.get(url).json()
 
-print(path_transport('126.94687065007022', '37.5635841072725', '126.92382953492177', '37.52679721577862')['result']['path'][0])
+# print(path_transport('126.94687065007022', '37.5635841072725', '126.92382953492177', '37.52679721577862')['result']['path'][0])
