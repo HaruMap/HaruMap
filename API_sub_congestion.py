@@ -40,6 +40,10 @@ def sub_congestion(stationCode, dow, hh, updn, mm):
 
     r_dict = json.loads(response.text)
     r_contents = r_dict.get("contents")
+    
+    # 현재 지하철이 운행하지 않을 경우 (혼잡도 정보가 없을 경우) -> return [0]
+    if r_contents == None:
+        return [0]
 
     r_rrr = []
     r_stat = r_contents['stat']
