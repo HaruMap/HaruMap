@@ -1,7 +1,7 @@
 # 도착 예정 시간(초)에 따른 weight
 # wait_t는 get_bus_wt()나 get_sub_wt() 리턴값(리스트)
 
-def weight_time(wait_t): # 단위 : sec
+def weight_time(wait_t): # 단위 : sec, subway
     wait_weight = []
     for i in range(len(wait_t)):
         if int(wait_t[i][-1]) <= 120:
@@ -11,6 +11,22 @@ def weight_time(wait_t): # 단위 : sec
         elif int(wait_t[i][-1]) > 300 and int(wait_t[i][-1]) <= 660:
             wait_weight.append(0.5)
         elif int(wait_t[i][-1]) > 660 and int(wait_t[i][-1]) <= 1320:
+            wait_weight.append(3)
+        else:
+            wait_weight.append(7)
+
+    return wait_weight
+
+def weight_time_bus(wait_t): # 단위 : sec, bus
+    wait_weight = []
+    for i in range(len(wait_t)):
+        if int(wait_t[i]) <= 120:
+            wait_weight.append(9.5)
+        elif int(wait_t[i]) > 120 and int(wait_t[i]) <= 300:
+            wait_weight.append(5)
+        elif int(wait_t[i]) > 300 and int(wait_t[i]) <= 660:
+            wait_weight.append(0.5)
+        elif int(wait_t[i]) > 660 and int(wait_t[i]) <= 1320:
             wait_weight.append(3)
         else:
             wait_weight.append(7)

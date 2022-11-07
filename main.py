@@ -98,7 +98,7 @@ for s in s_poi:
             trans_descrip = []
             trans_t = []
 
-            trans_description = path_description.description_transport(path) # 각 path 별 이동 description
+            trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) subway totalTime :'.format(idx), path_time.totaltime(path))
             sub_t, bus_t, walk_t = path_time.subtime(path)
@@ -137,7 +137,7 @@ for s in s_poi:
             trans_descrip = []
             trans_t = []
 
-            trans_description = path_description.description_transport(path) # 각 path 별 이동 description
+            trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
             sub_t, bus_t, walk_t = path_time.subtime(path)
@@ -178,7 +178,7 @@ for s in s_poi:
             # print(path['subPath'])
             path_loop.sub_avg_congestion(path['subPath'])
 
-            trans_description = path_description.description_transport(path) # 각 path 별 이동 description
+            trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
             sub_t, bus_t, walk_t = path_time.subtime(path)
@@ -188,8 +188,43 @@ for s in s_poi:
             # 도보 (출발) + 대중교통 + 도보 (도착)
             fin_descrip = s_descrip + trans_descrip + e_descrip
 
-            # 혼잡도 평균 산출
-            avg_congestion = path_loop.sub_avg_congestion(path['subPath'])
+            # 지하철 혼잡도 평균 산출
+            avg_sub_congestion = path_loop.sub_avg_congestion(path['subPath'])
+
+            # 버스 대기시간 누적 산출
+            # total_bus_info = [(버스 번호 리스트, 버스 출발 정류소명)]
+            # print('-')
+            for bus_tup in total_bus_info:
+
+                bus_wait_time = []
+                bus_wait_time_weight = [] # 버스 대기시간 가중치
+
+                # print(bus_tup)
+                bus_num_list = bus_tup[0] # 탑승 가능한 버스 번호 리스트
+                bus_station = bus_tup[1]  # 버스 정류소명
+                bus_stID_congestion = bus_tup[2] # 버스 정류소 ID, congestion parameter (예 : 13-120)
+                bus_stID_congestion = bus_stID_congestion.replace('-', '') # 버스 정류소 ID, congestion parameter (예 : 13120)
+                bus_stID_wt = bus_tup[3]
+                # print(bus_station, bus_num_list, bus_stID_congestion, bus_stID_wt)
+                # print()
+
+                for bus in bus_num_list:
+
+                    # 탈 수 있는 버스들의 대기시간 중 가장 대기시간이 짧은 값 확인
+                    try:
+                        check_bus_wt = wait_time.get_bus_wt(bus_stID_wt, '0')
+                        for wt in check_bus_wt:
+                            if bus == wt[0]: # 버스 대기시간 리스트 [(버스번호, 대기시간1, 대기시간2), ...] 에서 일치하는 버스번호의 대기시간 정보를 가져옴
+                                bus_wait_time.append(wt[1])
+                    except:
+                        continue
+                    
+                    # print(bus_wait_time)
+                    bus_wait_time_weight = weight.weight_time_bus(bus_wait_time)
+                    if len(bus_wait_time_weight) == 0: 
+                        bus_wait_time_weight = None
+                    # print(bus_wait_time_weight)
+                    # print()
 
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
@@ -197,14 +232,14 @@ for s in s_poi:
                     'description' : fin_descrip
                 },
                 'subway' : {
-                    'congestion' : weight.weight_sub(avg_congestion), # grading 해야함 
+                    'congestion' : 0, # [완료, 요금때문에 막음] weight.weight_sub(avg_sub_congestion), # grading 해야함 
                     'waittime' : 0, # (wait_time.get_sub_wt()), # (실제 대기시간, grading)
                     'pathtime' : sub_t, # (실제 이동시간, grading)
                     'service' : 0
                 },
                 'bus' : {
                     'congestion' : 0,
-                    'waittime' : 0,
+                    'waittime' : bus_wait_time_weight,
                     'pathtime' : bus_t
                 },
                 'walk' : {

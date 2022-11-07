@@ -18,6 +18,7 @@ def description_transport(path):
     description = []
     # print(path['subPath'])
     # print()
+    total_bus_info = []
 
     # 이동 경로에서 각 구간마다 description 생성 후 return
     for p in path['subPath']:
@@ -34,10 +35,13 @@ def description_transport(path):
             descrip = '버스 {0} 번 {1} 정류소 탑승 {2} 정류소 하차'.format(bus_list, p['startName'], p['endName'])
             # print(descrip); print()
             description.append(descrip)
+            # startArsID : congestion parameter
+            # startID : wait time parameter
+            total_bus_info.append((bus_list, p['startName'], p['startArsID'], p['startID']))
 
         elif p['trafficType'] == 3:
             descrip = '도보 {0} m 이동'.format(p['distance'])
             # print(descrip); print()
             description.append(descrip)
 
-    return description
+    return description, total_bus_info

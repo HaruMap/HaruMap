@@ -114,25 +114,39 @@ def get_bus_wt(stationID, lowBus):
     
     bus_arrival = API_bus_arrival.get_bus_real_time(stationID, lowBus)
     
+    cnt = 0
     busnum_and_wt = []
     bus_list = bus_arrival['result']['real']
 
     # print(bus_list)
+    # print(len(bus_list))
 
-    for idx, bus in enumerate(bus_list):
+    for bus in bus_list:
+        
+        # print(cnt)
+        # print(bus)
+        # cnt += 1
+        # print()
+        # break
+
         try:
             # print(bus['arrival1'])
             # print(bus['arrival2'])
-            busnum_and_wt.append((bus['arrival1']['busPlateNo'], bus['arrival1']['arrivalSec']))
-            busnum_and_wt.append((bus['arrival2']['busPlateNo'], bus['arrival2']['arrivalSec']))
+            busnum_and_wt.append((bus['routeNm'], bus['arrival1']['arrivalSec'], bus['arrival2']['arrivalSec']))
+
         except:
             try:
                 # print(bus['arrival1'])
-                busnum_and_wt.append((bus['arrival1']['busPlateNo'], bus['arrival1']['arrivalSec']))
+                busnum_and_wt.append((bus['routeNm'], bus['arrival1']['arrivalSec']))
             except:
-                # print(bus['arrival2'])
-                busnum_and_wt.append((bus['arrival2']['busPlateNo'], bus['arrival2']['arrivalSec']))
+                    try:
+                        # print(bus['arrival2'])
+                        busnum_and_wt.append((bus['routeNm'], bus['arrival2']['arrivalSec']))
+                    except:
+                        continue
+
+    # print(busnum_and_wt)
 
     return list(set(busnum_and_wt))
 
-# print(get_bus_wt('103948', '0')) # 파라미터 예 : stationID 102155 & 일반버스/저상버스 모두 포함
+# print(get_bus_wt('103891', '0')) # 파라미터 예 : stationID 102155 & 일반버스/저상버스 모두 포함
