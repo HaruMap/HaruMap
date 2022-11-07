@@ -80,6 +80,7 @@ def classification_sub(wait_c):
 path time
 '''
 
+# 지하철 or 버스
 def path_time(path_t):
     if path_t <= 10: # 10분 이하
         return 0.5
@@ -92,3 +93,16 @@ def path_time(path_t):
     elif path_t > 60: # 60분 초과
         return 9.5
 
+
+# 도보
+def path_time_walk(path_t):
+    if path_t <= 5: # 5분 이하
+        return 0.5
+    elif path_t > 5 and path_t <= 10: # 5분 초과 10분 이하
+        return 3
+    elif path_t > 10 and path_t <= 20: # 10분 초과 20분 이하
+        return 5
+    elif path_t > 20 and path_t <= 30: # 20분 초과 30분 이하
+        return 7
+    elif path_t > 30: # 30분 초과
+        return 9.5

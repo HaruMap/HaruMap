@@ -259,7 +259,7 @@ for s in s_poi:
                     'pathtime' : classification.path_time(bus_t) # (단위 : min)
                 },
                 'walk' : {
-                    'pathtime' : round((s_t + e_t) / 60) + walk_t, # (단위 : min)
+                    'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                     'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                     'slope' : 0,
                     'roadtype' : 0,
