@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:harumap2/mainpage.dart';
+import 'package:harumap2/path/deparriv_list.dart';
 import 'package:harumap2/startpage.dart';
 import 'package:flutter/services.dart';
 
@@ -16,6 +18,10 @@ class MyApp extends StatelessWidget {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return GetMaterialApp(
       home: StartPage(),
+      initialRoute: "/",
+      getPages: [
+        GetPage(name: "/mainpage", page: () => MainPage()),
+      ],
     );
   }
 }

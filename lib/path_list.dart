@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:harumap2/mainpage.dart';
 import 'package:harumap2/path_info.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+
+import 'model/getaddr_api_adapter.dart';
+import 'model/model_addr.dart';
 
 class TabPage extends StatefulWidget{
 
@@ -12,6 +17,28 @@ class TabPage extends StatefulWidget{
 }
 
 class _TabState extends State<TabPage> with TickerProviderStateMixin {
+
+  bool isLoading = false;
+  List<AddrLoc> locs = [];
+
+  String addr= "";
+
+  _loadLoc() async {
+    setState(() {
+      isLoading = true;
+    });
+    String baseUrl = "http://127.0.0.1:8000/?addr=$addr";
+    final response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      setState(() {
+        locs = parseAddrLoc(convert.utf8.decode(response.bodyBytes));
+        isLoading = false;
+      });
+    }else{
+      throw Exception("failed to load data");
+    }
+  }
+
   late TabController _tabController;
   @override
   void initState(){
