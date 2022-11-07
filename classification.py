@@ -1,3 +1,7 @@
+'''
+wait time
+'''
+
 # 도착 예정 시간(초)에 따른 weight
 # wait_t는 get_bus_wt()나 get_sub_wt() 리턴값(리스트)
 
@@ -33,6 +37,10 @@ def classification_time_bus(wait_t): # 단위 : sec, bus
 
     return wait_weight
 
+'''
+congestion
+'''
+
 # 버스 혼잡도 (대형 버스 기준)
 # 사람 수?가 input인가용??
 
@@ -67,3 +75,20 @@ def classification_sub(wait_c):
             scon_weight.append(9.5)
     
     return scon_weight
+
+'''
+path time
+'''
+
+def path_time(path_t):
+    if path_t <= 10: # 10분 이하
+        return 0.5
+    elif path_t > 10 and path_t <= 20: # 10분 초과 20분 이하
+        return 3
+    elif path_t > 20 and path_t <= 40: # 20분 초과 40분 이하
+        return 5
+    elif path_t > 40 and path_t <= 60: # 40분 초과 60분 이하
+        return 7
+    elif path_t > 60: # 60분 초과
+        return 9.5
+

@@ -205,7 +205,7 @@ for s in s_poi:
             avg_sub_congestion = path_loop.sub_avg_congestion(path['subPath'])
             '''
 
-            # 버스 대기시간 누적 산출
+            # 버스 대기시간 누적 (환승 과정) 산출
             # total_bus_info = [(버스 번호 리스트, 버스 출발 정류소명)]
             # print('-')
             for bus_tup in total_bus_info:
@@ -222,9 +222,9 @@ for s in s_poi:
                 # print(bus_station, bus_num_list, bus_stID_congestion, bus_stID_wt)
                 # print()
 
+                # 탈 수 있는 버스들의 대기시간 중 가장 대기시간이 짧은 값 확인
                 for bus in bus_num_list:
 
-                    # 탈 수 있는 버스들의 대기시간 중 가장 대기시간이 짧은 값 확인
                     try:
                         check_bus_wt = wait_time.get_bus_wt(bus_stID_wt, '0')
                         for wt in check_bus_wt:
@@ -248,15 +248,15 @@ for s in s_poi:
                     'description' : fin_descrip
                 },
                 'subway' : {
-                    'congestion' : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], # classification.classification_sub(avg_sub_congestion), # grading 해야함 
+                    'congestion' : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], # classification.classification_sub(avg_sub_congestion), # min value 만 추출?
                     'waittime' : 0, # (wait_time.get_sub_wt()), # (단위 : sec)
-                    'pathtime' : sub_t, # (단위 : min)
+                    'pathtime' : classification.path_time(sub_t), # (단위 : min)
                     'service' : 0
                 },
                 'bus' : {
                     'congestion' : 0, # 현재 정보가 없음
-                    'waittime' : bus_wait_time_classification, # (단위 : sec)
-                    'pathtime' : bus_t # (단위 : min)
+                    'waittime' : bus_wait_time_classification, # min value only! (단위 : sec)
+                    'pathtime' : classification.path_time(bus_t) # (단위 : min)
                 },
                 'walk' : {
                     'pathtime' : round((s_t + e_t) / 60) + walk_t, # (단위 : min)
