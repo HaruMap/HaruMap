@@ -1,7 +1,7 @@
 # 도착 예정 시간(초)에 따른 weight
 # wait_t는 get_bus_wt()나 get_sub_wt() 리턴값(리스트)
 
-def weight_time(wait_t): # 단위 : sec, subway
+def classification_time_sub(wait_t): # 단위 : sec, subway
     wait_weight = []
     for i in range(len(wait_t)):
         if int(wait_t[i][-1]) <= 120:
@@ -17,7 +17,7 @@ def weight_time(wait_t): # 단위 : sec, subway
 
     return wait_weight
 
-def weight_time_bus(wait_t): # 단위 : sec, bus
+def classification_time_bus(wait_t): # 단위 : sec, bus
     wait_weight = []
     for i in range(len(wait_t)):
         if int(wait_t[i]) <= 120:
@@ -36,7 +36,7 @@ def weight_time_bus(wait_t): # 단위 : sec, bus
 # 버스 혼잡도 (대형 버스 기준)
 # 사람 수?가 input인가용??
 
-def weight_bus(wait_c):
+def classification_bus(wait_c):
     bcon_weight = []
     if int(wait_c) <= 25: # 여유
         bcon_weight.append(0.5)
@@ -52,7 +52,7 @@ def weight_bus(wait_c):
 # 지하철 혼잡도
 # 칸마다 % input
 
-def weight_sub(wait_c):
+def classification_sub(wait_c):
     scon_weight = []
     for i in range(len(wait_c)):
         if int(wait_c[i]) <= 80: # 여유
