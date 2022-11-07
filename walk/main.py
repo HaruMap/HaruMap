@@ -26,17 +26,20 @@ depart_coor = geoCoding(depart)
 dest_coor = geoCoding(dest)
 
 searchOption = ['추천', '추천+대로우선', '최단', '최단거리+계단제외']
-payload = [{ "startX" : depart_coor[0],    "startY" : depart_coor[1],    "angle" : 359,    "speed" : 60,    "endPoiId" : "334852",
-            "endX" : dest_coor[0],    "endY" : dest_coor[1],    "reqCoordType" : "WGS84GEO",    "startName" : "%EC%B6%9C%EB%B0%9C",
-            "endName" : "%EB%B3%B8%EC%82%AC",    "searchOption" : 0,    "resCoordType" : "WGS84GEO"},{ "startX" : depart_coor[0],    "startY" : depart_coor[1],    "angle" : 359,    "speed" : 60,    "endPoiId" : "334852",
-            "endX" : dest_coor[0],    "endY" : dest_coor[1],    "reqCoordType" : "WGS84GEO",    "startName" : "%EC%B6%9C%EB%B0%9C",
-            "endName" : "%EB%B3%B8%EC%82%AC",    "searchOption" : 4,    "resCoordType" : "WGS84GEO"},{ "startX" : depart_coor[0],    "startY" : depart_coor[1],    "angle" : 359,    "speed" : 60,    "endPoiId" : "334852",
-            "endX" : dest_coor[0],    "endY" : dest_coor[1],    "reqCoordType" : "WGS84GEO",    "startName" : "%EC%B6%9C%EB%B0%9C",
-            "endName" : "%EB%B3%B8%EC%82%AC",    "searchOption" : 10,    "resCoordType" : "WGS84GEO"},{ "startX" : depart_coor[0],    "startY" : depart_coor[1],    "angle" : 359,    "speed" : 60,    "endPoiId" : "334852",
-            "endX" : dest_coor[0],    "endY" : dest_coor[1],    "reqCoordType" : "WGS84GEO",    "startName" : "%EC%B6%9C%EB%B0%9C",
-            "endName" : "%EB%B3%B8%EC%82%AC",    "searchOption" : 30,    "resCoordType" : "WGS84GEO"}]
+payload = [{"startX" : depart_coor[0], "startY" : depart_coor[1], "angle" : 359, "speed" : 60, "endPoiId" : "334852",
+            "endX" : dest_coor[0], "endY" : dest_coor[1], "reqCoordType" : "WGS84GEO", 
+            "startName" : "%EC%B6%9C%EB%B0%9C", "endName" : "%EB%B3%B8%EC%82%AC", "searchOption" : 0, "resCoordType" : "WGS84GEO"}, 
+           {"startX" : depart_coor[0], "startY" : depart_coor[1], "angle" : 359, "speed" : 60, "endPoiId" : "334852",
+            "endX" : dest_coor[0], "endY" : dest_coor[1], "reqCoordType" : "WGS84GEO", 
+            "startName" : "%EC%B6%9C%EB%B0%9C", "endName" : "%EB%B3%B8%EC%82%AC", "searchOption" : 4, "resCoordType" : "WGS84GEO"}, 
+           {"startX" : depart_coor[0], "startY" : depart_coor[1], "angle" : 359, "speed" : 60, "endPoiId" : "334852",
+            "endX" : dest_coor[0], "endY" : dest_coor[1], "reqCoordType" : "WGS84GEO", 
+            "startName" : "%EC%B6%9C%EB%B0%9C", "endName" : "%EB%B3%B8%EC%82%AC", "searchOption" : 10, "resCoordType" : "WGS84GEO"}, 
+           {"startX" : depart_coor[0], "startY" : depart_coor[1], "angle" : 359, "speed" : 60, "endPoiId" : "334852",
+            "endX" : dest_coor[0], "endY" : dest_coor[1], "reqCoordType" : "WGS84GEO", 
+            "startName" : "%EC%B6%9C%EB%B0%9C", "endName" : "%EB%B3%B8%EC%82%AC", "searchOption" : 30, "resCoordType" : "WGS84GEO"}]
 
-#호출 : request (format = .json)
+# 호출 : request (format = .json)
 totalCoord, totalDist, totalTime, totalRoad  = [], [], [], []
 
 for k in range(4):
