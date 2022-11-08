@@ -10,6 +10,8 @@ import API_path_walk
 import API_path_transport
 import API_sub_congestion
 
+import walk
+
 import sys
 import os
 
@@ -210,6 +212,8 @@ for s in s_poi:
             # print('-')
             for bus_tup in total_bus_info:
 
+                coordinate = [] # 모든 경로의 coordinate
+                pathcoordinate = [] # 도보의 coordinate
                 bus_wait_time = []
                 bus_wait_time_classification = [] # 버스 대기시간 가중치
 
@@ -245,7 +249,8 @@ for s in s_poi:
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
-                    'description' : fin_descrip
+                    'description' : fin_descrip,
+                    'coordinate' : coordinate
                 },
                 'subway' : {
                     'congestion' : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], # classification.classification_sub(avg_sub_congestion), # min value 만 추출?
@@ -305,6 +310,7 @@ elif op_transport == 3: # '지하철+버스' 선택
     print(total_path_subbus[0]) # sample
 
 # ================================================ 이동불편지수 산출 ================================================
+
 
 
 
