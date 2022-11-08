@@ -153,18 +153,49 @@ for s in s_poi:
             # 도보 (출발) + 대중교통 + 도보 (도착)
             fin_descrip = s_descrip + trans_descrip + e_descrip
 
+            # 버스 대기시간 누적 (환승 과정) 산출
+            # total_bus_info = [(버스 번호 리스트, 버스 출발 정류소명)]
+            # print('-')
+            for bus_tup in total_bus_info:
+
+                bus_wait_time = []
+                bus_wait_time_classification = [] # 버스 대기시간 가중치
+
+                # print(bus_tup)
+                bus_num_list = bus_tup[0] # 탑승 가능한 버스 번호 리스트
+                bus_station = bus_tup[1]  # 버스 정류소명
+                bus_stID_congestion = bus_tup[2] # 버스 정류소 ID, congestion parameter (예 : 13-120)
+                bus_stID_congestion = bus_stID_congestion.replace('-', '') # 버스 정류소 ID, congestion parameter (예 : 13120)
+                bus_stID_wt = bus_tup[3]
+                # print(bus_station, bus_num_list, bus_stID_congestion, bus_stID_wt)
+                # print()
+
+                for bus in bus_num_list:
+
+                    try:
+                        check_bus_wt = wait_time.get_bus_wt(bus_stID_wt, '0')
+                        for wt in check_bus_wt:
+                            if bus == wt[0]: # 버스 대기시간 리스트 [(버스번호, 대기시간1, 대기시간2), ...] 에서 일치하는 버스번호의 대기시간 정보를 가져옴
+                                bus_wait_time.append(wt[1])
+                    except:
+                        continue
+                    
+                    bus_wait_time_classification = classification.classification_time_bus(bus_wait_time)
+
             total_path_bus[cnt_path_bus] = {
+
                 'info' : {
-                    'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t),
-                    'description' : fin_descrip
+                    'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                    'description' : fin_descrip,
+                    'coordinate' : []
                 },
                 'bus' : {
-                    'congestion' : 0,
-                    'waittime' : 0,
-                    'pathtime' : 0
+                    'congestion' : 0, # 현재 정보가 없음
+                    'waittime' : bus_wait_time_classification, # min value only! (단위 : sec)
+                    'pathtime' : classification.path_time(bus_t) # (단위 : min)
                 },
                 'walk' : {
-                    'pathtime' : 0,
+                    'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                     'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                     'slope' : 0,
                     'roadtype' : 0,
@@ -175,11 +206,11 @@ for s in s_poi:
 
             cnt_path_bus += 1
 
-
+            '''
             # ========= API 요금 방지 ==========
             break
             # =================================
-
+            '''
 
         # 지하철 + 버스
         for idx, path in enumerate(path_subbus):
@@ -212,8 +243,6 @@ for s in s_poi:
             # print('-')
             for bus_tup in total_bus_info:
 
-                coordinate = [] # 모든 경로의 coordinate
-                pathcoordinate = [] # 도보의 coordinate
                 bus_wait_time = []
                 bus_wait_time_classification = [] # 버스 대기시간 가중치
 
@@ -226,7 +255,6 @@ for s in s_poi:
                 # print(bus_station, bus_num_list, bus_stID_congestion, bus_stID_wt)
                 # print()
 
-                # 탈 수 있는 버스들의 대기시간 중 가장 대기시간이 짧은 값 확인
                 for bus in bus_num_list:
 
                     try:
@@ -237,15 +265,13 @@ for s in s_poi:
                     except:
                         continue
                     
-                    # print(bus_wait_time)
                     bus_wait_time_classification = classification.classification_time_bus(bus_wait_time)
-                    print(bus_wait_time_classification)
 
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'description' : fin_descrip,
-                    'coordinate' : coordinate
+                    'coordinate' : []
                 },
                 'subway' : {
                     'congestion' : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], # classification.classification_sub(avg_sub_congestion), # min value 만 추출?
@@ -270,11 +296,9 @@ for s in s_poi:
 
             cnt_path_subbus += 1
 
-            '''
             # ========= API 요금 방지 ==========
             break
             # =================================
-            '''
 
     # ========= API 요금 방지 ==========
         break
@@ -312,12 +336,10 @@ elif op_transport == 3: # '지하철+버스' 선택
 # 1) 지하철
 
 # 2) 버스
-'''
 for idx in range(len(total_path_bus)):
     # print(total_path_bus)
     # print(total_path_bus[idx])
     total_path_bus[idx]['score'] = score.score_type1(total_path_bus[idx], 2)
-'''
 
 # 3) 지하철 + 버스
 for idx in range(len(total_path_subbus)):
@@ -325,8 +347,8 @@ for idx in range(len(total_path_subbus)):
 
 # sample path score 확인
 # print(total_path_bus[0])
-print(total_path_subbus[0])
-print(total_path_subbus[1])
+for idx in range(len(total_path_bus)):
+    print(total_path_bus[idx]['score'])
 
 # ================================================ 이동불편지수가 낮은 순으로 정렬 ================================================
 
