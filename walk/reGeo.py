@@ -26,18 +26,18 @@ def reGeo_function():
 
 def getReGeo(x, y):
     
-    print('Done. (getReGeo)')
+    # print('Done. (getReGeo)')
 
     url =  'https://dapi.kakao.com/v2/local/geo/coord2address.json?x={0}&y={1}&input_coord=WGS84'.format(x, y)
     headers = {
         "Authorization": '{0}'.format(API.api.getReGeo_key()),
     }
 
-    print('Done. (url)')
-    print(requests.get(url, headers=headers).json())
+    # print('Done. (url)')
+    # print(requests.get(url, headers=headers).json())
 
     places = requests.get(url, headers=headers).json()['documents']
 
-    print('Done. (places)')
+    # print('Done. (places)')
 
     return(places[0]['address']['address_name'])

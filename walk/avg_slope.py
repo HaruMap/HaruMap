@@ -10,11 +10,11 @@ from reGeo import getReGeo
 # ex : x, y = 126, 37
 def getSlope(x, y):
 
-    print('Done. (func)')
+    # print('Done. (func)')
 
     query_txt = getReGeo(x, y)
 
-    print('Done. (query)')
+    # print('Done. (query)')
 
     option = Options()
     option.add_argument("disable-infobars")
@@ -25,12 +25,12 @@ def getSlope(x, y):
     option.add_experimental_option('excludeSwitches',['enable-logging'])
     driver = webdriver.Chrome('C:\chromedriver.exe', options=option)
 
-    print('Done.')
+    # print('Done.')
 
     driver.get("https://webgis.neins.go.kr/popup/searchGCadastralPopup.do")
     time.sleep(1)
 
-    print('Done. (driver)')
+    # print('Done. (driver)')
 
     driver.find_element(By.ID, "queryText").click()
     element = driver.find_element(By.ID, "queryText")
@@ -38,7 +38,7 @@ def getSlope(x, y):
     element.send_keys("\n")
     time.sleep(1)
 
-    print('Done. (element)')
+    # print('Done. (element)')
 
     # 담기 버튼
     adress = driver.find_element(By.XPATH, '//*[@id="popupRatepoint"]/div[2]/div[3]/ul/li/a')
@@ -80,8 +80,9 @@ def getSlope(x, y):
 
     result = round(avg_slope, 3)
 
-    # 경사도 class 구분
+    # 경사도 classification
     slope_class = 0
+
     if result >= 0 and result < 3:
         slope_class = 0
     elif result >=3 and result < 7:
@@ -91,11 +92,11 @@ def getSlope(x, y):
     elif result >= 10:
         slope_class = 3
 
-    # 결과(평균 경사도, 경사도 class) 출력
+    # 결과 (평균 경사도, 경사도 class) 출력
     # print(result)
 
-    print(slope_class)
+    # print(slope_class)
 
     return slope_class
 
-getSlope(126.94687065007022, 37.5635841072725)
+# getSlope(126.94687065007022, 37.5635841072725)
