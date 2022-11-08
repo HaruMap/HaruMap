@@ -48,7 +48,7 @@ def score_type1(path_detail, op):
             # print(sub_score, bus_score, walk_score)
             # print(score)
 
-            return round(score, 2)
+            return round(score, 4)
 
         except:
             return None
@@ -83,7 +83,7 @@ def score_type1(path_detail, op):
             # print(sub_score, bus_score, walk_score)
             # print(score)
 
-            return round(score, 2)
+            return round(score, 4)
 
         except:
             return None
@@ -126,7 +126,7 @@ def score_type1(path_detail, op):
             # print(sub_score, bus_score, walk_score)
             # print(score)
 
-            return round(score, 2)
+            return round(score, 4)
         
         except:
             return None
