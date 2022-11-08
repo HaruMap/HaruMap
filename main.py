@@ -239,12 +239,7 @@ for s in s_poi:
                     
                     # print(bus_wait_time)
                     bus_wait_time_classification = classification.classification_time_bus(bus_wait_time)
-                    if len(bus_wait_time_classification) == 0: 
-                        bus_wait_time_classification = None
-                    else: # 추후 대기시간 수정 (해당 지점까지 도착하는 시간보다 작은 값을 제외 후, 그중 min value)
-                        bus_wait_time_classification = [min(bus_wait_time_classification)]
-                    # print(bus_wait_time_classification)
-                    # print()
+                    print(bus_wait_time_classification)
 
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
@@ -275,9 +270,11 @@ for s in s_poi:
 
             cnt_path_subbus += 1
 
+            '''
             # ========= API 요금 방지 ==========
             break
             # =================================
+            '''
 
     # ========= API 요금 방지 ==========
         break
@@ -329,6 +326,7 @@ for idx in range(len(total_path_subbus)):
 # sample path score 확인
 # print(total_path_bus[0])
 print(total_path_subbus[0])
+print(total_path_subbus[1])
 
 # ================================================ 이동불편지수가 낮은 순으로 정렬 ================================================
 
