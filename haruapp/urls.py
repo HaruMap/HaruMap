@@ -1,7 +1,6 @@
 from django.urls import path, include
-from .views import helloAPI, randomQuiz
+from .views import getPathes
 
 urlpatterns = [
-    path("hello/", helloAPI),
-    path("<int:id>/", randomQuiz),
+    path("getPathes", getPathes),
 ]
