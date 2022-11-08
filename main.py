@@ -298,7 +298,7 @@ print()
 # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
 
 # ================================================ 샘플 경로 확인 ================================================
-
+'''
 if op_transport == 1: # '지하철만' 선택
     print('유형 : 지하철')
     print(total_path_sub[0]) # sample
@@ -308,11 +308,27 @@ elif op_transport == 2: # '버스만' 선택
 elif op_transport == 3: # '지하철+버스' 선택
     print('유형 : 지하철 + 버스')
     print(total_path_subbus[0]) # sample
-
+'''
 # ================================================ 이동불편지수 산출 ================================================
 
+# 일단 휠체어 이용자로 가정함 (추후 받아온 사용자 정보 & 정렬 기준 기반 재산출)
+# 1) 지하철
 
+# 2) 버스
+'''
+for idx in range(len(total_path_bus)):
+    # print(total_path_bus)
+    # print(total_path_bus[idx])
+    total_path_bus[idx]['score'] = score.score_type1(total_path_bus[idx], 2)
+'''
 
+# 3) 지하철 + 버스
+for idx in range(len(total_path_subbus)):
+    total_path_subbus[idx]['score'] = score.score_type1(total_path_subbus[idx], 3)
+
+# sample path score 확인
+# print(total_path_bus[0])
+print(total_path_subbus[0])
 
 # ================================================ 이동불편지수가 낮은 순으로 정렬 ================================================
 
