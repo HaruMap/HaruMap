@@ -6,9 +6,21 @@ import 'package:get/get.dart';
 import 'package:harumap2/pathdetail.dart';
 import 'package:kakaomap_webview/kakaomap_webview.dart';
 
+import 'model/model_path.dart';
+
 
 
 class PathInfoPage extends StatefulWidget{
+
+  List<PathDetail> path;
+  String dep;
+  double dep_lat;
+  double dep_lng;
+  String arrv;
+  double arrv_lat;
+  double arrv_lng;
+  PathInfoPage({required this.path, required this.dep, required this.dep_lat, required this.dep_lng, required this.arrv, required this.arrv_lat, required this.arrv_lng});
+
   @override
   _PathInfoState createState() => _PathInfoState();
 }
@@ -21,10 +33,10 @@ class _PathInfoState extends State<PathInfoPage>{
     return Scaffold(
       body: Column(
         children: [
-          KakaoMapshow(),
+          _showdescription(context),
         GestureDetector(
           onTap: (){
-            Get.to(PathDetail(), transition: Transition.downToUp
+            Get.to(PathDesc(), transition: Transition.downToUp
             );
           },
           child: Container(
@@ -51,30 +63,16 @@ class _PathInfoState extends State<PathInfoPage>{
     );
   }
 
-}
-
-class KakaoKey{
-  String kakaokey;
-
-  KakaoKey(this.kakaokey);
-
-  factory KakaoKey.fromJson(Map<String,dynamic> parsedJson){
-    return KakaoKey(
-        parsedJson['key']
-    );
-  }
-}
-
-class KakaoMapshow extends StatelessWidget {
-  final h = screenheight;
-  final w = screenwidth;
   String kakaoMapKey = "";
   Future<String> _loadKeyAsset() async {
     return await rootBundle.loadString('assets/json/kakaojskey.json');
   }
 
+  final h = screenheight;
+  final w = screenwidth;
+
   @override
-  Widget build(BuildContext context) {
+  Widget _showdescription(BuildContext context) {
     return FutureBuilder<String>(
         future: _loadKeyAsset(),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot){
@@ -91,8 +89,8 @@ class KakaoMapshow extends StatelessWidget {
                     width: w * 0.9,
                     height: h * 0.75,
                     kakaoMapKey: kakaoMapKey,
-                    lat: 33.450701,
-                    lng: 126.570667,
+                    lat: widget.dep_lat,
+                    lng: widget.dep_lng,
                     showMapTypeControl: true,
                     showZoomControl: true,
                     draggableMarker: true,
@@ -106,6 +104,60 @@ class KakaoMapshow extends StatelessWidget {
                       strokeWeight: 2.5,
                       strokeColorOpacity: 0.9,
                     ),
+                    customScript: '''
+                  var markers = [];   
+                  var complete_dep = true;
+                  var complete_arrv = true;
+                  var i = 0;
+                  var bounds = new kakao.maps.LatLngBounds();
+                                                             
+                  function addMarker(position) {              
+                    var marker = new kakao.maps.Marker({position: position});              
+                    marker.setMap(map);              
+                    markers.push(marker);
+                  }
+                  var marker1 = new kakao.maps.LatLng(${widget.dep_lat},${widget.dep_lng});
+                  var marker2 = new kakao.maps.LatLng(${widget.arrv_lat},${widget.arrv_lng});
+                    
+                  addMarker(marker1);
+                  bounds.extend(marker1);
+                  const dep_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">${widget.dep}</span>' + '</div>';
+                    var dep_customOverlay = new kakao.maps.CustomOverlay({
+                            map: map,
+                            position: marker1,
+                            content: dep_content,
+                            yAnchor: 2
+                       
+                        });
+                    
+                  addMarker(marker2);
+                  bounds.extend(marker2);
+                  const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">${widget.arrv}</span>' + '</div>';
+                  var dep_customOverlay = new kakao.maps.CustomOverlay({
+                            map: map,
+                            position: marker2,
+                            content: arrv_content,
+                            yAnchor: 2
+                       
+                        });
+                  setBounds()
+              
+                  var zoomControl = new kakao.maps.ZoomControl();
+                  map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);              
+                  var mapTypeControl = new kakao.maps.MapTypeControl();
+                  map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+                  
+                    
+                  function panTo(lat,lng) {
+                      var moveLatLon = new kakao.maps.LatLng(lat,lng);
+                      
+                      map.panTo(moveLatLon);            
+                  }   
+                  function setBounds() {
+                      map.setBounds(bounds);
+                  }
+                  
+                  ''',
                   ),
                 ),
               ],
@@ -117,6 +169,7 @@ class KakaoMapshow extends StatelessWidget {
     );
 
   }
+
 }
 
 

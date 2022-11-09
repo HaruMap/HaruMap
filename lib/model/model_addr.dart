@@ -6,8 +6,8 @@ class AddrLoc {
   String road_address_name;
   String address_name;
   String phone;
-  double lat;
-  double lng;
+  String lat;
+  String lng;
 
   AddrLoc({
     required this.place_name,
@@ -31,7 +31,10 @@ class AddrLoc {
         road_address_name = json["road_address_name"],
         address_name = json["address_name"],
         phone = json["phone"],
-        lat = json["lat"],
-        lng = json["lng"];
+        lat = json["y"],
+        lng = json["x"];
 
 }
+
+
+

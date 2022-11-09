@@ -1,7 +1,10 @@
 
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:harumap2/model/getpath_api_adapter.dart';
+import 'package:harumap2/model/model_path.dart';
 import 'package:harumap2/path/deparriv_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,19 +31,9 @@ bool hasdep = false;
 bool hasarrv = false;
 bool startok = false;
 bool stopok = false;
-String startlabel = "";
-String stoplabel = "";
 
-class Controller extends GetxController{
-  String startText = "";
-  String stopText = "";
-
-  void change(start,stop){
-    startText = start;
-    stopText = stop;
-    update();
-  }
-}
+TextEditingController _depController = TextEditingController( text: " ");
+TextEditingController _arrvController = TextEditingController( text: " ");
 class _MainPageState extends State<MainPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -48,11 +41,21 @@ class _MainPageState extends State<MainPage>{
   String stopText = "";
 
   List<AddrLoc> locs = [];
+  List<PathDetail> pathes = [];
 
+  Future<String> _loadKeyAsset() async {
+    return await rootBundle.loadString('assets/json/kakaorestapi.json');
+  }
 
   _loadLoc(loc) async {
-    String baseUrl = "http://192.168.0.106:8000/haruapp/getloc?loc=${loc}";
-    final response = await http.get(Uri.parse(baseUrl));
+    String REST_API_KEY = await _loadKeyAsset();
+    REST_API_KEY = REST_API_KEY.split(":")[1].split("}")[0].split("\"")[1];
+    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
+    final response = await http.get(
+      Uri.parse(baseUrl),
+      headers: {HttpHeaders.authorizationHeader: "KakaoAK ${REST_API_KEY}"},
+    );
+    print(response.statusCode);
     if (response.statusCode == 200) {
       setState(() {
         locs = parseAddrLoc(convert.utf8.decode(response.bodyBytes));
@@ -62,26 +65,43 @@ class _MainPageState extends State<MainPage>{
     }
   }
 
+  _loadPath(deplat,deplng,arrvlat,arrvlng) async {
+    String baseUrl = "http://192.168.0.103:8000/haruapp/getPathes?deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    final response = await http.get(
+      Uri.parse(baseUrl),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      setState(() {
+        pathes = parsePathes(convert.utf8.decode(response.bodyBytes));
+      });
+    }else{
+      throw Exception("failed to load data");
+    }
+  }
   @override
   Widget build(BuildContext context){
     screenheight = MediaQuery.of(context).size.height;
     screenwidth = MediaQuery.of(context).size.width;
-    final controller = Get.put(Controller());
     startText = "";
     stopText = "";
-    if (startok){
-      startlabel = startlabel;
-    } else{
-      startlabel = "출발지";
-    }
-    if (stopok){
-      stoplabel = stoplabel;
-    } else{
-      stoplabel = "도착지";
-    }
+
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
         child: Scaffold(
+          appBar: AppBar(
+            elevation: 0.0,
+            backgroundColor: Colors.white,
+            title: Text("하루 지도",
+              style: TextStyle(fontSize: screenwidth*0.06,
+                  fontFamily: "NotoSans",
+                  color: Color.fromARGB(233, 94, 208, 184),
+                  fontWeight: FontWeight.bold),
+              textScaleFactor: 1.0,
+              overflow: TextOverflow.ellipsis,
+            ),
+            centerTitle: true,
+          ),
           resizeToAvoidBottomInset: false,
           key: _scaffoldKey,
           body: Container(
@@ -96,55 +116,63 @@ class _MainPageState extends State<MainPage>{
                       child: Column(
                           children: [
                             Padding(
-                              child: TextField(
-                                textInputAction: TextInputAction.go,
-                                onSubmitted: (text) {
-                                  startText = text;
-                                  if (startText.isEmpty){
-                                    showDialog(context: context,
-                                    builder: (BuildContext buildcontext){
-                                    return AlertDialog(
-                                      content: Text("값을 입력해주세요"),
-                                      actions: [
-                                        Center(
-                                          child: TextButton(
-                                            child: Text('확인'),
-                                            onPressed: (){
-                                            Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                      );
-                                    });
-                                  }
-                                  else {
-                                    _loadLoc(startText).whenComplete((){
-                                      startok = true;
-                                      return Navigator.push(context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Departure(
-                                                locs: locs,
-                                                start: true,
-                                                stop: false,
+                              child:
+                                  TextField(
+                                    controller: _depController,
+                                    textInputAction: TextInputAction.go,
+                                    onSubmitted: (text) {
+                                      startText = text;
+                                      if (startText.isEmpty){
+                                        showDialog(context: context,
+                                            builder: (BuildContext buildcontext){
+                                              return AlertDialog(
+                                                content: Text("값을 입력해주세요"),
+                                                actions: [
+                                                  Center(
+                                                    child: TextButton(
+                                                      child: Text('확인'),
+                                                      onPressed: (){
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            });
+                                      }
+                                      else {
+                                        _loadLoc(startText).whenComplete((){
+                                          print(locs);
+                                          startok = true;
+                                          return Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Departure(
+                                                    locs: locs,
+                                                    start: true,
+                                                    stop: false,
+                                                  )
                                               )
-                                          )
-                                      );
-                                    });
+                                          );
+                                        });
 
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                    labelText: startlabel,
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                        labelText: _depController.text,
+                                        prefixText: "출발지 : ",
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                        )
                                     )
-                                ),
                               ),
-                              padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
+                              padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 5.0),
                             ),
                             Padding(
                                 child: TextField(
+                                  controller: _arrvController,
                                   textInputAction: TextInputAction.go,
                                   onSubmitted: (text) async {
                                     stopText = text;
@@ -182,7 +210,11 @@ class _MainPageState extends State<MainPage>{
                                     }
                                   },
                                   decoration: InputDecoration(
-                                      labelText: stoplabel,
+                                      labelText: _arrvController.text,
+                                      prefixText: "도착지 : ",
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      floatingLabelBehavior: FloatingLabelBehavior.never,
                                       border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(10.0))
                                       )
@@ -192,8 +224,21 @@ class _MainPageState extends State<MainPage>{
                             ),
                             TextButton(onPressed:(){
                               if (startok && stopok){
-                                controller.change(startText, stopText);
-                                Get.to(TabPage());
+                                _loadPath(hasdep_lat,hasdep_lng,hasarrv_lat,hasarrv_lng).whenComplete((){
+                                  return Navigator.push(context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TabPage(
+                                            path: pathes,
+                                            dep: hasdep_name,
+                                            dep_lat: hasdep_lat,
+                                            dep_lng: hasdep_lng,
+                                            arrv: hasarrv_name,
+                                            arrv_lat: hasarrv_lat,
+                                            arrv_lng: hasarrv_lng,
+                                          )
+                                      )
+                                  );
+                                });
                               }else{
                                 showDialog(context: context,
                                     builder: (BuildContext buildcontext){
@@ -226,8 +271,9 @@ class _MainPageState extends State<MainPage>{
         ),
         onWillPop: (){
           dep_ok = false;
+          arrv_ok = false;
           startok = false;
-          startok = false;
+          stopok = false;
           Get.offAll(SelectCasePage());
           return Future(() => true);
         }
@@ -236,9 +282,10 @@ class _MainPageState extends State<MainPage>{
 }
 
 
+bool arrv_ok = false;
 bool dep_ok = false;
-double hasarrv_lat = 37.556814718;
-double hasarrv_lng = 126.94642;
+double hasarrv_lat = 37.56;
+double hasarrv_lng = 126.9;
 String hasarrv_name = "";
 
 double hasdep_lat = 37.556814718;
@@ -256,27 +303,22 @@ class KakaoMapshow extends StatelessWidget {
   Widget build(BuildContext context) {
     if (Get.arguments != null){
       hasdep = Get.arguments[0];
-      print("AAAAAAAAAAAAAa");
-      print(["b",hasdep]);
       if(hasdep){
         hasdep_lat = Get.arguments[2];
         hasdep_lng =  Get.arguments[3];
         hasdep_name = Get.arguments[4];
-        startlabel = hasdep_name;
         dep_ok = true;
+        _depController.text = hasdep_name;
       }
       hasarrv = Get.arguments[1];
-      print(["arrvb",hasarrv]);
       if(hasarrv){
         hasarrv_lat = Get.arguments[2];
         hasarrv_lng = Get.arguments[3];
         hasarrv_name = Get.arguments[4];
-        stoplabel = hasarrv_name;
+        arrv_ok = true;
+        _arrvController.text = hasarrv_name;
       }
     }
-    print(dep_ok);
-    print(["dep",hasdep_lng]);
-    print(["arr",hasarrv_lng]);
 
     return FutureBuilder<String>(
       future: _loadKeyAsset(),
@@ -318,7 +360,7 @@ class KakaoMapshow extends StatelessWidget {
                               map: map,
                               position: marker1,
                               content: dep_content,
-                              yAnchor: 1
+                              yAnchor: 2
                          
                           });
                       panTo($hasdep_lat,$hasdep_lng);
@@ -326,7 +368,24 @@ class KakaoMapshow extends StatelessWidget {
                     
                     }
                   
-                  if ($hasarrv && complete_arrv){
+                  if ($arrv_ok && complete_arrv){
+                    marker2 = new kakao.maps.LatLng($hasarrv_lat,$hasarrv_lng)
+                    if(!$hasdep){
+                      addMarker(marker2);
+                      bounds.extend(marker2);
+                      const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
+                      var dep_customOverlay = new kakao.maps.CustomOverlay({
+                              map: map,
+                              position: marker2,
+                              content: arrv_content,
+                              yAnchor: 2
+                         
+                          });
+                      panTo($hasarrv_lat,$hasarrv_lng);
+                      }
+                   }
+                   
+                  if ($dep_ok && $arrv_ok){
                     addMarker(marker1);
                     bounds.extend(marker1);
                     const dep_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">$hasdep_name</span>' + '</div>';
@@ -337,9 +396,7 @@ class KakaoMapshow extends StatelessWidget {
                               yAnchor: 2
                          
                           });
-                          
                     
-                    marker2 = new kakao.maps.LatLng($hasarrv_lat,$hasarrv_lng)
                     addMarker(marker2);
                     bounds.extend(marker2);
                     const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
@@ -357,6 +414,7 @@ class KakaoMapshow extends StatelessWidget {
                     var mapTypeControl = new kakao.maps.MapTypeControl();
                     map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
                     }
+                    
                     function panTo(lat,lng) {
                         var moveLatLon = new kakao.maps.LatLng(lat,lng);
                         
@@ -367,62 +425,62 @@ class KakaoMapshow extends StatelessWidget {
                     }
                   
                   ''',
-                  customOverlayStyle:
-                    '''
-                    <style>
-                  .customoverlay {position:relative;bottom:85px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
-                  .customoverlay: nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;} 
-                  .customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
-                    </style>
-                    ''',
-                  customOverlay:
-                    '''
-                    var complete_dep_name = true;
-                    var complete_arrv_name = true;
-                    if ($dep_ok && complete_dep_name){
-                        if (!$hasarrv){
-                          const dep_content = '<div class="customoverlay">' + '    <span class="title">$hasdep_name</span>' + '</div>';
-                          var position = new kakao.maps.LatLng($hasdep_lat,$hasdep_lng);
-                      
-                          var dep_customOverlay = new kakao.maps.CustomOverlay({
-                              map: map,
-                              position: position,
-                              content: dep_content,
-                              yAnchor: 1
-                         
-                          });
-                        }
-                    }
-                    
-                    if($hasarrv && complete_arrv_name){
-                        if ($dep_ok){
-                          const dep_content = '<div class="customoverlay">' +
-                            '    <span class="title">$hasdep_name</span>' +
-                            '</div>';
-                            
-                          var dep_position = new kakao.maps.LatLng($hasdep_lat,$hasdep_lng);
-                      
-                          var dep_customOverlay = new kakao.maps.CustomOverlay({
-                              map: map,
-                              position: dep_position,
-                              content: dep_content,
-                              yAnchor: 1
-                         
-                          });
-                        }
-                        const arrv_content = '<div class="customoverlay">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
-                             
-                        
-                        var position = new kakao.maps.LatLng($hasarrv_lat,$hasarrv_lng);
-                    
-                        var customOverlay = new kakao.maps.CustomOverlay({
-                            map: map,
-                            position: position,
-                            content: arrv_content,
-                            yAnchor: 1
-                        });
-                    }
-                    ''',
+                  // customOverlayStyle:
+                  //   '''
+                  //   <style>
+                  // .customoverlay {position:relative;bottom:85px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
+                  // .customoverlay: nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+                  // .customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
+                  //   </style>
+                  //   ''',
+                  // customOverlay:
+                  //   '''
+                  //   var complete_dep_name = true;
+                  //   var complete_arrv_name = true;
+                  //   if ($dep_ok && complete_dep_name){
+                  //       if (!$hasarrv){
+                  //         const dep_content = '<div class="customoverlay">' + '    <span class="title">$hasdep_name</span>' + '</div>';
+                  //         var position = new kakao.maps.LatLng($hasdep_lat,$hasdep_lng);
+                  //
+                  //         var dep_customOverlay = new kakao.maps.CustomOverlay({
+                  //             map: map,
+                  //             position: position,
+                  //             content: dep_content,
+                  //             yAnchor: 1
+                  //
+                  //         });
+                  //       }
+                  //   }
+                  //
+                  //   if($hasarrv && complete_arrv_name){
+                  //       if ($dep_ok){
+                  //         const dep_content = '<div class="customoverlay">' +
+                  //           '    <span class="title">$hasdep_name</span>' +
+                  //           '</div>';
+                  //
+                  //         var dep_position = new kakao.maps.LatLng($hasdep_lat,$hasdep_lng);
+                  //
+                  //         var dep_customOverlay = new kakao.maps.CustomOverlay({
+                  //             map: map,
+                  //             position: dep_position,
+                  //             content: dep_content,
+                  //             yAnchor: 1
+                  //
+                  //         });
+                  //       }
+                  //       const arrv_content = '<div class="customoverlay">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
+                  //
+                  //
+                  //       var position = new kakao.maps.LatLng($hasarrv_lat,$hasarrv_lng);
+                  //
+                  //       var customOverlay = new kakao.maps.CustomOverlay({
+                  //           map: map,
+                  //           position: position,
+                  //           content: arrv_content,
+                  //           yAnchor: 1
+                  //       });
+                  //   }
+                  //   ''',
                 onTapMarker: (message) {
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text(message.message)));

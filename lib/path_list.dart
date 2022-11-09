@@ -2,14 +2,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:harumap2/mainpage.dart';
+import 'package:harumap2/model/model_path.dart';
 import 'package:harumap2/path_info.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 
-import 'model/getaddr_api_adapter.dart';
-import 'model/model_addr.dart';
+List<PathDetail> path = [];
+String dep = "";
+double dep_lat = 0.0;
+double dep_lng = 0.0;
+String arrv = "";
+double arrv_lat = 0.0;
+double arrv_lng= 0.0;
 
 class TabPage extends StatefulWidget{
+
+  List<PathDetail> path;
+  String dep;
+  double dep_lat;
+  double dep_lng;
+  String arrv;
+  double arrv_lat;
+  double arrv_lng;
+  TabPage({required this.path, required this.dep, required this.dep_lat, required this.dep_lng, required this.arrv, required this.arrv_lat, required this.arrv_lng});
 
   @override
   _TabState createState() => _TabState();
@@ -17,27 +30,6 @@ class TabPage extends StatefulWidget{
 }
 
 class _TabState extends State<TabPage> with TickerProviderStateMixin {
-
-  bool isLoading = false;
-  List<AddrLoc> locs = [];
-
-  String addr= "";
-
-  _loadLoc() async {
-    setState(() {
-      isLoading = true;
-    });
-    String baseUrl = "http://127.0.0.1:8000/?addr=$addr";
-    final response = await http.get(Uri.parse(baseUrl));
-    if (response.statusCode == 200) {
-      setState(() {
-        locs = parseAddrLoc(convert.utf8.decode(response.bodyBytes));
-        isLoading = false;
-      });
-    }else{
-      throw Exception("failed to load data");
-    }
-  }
 
   late TabController _tabController;
   @override
@@ -48,26 +40,15 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
     );
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
-    if (Flag){
-      pathes = [
-        Pathes(10, newstartText, newstopText, pathdetail),
-        Pathes(10, newstartText, newstopText, pathdetail),
-        Pathes(10, newstartText, newstopText, pathdetail),
-        Pathes(10, newstartText, newstopText, pathdetail),
-      ];
-    }else{
-      startText = Get.find<Controller>().startText;
-      stopText = Get.find<Controller>().stopText;
-      pathes = [
-        Pathes(10, startText, stopText, pathdetail),
-        Pathes(10, startText, stopText, pathdetail),
-        Pathes(10, startText, stopText, pathdetail),
-        Pathes(10, startText, stopText, pathdetail),
-      ];
-    }
+    path = widget.path;
+    dep = widget.dep;
+    dep_lat = widget.dep_lat;
+    dep_lng = widget.dep_lng;
+    arrv = widget.arrv;
+    arrv_lat = widget.arrv_lat;
+    arrv_lng = widget.arrv_lng;
     return Scaffold(
       body: Column(
         children: [
@@ -128,19 +109,9 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
 }
 
 class PathListPage extends StatefulWidget {
-
-  @override
+   @override
   _PathListPageState createState() => _PathListPageState();
 
-}
-
-class Pathes{
-  int time;
-  String start;
-  String stop;
-  List<String> pathes;
-
-  Pathes(this.time,this.start,this.stop,this.pathes);
 }
 
 String startText = "";
@@ -148,25 +119,26 @@ String stopText = "";
 bool Flag = false;
 String newstartText = "";
 String newstopText = "";
-List<String> pathdetail = <String>['a','b','c'];
-List pathes = [];
+
 
 class _PathListPageState extends State<PathListPage>{
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
         child:Scaffold(
           body: SingleChildScrollView(
             child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
+              height: height,
+              width: width,
               child: Column(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
+                    height: height,
+                    width: width,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -174,9 +146,9 @@ class _PathListPageState extends State<PathListPage>{
                         Expanded(
                           child: ListView.separated(
                             padding: EdgeInsets.all(8),
-                            itemCount: pathes.length,
+                            itemCount: path.length,
                             itemBuilder: (context,int index){
-                              return PathList(pathes[index]);
+                              return _makepath(path[index]);
                             },
                             separatorBuilder: (context, int index){
                               return Divider();
@@ -198,98 +170,105 @@ class _PathListPageState extends State<PathListPage>{
         }
     );
   }
-}
 
-
-class PathList extends StatelessWidget{
-  PathList(this._pathes);
-  final Pathes _pathes;
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+  Widget _makepath(PathDetail _pathes) {
+    Map icons = {'지하철': Icons.directions_subway,
+                  "버스": Icons.directions_bus,
+                  "도보": Icons.directions_walk,};
+    List sub_color = [Colors.blueAccent,Colors.green, Colors.orange, Colors.lightBlue, Colors.deepPurple, Colors.brown];
+    List<Widget> containers = [];
+    for(int i=0; i<_pathes.totaldescription.length; i++){
+      List<String> totaldesc = _pathes.totaldescription[i].split(":");
+      var kind = totaldesc[0].split(" ")[0];
+      var time = int.parse(totaldesc[1].split(" ")[1]);
+      var color = Colors.white10;
+      if (kind == "지하철"){
+        color = sub_color[int.parse(totaldesc[1].split(" ")[2])-1];
+      }
+      if (kind == "버스"){
+        color = Colors.indigo;
+      }
+      if (kind == "도보"){
+        color = Colors.grey;
+      }
+      var width = (context.width*(time/2))/(_pathes.totaldescription.length*100);
+      if (width > 30){
+        width = 25.0;
+      }
+      if(width <3){
+        width = 3.0;
+      }
+      print(width);
+      containers.add(
+        Container(
+          height: 3.0,
+          width: width,
+          color: color,
+          margin: EdgeInsets.fromLTRB(2, 10, 0, 10),
+        ),
+      );
+      containers.add(
+        Icon(
+          icons[kind],
+          color: color,
+          size: 30,
+        ),
+      );
+      containers.add(
+        Container(
+          height: 3.0,
+          width: width,
+          color: color,
+          margin: EdgeInsets.fromLTRB(2, 10, 0, 10),
+        ),
+      );
+    }
     return Container(
         padding: EdgeInsets.fromLTRB(10, 2, 10, 10),
         margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: (){
-                Get.to(PathInfoPage());
-              },
-              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                  MaterialPageRoute(
+                      builder: (context) => PathInfoPage(
+                        path: path,
+                        dep: dep,
+                        dep_lat: dep_lat,
+                        dep_lng: dep_lng,
+                        arrv: arrv,
+                        arrv_lat: arrv_lat,
+                        arrv_lng: arrv_lng,
+                      )
+                    )
+                  );
+                                     },
+                child: Column(
                   children:[
                     Container(
-                      child: Text("20분 ${_pathes.start} ~ ${_pathes.stop}",
+                      child: Text("${dep}에서 ${arrv}까지 ${_pathes.totaltime}분 ",
                         style:TextStyle(fontSize: 18) ,),
                       margin: EdgeInsets.fromLTRB(5, 0, 5, 10),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 2.0,
-                          width: 10.0,
-                          color: Colors.deepPurple,
-                          margin: EdgeInsets.fromLTRB(2, 10, 0, 10),
-                        ),
-                        Icon(
-                          Icons.directions_subway,
-                          color: Colors.deepPurple,
-                          size: 35,
-                        ),
-                        Container(
-                          height: 2.0,
-                          width: 10.0,
-                          color: Colors.deepPurple,
-                          margin: EdgeInsets.fromLTRB(0, 10, 2, 10),
-                        ),
-                        Container(
-                          height: 1.0,
-                          width: 10.0,
-                          color: Colors.grey,
-                          margin: EdgeInsets.fromLTRB(2, 10, 0, 10),
-                        ),
-                        Icon(
-                          Icons.directions_walk,
-                          color: Colors.grey,
-                          size: 35,
-                        ),
-                        Container(
-                          height: 1.0,
-                          width: 10.0,
-                          color: Colors.grey,
-                          margin: EdgeInsets.fromLTRB(0, 10, 2, 10),
-                        ),
-                        Container(
-                          height: 2.0,
-                          width: 10.0,
-                          color: Colors.indigo,
-                          margin: EdgeInsets.fromLTRB(2, 10, 0, 10),
-                        ),
-                        Icon(
-                          Icons.directions_bus,
-                          color: Colors.indigo,
-                          size: 35,
-                        ),
-                        Container(
-                          height: 2.0,
-                          width: 10.0,
-                          color: Colors.indigo,
-                          margin: EdgeInsets.fromLTRB(0, 10, 2, 10),
-                        ),
-                      ],
+                      children: containers
+                      ,
                     )
                   ],
+                ),
               ),
-              ),
-          ]
+            ]
         )
     );
   }
+
 }
+
 
 class Default extends StatefulWidget{
   @override
@@ -339,7 +318,7 @@ class _DefaultState extends State<Default> {
               newstartText = text;
             },
             decoration: InputDecoration(
-                labelText: " $startText",
+                labelText: "${dep}",
                 labelStyle: TextStyle(
                     fontSize: screenwidth*0.045,
                     fontFamily: "NanumSquare"
@@ -361,7 +340,7 @@ class _DefaultState extends State<Default> {
               },
               decoration: InputDecoration(
                   floatingLabelBehavior: FloatingLabelBehavior.never,
-                  labelText: " $stopText",
+                  labelText: " ${arrv}",
                   labelStyle: TextStyle(
                       fontSize: screenwidth*0.045,
                       fontFamily: "NanumSquare"

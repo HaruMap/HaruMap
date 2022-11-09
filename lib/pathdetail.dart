@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 int value = 1;
 var screenheight = 0.0;
 var screenwidth = 0.0;
-class PathDetail extends StatefulWidget {
+class PathDesc extends StatefulWidget {
 
   @override
-  _PathDetailState createState() => _PathDetailState();
+  _PathDescState createState() => _PathDescState();
 }
 
-class _PathDetailState extends State<PathDetail>{
+class _PathDescState extends State<PathDesc>{
   @override
   Widget build(BuildContext context) {
     screenheight = MediaQuery.of(context).size.height;

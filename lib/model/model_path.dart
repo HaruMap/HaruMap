@@ -1,20 +1,25 @@
 
+import 'package:flutter/cupertino.dart';
+
 class PathDetail {
   int totaltime;
-  int totalwalk;
-  List<String> description;
+  List<dynamic> description;
+  List<dynamic> totaldescription;
+  int score;
 
   PathDetail({
-    required this.totaltime, required this.totalwalk, required this.description});
+    required this.totaltime, required this.score, required this.description, required this.totaldescription});
 
   PathDetail.fromMap(Map<String, dynamic> map)
       : totaltime = map['totaltime'],
-        totalwalk = map["totalwalk"],
-        description = map["description"];
+        score = map["score"],
+        description = map["description"],
+        totaldescription = map["totaldescription"];
 
   PathDetail.fromJson(Map<String, dynamic> json)
       : totaltime = json["totaltime"],
-        totalwalk = json["totalwalk"],
-        description = json["description"];
+        score = json["score"],
+        description = json["description"],
+        totaldescription = json["totaldescription"];
 
 }

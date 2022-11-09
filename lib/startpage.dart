@@ -23,30 +23,32 @@ class _StartPageState extends State<StartPage>{
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
+      backgroundColor: Color.fromARGB(233, 104, 231, 205),
       body: Center(
         child: Container(
-          height: 110,
-          width: 110,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(200, 232, 232, 232),
-            shape: BoxShape.circle
-          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Text("하루",
-                style: TextStyle(fontSize: 23,fontFamily: "NanumSquare"),
-                textScaleFactor: 1.0,
-                overflow: TextOverflow.ellipsis,
+            children: [
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("편안한 하루를 안내하는",
+                      style: TextStyle(fontSize: 23,color: Colors.white,fontFamily: "NotoSans"),
+                      textScaleFactor: 1.0,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text("",style: TextStyle(fontSize: 10),),
+                    Text("하루 지도",
+                      style: TextStyle(fontSize: 40,color: Colors.white,fontFamily: "NotoSans",fontWeight: FontWeight.bold),
+                      textScaleFactor: 1.0,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-              Text("",style: TextStyle(fontSize: 5),),
-              Text("지도",
-                style: TextStyle(fontSize: 23,fontFamily: "NanumSquare"),
-                textScaleFactor: 1.0,
-                overflow: TextOverflow.ellipsis,
               ),
+
             ]
           )
         ),

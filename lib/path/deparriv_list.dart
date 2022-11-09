@@ -77,8 +77,8 @@ class _DepartureState extends State<Departure> {
                   GestureDetector(
                     onTap: () {
                       flag = true;
-                      print([widget.start,widget.stop,loc.lat,loc.lng ,loc.place_name]);
-                      Get.to(MainPage(),arguments: [widget.start,widget.stop,loc.lat,loc.lng ,loc.place_name]);
+                      print([widget.start,widget.stop,double.parse(loc.lat),double.parse(loc.lng),loc.place_name]);
+                      Get.to(MainPage(),arguments: [widget.start,widget.stop,double.parse(loc.lat),double.parse(loc.lng) ,loc.place_name]);
                     },
                     child: Column(
                       children: [
