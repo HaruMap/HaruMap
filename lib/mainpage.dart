@@ -31,11 +31,16 @@ bool hasdep = false;
 bool hasarrv = false;
 bool startok = false;
 bool stopok = false;
+String dep = "";
+String arrv = "";
 
 TextEditingController _depController = TextEditingController( text: " ");
 TextEditingController _arrvController = TextEditingController( text: " ");
+
 class _MainPageState extends State<MainPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+
 
   String startText = "";
   String stopText = "";
@@ -50,7 +55,7 @@ class _MainPageState extends State<MainPage>{
   _loadLoc(loc) async {
     String REST_API_KEY = await _loadKeyAsset();
     REST_API_KEY = REST_API_KEY.split(":")[1].split("}")[0].split("\"")[1];
-    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
+    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=90&sort=accuracy&query=${loc}";
     final response = await http.get(
       Uri.parse(baseUrl),
       headers: {HttpHeaders.authorizationHeader: "KakaoAK ${REST_API_KEY}"},
@@ -79,6 +84,13 @@ class _MainPageState extends State<MainPage>{
       throw Exception("failed to load data");
     }
   }
+  // @override
+  // void dispose() {
+  //   _depController.dispose();
+  //   _arrvController.dispose();
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context){
     screenheight = MediaQuery.of(context).size.height;
@@ -89,6 +101,7 @@ class _MainPageState extends State<MainPage>{
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
         child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
             elevation: 0.0,
             backgroundColor: Colors.white,
@@ -105,6 +118,7 @@ class _MainPageState extends State<MainPage>{
           resizeToAvoidBottomInset: false,
           key: _scaffoldKey,
           body: Container(
+            margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
             child: GestureDetector(
               onTap: ()=> FocusScope.of(context).unfocus(),
               child: SingleChildScrollView(
@@ -112,25 +126,37 @@ class _MainPageState extends State<MainPage>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 15.0),
+                      margin: EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 15.0),
                       child: Column(
                           children: [
-                            Padding(
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
                               child:
                                   TextField(
                                     controller: _depController,
                                     textInputAction: TextInputAction.go,
                                     onSubmitted: (text) {
                                       startText = text;
-                                      if (startText.isEmpty){
+                                      if (startText.isEmpty || startText == " "){
                                         showDialog(context: context,
                                             builder: (BuildContext buildcontext){
                                               return AlertDialog(
-                                                content: Text("값을 입력해주세요"),
+                                                content: SizedBox(
+                                                    height: screenheight*0.1,
+                                                    child:Center(
+                                                      child: Text("값을 입력해주세요",
+                                                          style: TextStyle(fontSize: screenwidth*0.045,
+                                                            fontFamily: "NotoSans",
+                                                            color: Colors.black,)),
+                                                    )
+                                                ),
                                                 actions: [
                                                   Center(
                                                     child: TextButton(
-                                                      child: Text('확인'),
+                                                      child: Text('확인',
+                                                          style: TextStyle(fontSize: screenwidth*0.045,
+                                                            fontFamily: "NotoSans",
+                                                            color: Colors.black,)),
                                                       onPressed: (){
                                                         Navigator.of(context).pop();
                                                       },
@@ -148,8 +174,10 @@ class _MainPageState extends State<MainPage>{
                                               MaterialPageRoute(
                                                   builder: (context) => Departure(
                                                     locs: locs,
+                                                    query: startText,
                                                     start: true,
                                                     stop: false,
+                                                    controller: _depController,
                                                   )
                                               )
                                           );
@@ -163,28 +191,44 @@ class _MainPageState extends State<MainPage>{
                                         fillColor: Colors.white,
                                         filled: true,
                                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                                        border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(10.0))
-                                        )
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                            borderSide: BorderSide.none
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                            borderSide: BorderSide.none
+                                        ),
                                     )
                               ),
                               padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 5.0),
                             ),
-                            Padding(
+                            Container(
                                 child: TextField(
                                   controller: _arrvController,
                                   textInputAction: TextInputAction.go,
                                   onSubmitted: (text) async {
                                     stopText = text;
-                                    if (stopText.isEmpty){
+                                    if (stopText.isEmpty || stopText == " "){
                                       showDialog(context: context,
                                           builder: (BuildContext buildcontext){
                                             return AlertDialog(
-                                              content: Text("값을 입력해주세요"),
+                                              content: SizedBox(
+                                                  height: screenheight*0.1,
+                                                  child: Center(
+                                                    child: Text("값을 입력해주세요",
+                                                        style: TextStyle(fontSize: screenwidth*0.045,
+                                                          fontFamily: "NotoSans",
+                                                          color: Colors.black,)),
+                                                  )
+                                              ),
                                               actions: [
                                                 Center(
                                                   child: TextButton(
-                                                    child: Text('확인'),
+                                                    child: Text('확인',
+                                                        style: TextStyle(fontSize: screenwidth*0.045,
+                                                          fontFamily: "NotoSans",
+                                                          color: Colors.black,)),
                                                     onPressed: (){
                                                       Navigator.of(context).pop();
                                                     },
@@ -200,8 +244,10 @@ class _MainPageState extends State<MainPage>{
                                             MaterialPageRoute(
                                                 builder: (context) => Departure(
                                                   locs: locs,
+                                                  query: stopText,
                                                   start: false,
                                                   stop: true,
+                                                  controller: _arrvController,
                                                 )
                                             )
                                         );
@@ -215,54 +261,96 @@ class _MainPageState extends State<MainPage>{
                                       fillColor: Colors.white,
                                       filled: true,
                                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(10.0))
-                                      )
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                          borderSide: BorderSide.none
+                                      ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                        borderSide: BorderSide.none
+                                    ),
                                   ),
                                 ),
                                 padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 5.0)
                             ),
-                            TextButton(onPressed:(){
-                              if (startok && stopok){
-                                _loadPath(hasdep_lat,hasdep_lng,hasarrv_lat,hasarrv_lng).whenComplete((){
-                                  return Navigator.push(context,
-                                      MaterialPageRoute(
-                                          builder: (context) => TabPage(
-                                            path: pathes,
-                                            dep: hasdep_name,
-                                            dep_lat: hasdep_lat,
-                                            dep_lng: hasdep_lng,
-                                            arrv: hasarrv_name,
-                                            arrv_lat: hasarrv_lat,
-                                            arrv_lng: hasarrv_lng,
-                                          )
-                                      )
-                                  );
-                                });
-                              }else{
-                                showDialog(context: context,
-                                    builder: (BuildContext buildcontext){
-                                  return AlertDialog(
-                                    content: Text("값을 입력해주세요"),
-                                    actions: [
-                                      Center(
-                                        child: TextButton(
-                                          child: Text('확인'),
-                                          onPressed: (){
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  );
-                                }
-                                );
-                              }
-                            }, child: Text("경로 찾기!"))
+
                           ]
                       ),
                     ),
                     KakaoMapshow(),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
+                      child:TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: Color.fromARGB(233, 94, 208, 184),
+                          ),
+                          onPressed:(){
+                            if (startok && stopok){
+                              _loadPath(hasdep_lat,hasdep_lng,hasarrv_lat,hasarrv_lng).whenComplete((){
+                                return Navigator.push(context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TabPage(
+                                          path: pathes,
+                                          dep: hasdep_name,
+                                          dep_lat: hasdep_lat,
+                                          dep_lng: hasdep_lng,
+                                          arrv: hasarrv_name,
+                                          arrv_lat: hasarrv_lat,
+                                          arrv_lng: hasarrv_lng,
+                                        )
+                                    )
+                                );
+                              });
+                            }else{
+                              showDialog(context: context,
+                                  builder: (BuildContext buildcontext){
+                                    return AlertDialog(
+                                      content: SizedBox(
+                                          height: screenheight*0.1,
+                                          child:Center(
+                                            child: Text("값을 입력해주세요",
+                                                style: TextStyle(fontSize: screenwidth*0.045,
+                                                  fontFamily: "NotoSans",
+                                                  color: Colors.black,)),
+                                          )
+                                      ),
+                                      actions: [
+                                        Center(
+                                          child: TextButton(
+                                            child:Text('확인',
+                                                style: TextStyle(fontSize: screenwidth*0.045,
+                                                  fontFamily: "NotoSans",
+                                                  color: Colors.black,
+                                                )
+                                            ),
+                                            onPressed: (){
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              );
+                            }
+                          }, child: Container(
+                              width: screenwidth * 0.85,
+                              height: screenheight * 0.05,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(screenwidth*0.4),
+                              ),
+                              child: Center(
+                                child: Text("경로 확인!",
+                                    style: TextStyle(fontSize: screenwidth*0.048,
+                                      fontFamily: "NotoSans",
+                                      color: Colors.white,
+                                        fontWeight: FontWeight.bold)
+                          ),
+                        ),
+                      )
+                      ) ,
+                    ),
+
                   ],
                 ),
               ),
@@ -274,6 +362,8 @@ class _MainPageState extends State<MainPage>{
           arrv_ok = false;
           startok = false;
           stopok = false;
+          _depController.text= " ";
+          _arrvController.text= " ";
           Get.offAll(SelectCasePage());
           return Future(() => true);
         }
@@ -308,7 +398,8 @@ class KakaoMapshow extends StatelessWidget {
         hasdep_lng =  Get.arguments[3];
         hasdep_name = Get.arguments[4];
         dep_ok = true;
-        _depController.text = hasdep_name;
+
+        // _depController.text = hasdep_name;
       }
       hasarrv = Get.arguments[1];
       if(hasarrv){
@@ -316,7 +407,7 @@ class KakaoMapshow extends StatelessWidget {
         hasarrv_lng = Get.arguments[3];
         hasarrv_name = Get.arguments[4];
         arrv_ok = true;
-        _arrvController.text = hasarrv_name;
+        // _arrvController.text = hasarrv_name;
       }
     }
 
@@ -331,8 +422,8 @@ class KakaoMapshow extends StatelessWidget {
               Container(
                 margin: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
                 child: KakaoMapView(
-                  width: w * 0.9,
-                  height: h * 0.7,
+                  width: w,
+                  height: h * 0.5,
                   kakaoMapKey: kakaoMapKey,
                   lat: 33.450701,
                   lng: 126.570667,
@@ -355,7 +446,7 @@ class KakaoMapshow extends StatelessWidget {
                     if(!$hasarrv){
                       addMarker(marker1);
                       bounds.extend(marker1);
-                      const dep_content = '<div class="customoverlay">' + '    <span class="title">$hasdep_name</span>' + '</div>';
+                      const dep_content = '<div class="customoverlay">' + '    <span style ="display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd; box-shadow:0px 1px 2px #888;" >$hasdep_name</span>' + '</div>';
                       var dep_customOverlay = new kakao.maps.CustomOverlay({
                               map: map,
                               position: marker1,
@@ -373,7 +464,7 @@ class KakaoMapshow extends StatelessWidget {
                     if(!$hasdep){
                       addMarker(marker2);
                       bounds.extend(marker2);
-                      const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
+                      const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span style="display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd; box-shadow:0px 1px 2px #888;">$hasarrv_name</span>' + '</div>';
                       var dep_customOverlay = new kakao.maps.CustomOverlay({
                               map: map,
                               position: marker2,
@@ -388,7 +479,10 @@ class KakaoMapshow extends StatelessWidget {
                   if ($dep_ok && $arrv_ok){
                     addMarker(marker1);
                     bounds.extend(marker1);
-                    const dep_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">$hasdep_name</span>' + '</div>';
+                                        
+                    addMarker(marker2);
+                    bounds.extend(marker2);
+                    const dep_content = '<div class="customoverlay" style="padding:5px;">' + '    <span style ="display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd; box-shadow:0px 1px 2px #888;" >$hasdep_name</span>' + '</div>';
                       var dep_customOverlay = new kakao.maps.CustomOverlay({
                               map: map,
                               position: marker1,
@@ -397,9 +491,7 @@ class KakaoMapshow extends StatelessWidget {
                          
                           });
                     
-                    addMarker(marker2);
-                    bounds.extend(marker2);
-                    const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
+                    const arrv_content = '<div class="customoverlay" style="padding:5px;">' + '    <span style ="display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd; box-shadow:0px 1px 2px #888;" >$hasarrv_name</span>' + '</div>';
                     var dep_customOverlay = new kakao.maps.CustomOverlay({
                               map: map,
                               position: marker2,
@@ -425,66 +517,6 @@ class KakaoMapshow extends StatelessWidget {
                     }
                   
                   ''',
-                  // customOverlayStyle:
-                  //   '''
-                  //   <style>
-                  // .customoverlay {position:relative;bottom:85px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
-                  // .customoverlay: nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
-                  // .customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
-                  //   </style>
-                  //   ''',
-                  // customOverlay:
-                  //   '''
-                  //   var complete_dep_name = true;
-                  //   var complete_arrv_name = true;
-                  //   if ($dep_ok && complete_dep_name){
-                  //       if (!$hasarrv){
-                  //         const dep_content = '<div class="customoverlay">' + '    <span class="title">$hasdep_name</span>' + '</div>';
-                  //         var position = new kakao.maps.LatLng($hasdep_lat,$hasdep_lng);
-                  //
-                  //         var dep_customOverlay = new kakao.maps.CustomOverlay({
-                  //             map: map,
-                  //             position: position,
-                  //             content: dep_content,
-                  //             yAnchor: 1
-                  //
-                  //         });
-                  //       }
-                  //   }
-                  //
-                  //   if($hasarrv && complete_arrv_name){
-                  //       if ($dep_ok){
-                  //         const dep_content = '<div class="customoverlay">' +
-                  //           '    <span class="title">$hasdep_name</span>' +
-                  //           '</div>';
-                  //
-                  //         var dep_position = new kakao.maps.LatLng($hasdep_lat,$hasdep_lng);
-                  //
-                  //         var dep_customOverlay = new kakao.maps.CustomOverlay({
-                  //             map: map,
-                  //             position: dep_position,
-                  //             content: dep_content,
-                  //             yAnchor: 1
-                  //
-                  //         });
-                  //       }
-                  //       const arrv_content = '<div class="customoverlay">' + '    <span class="title">$hasarrv_name</span>' + '</div>';
-                  //
-                  //
-                  //       var position = new kakao.maps.LatLng($hasarrv_lat,$hasarrv_lng);
-                  //
-                  //       var customOverlay = new kakao.maps.CustomOverlay({
-                  //           map: map,
-                  //           position: position,
-                  //           content: arrv_content,
-                  //           yAnchor: 1
-                  //       });
-                  //   }
-                  //   ''',
-                onTapMarker: (message) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text(message.message)));
-                      }
 
                 ),
               ),

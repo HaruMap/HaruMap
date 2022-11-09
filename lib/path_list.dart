@@ -50,6 +50,20 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
     arrv_lat = widget.arrv_lat;
     arrv_lng = widget.arrv_lng;
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+        title: Text("하루 지도",
+          style: TextStyle(fontSize: screenwidth*0.06,
+              fontFamily: "NotoSans",
+              color: Color.fromARGB(233, 94, 208, 184),
+              fontWeight: FontWeight.bold),
+          textScaleFactor: 1.0,
+          overflow: TextOverflow.ellipsis,
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           Default(),
