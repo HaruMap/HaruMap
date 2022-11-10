@@ -8,22 +8,46 @@ def description_ws(descrip_ws):
     fin_descrip_ws = []
 
     for descrip in descrip_ws:
+        fin_text = ''
         target = descrip.split()
-        for text in target:
-            if text == '좌회전' or text == '우회전':
-                fin_descrip_ws.append('도보 : {0}'.format(text))
-            elif text == '보행자도로':
-                fin_descrip_ws.append('보행자도로')
-            elif list(text)[-1] == 'm':
-                fin_descrip_ws.append(text)
-        print(fin_descrip_ws)
+
+        if '좌회전' in target or '우회전' in target or '직진' in target:
+
+            for text in target:
+                if text == '좌회전' or text == '우회전' or text == '직진':
+                    fin_text += '도보 : {0}'.format(text)
+                elif text == '보행자도로':
+                    fin_text += ' 보행자도로'
+                elif list(text)[-1] == 'm':
+                    fin_text += ' {0}'.format(text)
+
+            fin_descrip_ws.append(fin_text)
+
+    return fin_descrip_ws
     
 
 # 도보 (도착)
 def description_we(descrip_we):
-    for descrip in e_description:
-        print(descrip)
-    # print(e_name[0], '도착')
+
+    fin_descrip_we = []
+
+    for descrip in descrip_we:
+        fin_text = ''
+        target = descrip.split()
+
+        if '좌회전' in target or '우회전' in target or '직진' in target:
+
+            for text in target:
+                if text == '좌회전' or text == '우회전' or text == '직진':
+                    fin_text += '도보 : {0}'.format(text)
+                elif text == '보행자도로':
+                    fin_text += ' 보행자도로'
+                elif list(text)[-1] == 'm':
+                    fin_text += ' {0}'.format(text)
+
+            fin_descrip_we.append(fin_text)
+    
+    return fin_descrip_we
 
 # 대중교통
 def description_transport(path):

@@ -82,7 +82,7 @@ for s in s_poi:
         # 도보 (출발) description 형태 수정
         s_descrip = path_description.description_ws(s_descrip)
         # 도보 (도착) description 형태 수정
-        
+        e_descrip = path_description.description_we(e_descrip)
 
         # ================================================ 대중교통 경로 검색 ================================================
 
