@@ -21,7 +21,22 @@ def sort_score(total_paths):
 
 # 최소 시간 순
 def sort_time(total_paths):
-    return
+
+    paths = []
+    times = []
+    sort_path = []
+
+    for idx in range(len(total_paths)):
+        paths.append(total_paths[idx])
+        times.append(total_paths[idx]['info']['totaltime'])
+
+    time_sorted = np.sort(times) # 오름차순 정렬 (이동불편지수가 낮은 경로를 우선으로 정렬)
+    time_sorted_idx = np.argsort(times)
+    paths_sorted = [paths[i] for i in time_sorted_idx]
+
+    # print(paths_sorted)
+    # print(time_sorted)
+    return paths_sorted
 
 # 최소 도보 순
 def sort_walk(total_paths):

@@ -23,19 +23,6 @@ import API.api
 # ================================================ 출발지/도착지 입력 ================================================
 
 # 출발지/도착지 주소 입력
-'''
-s_address = input('출발지를 입력하세요 : ')
-e_address = input('도착지를 입력하세요 : ')
-
-# geocoding
-sx = geocoding.geocoding(s_address)[0]
-sy = geocoding.geocoding(s_address)[1]
-# sx, sy = 126.9463175, 37.5654184
-ex = geocoding.geocoding(e_address)[0]
-ey = geocoding.geocoding(e_address)[1]
-# print(sx, sy, ex, ey)
-'''
-# -> 지도에서 클릭 후 각 위경도 받아오는 식으로 추후 수정
 # 출발지, 도착지 샘플
 w_sx, w_sy = 126.94687065007022, 37.5635841072725  # 이대 포스코관
 w_ex, w_ey = 127.03257402230341, 37.483659133375106 # 서초구청
@@ -50,8 +37,7 @@ e_poi = API_transport_poi.get_transport_poi(str(w_ex), str(w_ey), '1:2')
 
 # 출발지, 도착지 정류소명 확인
 print('출발 정류소 :', s_poi)
-print('도착 정류소 :', e_poi)
-print()
+print('도착 정류소 :', e_poi, '\n')
 
 # ================================================ 모든 경로 담은 리스트 생성 (추후 이동불편지수 반영) ======================
 
@@ -216,11 +202,9 @@ for s in s_poi:
 
             cnt_path_bus += 1
 
-            '''
             # ========= API 요금 방지 ==========
             break
             # =================================
-            '''
 
         # 지하철 + 버스
         for idx, path in enumerate(path_subbus):
@@ -307,29 +291,16 @@ for s in s_poi:
 
             cnt_path_subbus += 1
 
-            # ========= API 요금 방지 ==========
+            '''
+            # ========= API 요금 방지 ==========s
             break
             # =================================
+            '''
 
     # ========= API 요금 방지 ==========
         break
     break
     # =================================
-
-# ================================================ 경로 유형 선택 ================================================
-
-'''
-print('지하철 경로 수 :', len(total_path_sub))
-print('버스 경로 수 :', len(total_path_bus))
-print('버스 + 지하철 경로 수 :', len(total_path_subbus))
-print()
-
-# 대중교통 유형 택1
-op_transport = int(input('대중교통 유형 택1 (1:지하철, 2:버스, 3:지하철+버스) : '))
-print()
-
-# 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
-'''
 
 # ================================================ 샘플 경로 확인 ================================================
 '''
@@ -356,13 +327,45 @@ for idx in range(len(total_path_bus)):
 for idx in range(len(total_path_subbus)):
     total_path_subbus[idx]['score'] = score.score_type1(total_path_subbus[idx], 3)
 
-# sample path score 확인
-'''
-for idx in range(len(total_path_bus)):
-    print(total_path_bus[idx]['score'])
-'''
-print(total_path_subbus[0])
+# ================================================ 사용자 지정 유형/순서로 정렬 ================================================
 
-# ================================================ 이동불편지수가 낮은 순으로 정렬 ================================================
+'''
+print('지하철 경로 수 :', len(total_path_sub))
+print('버스 경로 수 :', len(total_path_bus))
+print('버스 + 지하철 경로 수 :', len(total_path_subbus))
+print()
 
-sort_path_by_score.sort_score(total_path_bus)
+# 대중교통 유형 택1
+op_transport = int(input('대중교통 유형 택1 (1:지하철, 2:버스, 3:지하철+버스) : '))
+print()
+'''
+
+# 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
+op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도보, 4:환승) : '))
+print()
+
+# 최종 반환 경로
+fin_view_path = []
+
+# 일단 샘플은 subbus 경로를 보여줌!
+if op_sort == 1:
+
+    # 이동불편지수 낮은 순
+    fin_view_path = sort_path_by_score.sort_score(total_path_subbus)
+
+elif op_sort == 2:
+
+    # 최소 시간 순
+    fin_view_path = sort_path_by_score.sort_time(total_path_subbus)
+
+elif op_sort == 3:
+
+    # 최소 도보 순
+    fin_view_path = sort_path_by_score.sort_walk(total_path_subbus)
+
+elif op_sort == 4:
+
+    # 최소 환승 순
+    fin_view_path = sort_path_by_score.sort_transfer(total_path_subbus)
+
+print('Done.')
