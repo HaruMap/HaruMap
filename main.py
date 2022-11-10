@@ -79,6 +79,11 @@ for s in s_poi:
         except:
             continue # 위/경도로 도보 경로가 반환되지 않는다면 cotinue (: 다음 경로 탐색)
 
+        # 도보 (출발) description 형태 수정
+        s_descrip = path_description.description_ws(s_descrip)
+        # 도보 (도착) description 형태 수정
+        
+
         # ================================================ 대중교통 경로 검색 ================================================
 
         # 대중교통 경로 반환 (버스, 지하철, 버스+지하철)
@@ -115,7 +120,9 @@ for s in s_poi:
             total_path_sub[cnt_path_sub] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # 총 이동시간 (대기시간 아직 미포함)
-                    'description' : fin_descrip # 이동경로 description = [도보 출발 경로, [대중교통 경로], 도보 도착 경로] 형태
+                    'description' : fin_descrip, # 이동경로 description = [도보 출발 경로, [대중교통 경로], 도보 도착 경로] 형태
+                    # 'coordinate' : [],
+                    'summary' : []
                 },
                 'subway' : {
                     'congestion' : 0,
@@ -189,7 +196,8 @@ for s in s_poi:
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'description' : fin_descrip,
-                    'coordinate' : []
+                    'coordinate' : [],
+                    'summary' : []
                 },
                 'bus' : {
                     'congestion' : 0, # 현재 정보가 없음
@@ -273,7 +281,8 @@ for s in s_poi:
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'description' : fin_descrip,
-                    'coordinate' : []
+                    'coordinate' : [],
+                    'summary' : []
                 },
                 'subway' : {
                     'congestion' : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], # classification.classification_sub(avg_sub_congestion), # min value 만 추출?
@@ -309,6 +318,7 @@ for s in s_poi:
 
 # ================================================ 경로 유형 선택 ================================================
 
+'''
 print('지하철 경로 수 :', len(total_path_sub))
 print('버스 경로 수 :', len(total_path_bus))
 print('버스 + 지하철 경로 수 :', len(total_path_subbus))
@@ -319,6 +329,7 @@ op_transport = int(input('대중교통 유형 택1 (1:지하철, 2:버스, 3:지
 print()
 
 # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
+'''
 
 # ================================================ 샘플 경로 확인 ================================================
 '''
@@ -350,6 +361,7 @@ for idx in range(len(total_path_subbus)):
 for idx in range(len(total_path_bus)):
     print(total_path_bus[idx]['score'])
 '''
+print(total_path_subbus[0])
 
 # ================================================ 이동불편지수가 낮은 순으로 정렬 ================================================
 
