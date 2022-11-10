@@ -216,6 +216,7 @@ for s in s_poi:
             # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
             coor_transport = coordinate.coor_transport(path['subPath'])
             coor_walk = s_coor + e_coor
+            print(coor_walk)
 
             '''
             path_loop.sub_avg_congestion(path['subPath'])
@@ -372,10 +373,10 @@ elif op_sort == 4:
     # 최소 환승 순
     fin_view_path = sort_path_by_score.sort_transfer(total_path_subbus)
 
-
+'''
 print('sample path results :')
 print(total_path_subbus[0])
 print()
-
+'''
 
 print('Done.')
