@@ -216,7 +216,6 @@ for s in s_poi:
             # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
             coor_transport = coordinate.coor_transport(path['subPath'])
             coor_walk = s_coor + e_coor
-            print(coor_walk)
 
             '''
             path_loop.sub_avg_congestion(path['subPath'])
