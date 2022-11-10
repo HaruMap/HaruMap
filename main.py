@@ -5,6 +5,7 @@ import path_description
 import score
 import classification
 import path_loop
+import coordinate
 import sort_path_by_score
 import API_transport_poi
 import API_path_walk
@@ -212,7 +213,9 @@ for s in s_poi:
             trans_descrip = []
             trans_t = []
 
-            # print(path['subPath'])
+            # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
+            coor_transport = coordinate.coor_transport(path['subPath'])
+
             '''
             path_loop.sub_avg_congestion(path['subPath'])
             '''
@@ -265,7 +268,7 @@ for s in s_poi:
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'description' : fin_descrip,
-                    'coordinate' : [],
+                    'coordinate' : s_coor + coor_transport + e_coor,
                     'summary' : []
                 },
                 'subway' : {
@@ -329,12 +332,12 @@ for idx in range(len(total_path_subbus)):
 
 # ================================================ 사용자 지정 유형/순서로 정렬 ================================================
 
-'''
 print('지하철 경로 수 :', len(total_path_sub))
 print('버스 경로 수 :', len(total_path_bus))
 print('버스 + 지하철 경로 수 :', len(total_path_subbus))
 print()
 
+'''
 # 대중교통 유형 택1
 op_transport = int(input('대중교통 유형 택1 (1:지하철, 2:버스, 3:지하철+버스) : '))
 print()
@@ -367,5 +370,11 @@ elif op_sort == 4:
 
     # 최소 환승 순
     fin_view_path = sort_path_by_score.sort_transfer(total_path_subbus)
+
+'''
+print('sample path results :')
+print(total_path_subbus[0])
+print()
+'''
 
 print('Done.')

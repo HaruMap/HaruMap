@@ -48,7 +48,6 @@ def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
         "endName" : "%EB%B3%B8%EC%82%AC",
         "searchOption" : op, # 30, # 경로 탐색 옵션 (예 : 30 = 최단 + 계단 제외)
         "resCoordType" : "WGS84GEO" # 위경도로 return 
-
     }
 
     # 호출 : request (format = .json)
@@ -70,15 +69,23 @@ def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
 
     for idx, obj in enumerate(json_obj['features'][1:]):
 
+        # print(obj)
+
         if obj['geometry']['type'] == 'Point':
             
-            coor.append(obj['geometry']['coordinates'])
+            x = obj['geometry']['coordinates'][0]
+            y = obj['geometry']['coordinates'][1]
+            coor.append((3, x, y))
+
             descrip.append(obj['properties']['description'])
 
         elif obj['geometry']['type'] == 'LineString':
             
-            coor.append(obj['geometry']['coordinates'])
-            # descrip.append(obj['properties']['description'])
+            for xy in obj['geometry']['coordinates']:
+                x = xy[0]
+                y = xy[1]
+                coor.append((3, x, y))
+            
             d += int(obj['properties']['distance'])
             t += int(obj['properties']['time'])
             roadType.append(obj['properties']['roadType'])
@@ -103,6 +110,8 @@ def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
     print(roadType)
     '''
 
+    # print(coor)
+
     return t, d, coor, descrip[:-1], roadType
 
-# print(path_walk(126.94693854866031, 37.563602157733705, 126.94589082871869, 37.55681717620876, 30))
+# path_walk(126.94693854866031, 37.563602157733705, 126.94589082871869, 37.55681717620876, 30)
