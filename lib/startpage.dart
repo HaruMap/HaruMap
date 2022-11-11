@@ -40,7 +40,7 @@ class _StartPageState extends State<StartPage>{
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text("",style: TextStyle(fontSize: 10),),
-                    Text("하루 지도",
+                    Text("하루지도",
                       style: TextStyle(fontSize: 40,color: Colors.white,fontFamily: "NotoSans",fontWeight: FontWeight.bold),
                       textScaleFactor: 1.0,
                       overflow: TextOverflow.ellipsis,

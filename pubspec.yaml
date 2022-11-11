@@ -77,9 +77,9 @@ flutter:
   fonts:
      - family: NotoSans
        fonts:
-         - asset: assets/font/NotoSansKR-Bold.otf
+         - asset: assets/font/NEXONLv2GothicBold.ttf
            weight: 700
-         - asset: assets/font/NotoSansKR-Medium.otf
+         - asset: assets/font/NEXONLv2GothicMedium.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

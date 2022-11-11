@@ -33,7 +33,7 @@ class _DepartureState extends State<Departure> {
   _loadLoc(loc) async {
     String REST_API_KEY = await _loadKeyAsset();
     REST_API_KEY = REST_API_KEY.split(":")[1].split("}")[0].split("\"")[1];
-    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=90&sort=accuracy&query=${loc}";
+    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
     final response = await http.get(
       Uri.parse(baseUrl),
       headers: {HttpHeaders.authorizationHeader: "KakaoAK ${REST_API_KEY}"},
@@ -203,10 +203,10 @@ class _DepartureState extends State<Departure> {
 
   Widget _buildLocList(AddrLoc loc, double height, double width){
     String address = "";
-    if (loc.road_address_name != null){
-      address = loc.road_address_name;
-    }else{
+    if (loc.road_address_name.isEmpty){
       address = loc.address_name;
+    }else{
+      address = loc.road_address_name;
     }
     return Container(
             padding: EdgeInsets.fromLTRB(10, 2, 10, 10),

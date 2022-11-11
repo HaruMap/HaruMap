@@ -55,7 +55,8 @@ class _MainPageState extends State<MainPage>{
   _loadLoc(loc) async {
     String REST_API_KEY = await _loadKeyAsset();
     REST_API_KEY = REST_API_KEY.split(":")[1].split("}")[0].split("\"")[1];
-    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=90&sort=accuracy&query=${loc}";
+    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
+    print(REST_API_KEY);
     final response = await http.get(
       Uri.parse(baseUrl),
       headers: {HttpHeaders.authorizationHeader: "KakaoAK ${REST_API_KEY}"},
@@ -71,7 +72,8 @@ class _MainPageState extends State<MainPage>{
   }
 
   _loadPath(deplat,deplng,arrvlat,arrvlng) async {
-    String baseUrl = "http://192.168.0.103:8000/haruapp/getPathes?deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    String baseUrl = "http://10.200.91.116:8000/haruapp/getPathes?deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    print(baseUrl);
     final response = await http.get(
       Uri.parse(baseUrl),
     );
@@ -291,12 +293,14 @@ class _MainPageState extends State<MainPage>{
                                     MaterialPageRoute(
                                         builder: (context) => TabPage(
                                           path: pathes,
-                                          dep: hasdep_name,
+                                          dep: _depController.text,
                                           dep_lat: hasdep_lat,
                                           dep_lng: hasdep_lng,
-                                          arrv: hasarrv_name,
+                                          arrv: _arrvController.text,
                                           arrv_lat: hasarrv_lat,
                                           arrv_lng: hasarrv_lng,
+                                          dep_controller: _depController,
+                                          arrv_controller: _arrvController,
                                         )
                                     )
                                 );
@@ -399,7 +403,6 @@ class KakaoMapshow extends StatelessWidget {
         hasdep_name = Get.arguments[4];
         dep_ok = true;
 
-        // _depController.text = hasdep_name;
       }
       hasarrv = Get.arguments[1];
       if(hasarrv){
@@ -407,7 +410,6 @@ class KakaoMapshow extends StatelessWidget {
         hasarrv_lng = Get.arguments[3];
         hasarrv_name = Get.arguments[4];
         arrv_ok = true;
-        // _arrvController.text = hasarrv_name;
       }
     }
 
