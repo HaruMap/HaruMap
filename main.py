@@ -97,7 +97,7 @@ for s in s_poi:
             trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) subway totalTime :'.format(idx), path_time.totaltime(path))
-            sub_t, bus_t, walk_t = path_time.subtime(path)
+            sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
             # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
             trans_t.append(sub_t + bus_t + walk_t)
 
@@ -142,7 +142,7 @@ for s in s_poi:
             trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
-            sub_t, bus_t, walk_t = path_time.subtime(path)
+            sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
             # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
             trans_t.append(sub_t + bus_t + walk_t)
 
@@ -208,6 +208,7 @@ for s in s_poi:
             # =================================
 
         # 지하철 + 버스
+        pathdetails = []
         for idx, path in enumerate(path_subbus):
             
             trans_descrip = []
@@ -224,7 +225,7 @@ for s in s_poi:
             trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
             # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
-            sub_t, bus_t, walk_t = path_time.subtime(path)
+            sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
             # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
             trans_t.append(sub_t + bus_t + walk_t)
 
@@ -293,6 +294,33 @@ for s in s_poi:
                 },
                 'score' : 0
             }
+
+            # =============================================================================
+            # drf 전달 데이터
+            totaldescription = []
+            totaldescription.append('도보 1 : {0}'.format(s_t))
+            sub_t_cnt, bus_t_cnt = 0, 0
+
+            for t in resp_t:
+                if t[0] == 1:
+                    sub_t_cnt += 1
+                    totaldescription.append('지하철 {0} : {1}'.format(sub_t_cnt, t[1]))
+                elif t[0] == 2:
+                    bus_t_cnt += 1
+                    totaldescription.append('버스 {0} : {1}'.format(bus_t_cnt, t[1]))
+            totaldescription.append('도보 2 : {0}'.format(e_t))
+
+            in_pathdetails = {}
+            in_pathdetails = {
+                'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                'totaldescription' : totaldescription,
+                'description' : fin_descrip,
+                'coor' : s_coor + coor_transport + e_coor,
+                'score' : 0
+            }
+            pathdetails.append(in_pathdetails)
+            print(pathdetails); print(); break
+            # =============================================================================
 
             cnt_path_subbus += 1
 
@@ -378,6 +406,5 @@ print('sample path results :')
 print(total_path_subbus[0])
 print()
 '''
-print(type(fin_view_path))
 
 print('Done.')
