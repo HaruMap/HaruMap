@@ -268,6 +268,7 @@ for s in s_poi:
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                    'totaldescription' : [],
                     'description' : fin_descrip,
                     'coordinate' : s_coor + coor_transport + e_coor,
                     'summary' : []
@@ -377,5 +378,6 @@ print('sample path results :')
 print(total_path_subbus[0])
 print()
 '''
+print(type(fin_view_path))
 
 print('Done.')
