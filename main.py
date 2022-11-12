@@ -298,7 +298,7 @@ for s in s_poi:
             # =============================================================================
             # drf 전달 데이터
             totaldescription = []
-            totaldescription.append('도보 1 : {0}'.format(s_t))
+            totaldescription.append('도보 1 : {0}'.format(round(s_t / 60)))
             sub_t_cnt, bus_t_cnt = 0, 0
 
             for t in resp_t:
@@ -308,7 +308,7 @@ for s in s_poi:
                 elif t[0] == 2:
                     bus_t_cnt += 1
                     totaldescription.append('버스 {0} : {1}'.format(bus_t_cnt, t[1]))
-            totaldescription.append('도보 2 : {0}'.format(e_t))
+            totaldescription.append('도보 2 : {0}'.format(round(e_t / 60)))
 
             in_pathdetails = {}
             in_pathdetails = {
@@ -330,10 +330,12 @@ for s in s_poi:
             # =================================
             '''
 
+    '''
     # ========= API 요금 방지 ==========
         break
     break
     # =================================
+    '''
 
 # ================================================ 샘플 경로 확인 ================================================
 '''
@@ -379,12 +381,14 @@ print()
 
 # 최종 반환 경로
 fin_view_path = []
+fin_drf_view_path = []
 
 # 일단 샘플은 subbus 경로를 보여줌!
 if op_sort == 1:
 
     # 이동불편지수 낮은 순
     fin_view_path = sort_path_by_score.sort_score(total_path_subbus)
+    fin_drf_view_path = sort_path_by_core.sort_score(pathdetails)
 
 elif op_sort == 2:
 
