@@ -55,7 +55,7 @@ class _SelectCaseState extends State<SelectCasePage>{
                     Text("이용자 맞춤형 경로를 제공해드립니다.",
                         style: TextStyle(fontSize: screenwidth*0.04,
                           fontFamily: "NotoSans",
-                          color: Color.fromARGB(255, 108,108,108),
+                          color: Colors.black,
                         )
                     ),
                   ],
@@ -68,7 +68,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                 children: [
                   GestureDetector(
                     onTap: (){
-                      Get.to(MainPage());
+                      Get.to(MainPage(
+                        selectedcase: "0",
+                      ));
                     },
                     child: Container(
                       height: screenwidth*0.4,
@@ -87,7 +89,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                                 icon: Image.asset("assets/image/eldery.png"),
                                 iconSize: screenwidth*0.2,
                                 onPressed: (){
-                                  Get.to(MainPage());
+                                  Get.to(MainPage(
+                                    selectedcase: "0",
+                                  ));
                                 },
                               ),
                               Text("",style: TextStyle(fontSize:  screenwidth*0.01),),
@@ -103,7 +107,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                   ),
                   GestureDetector(
                     onTap: (){
-                      Get.to(MainPage());
+                      Get.to(MainPage(
+                        selectedcase: "1",
+                      ));
                     },
                     child: Container(
                         height: screenwidth*0.4,
@@ -122,7 +128,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                                   icon: Image.asset("assets/image/hurt.png"),
                                   iconSize: screenwidth*0.2,
                                   onPressed: (){
-                                    Get.to(MainPage());
+                                    Get.to(MainPage(
+                                      selectedcase: "1",
+                                    ));
                                   },
                                 ),
                                 Text("",style: TextStyle(fontSize:  screenwidth*0.01),),
@@ -144,7 +152,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                 children: [
                   GestureDetector(
                     onTap: (){
-                      Get.to(MainPage());
+                      Get.to(MainPage(
+                        selectedcase: "2",
+                      ));
                     },
                     child:Container(
                         height: screenwidth*0.4,
@@ -163,7 +173,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                                   icon: Image.asset("assets/image/stroller.png"),
                                   iconSize: screenwidth*0.2,
                                   onPressed: (){
-                                    Get.to(MainPage());
+                                    Get.to(MainPage(
+                                      selectedcase: "2",
+                                    ));
                                   },
                                 ),
                                 Text("",style: TextStyle(fontSize:  screenwidth*0.01),),
@@ -179,7 +191,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                   ),
                   GestureDetector(
                     onTap: (){
-                      Get.to(MainPage());
+                      Get.to(MainPage(
+                        selectedcase: "3",
+                      ));
                     },
                   child: Container(
                       height: screenwidth*0.4,
@@ -198,7 +212,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                                 icon: Image.asset("assets/image/preg.png"),
                                 iconSize: screenwidth*0.2,
                                 onPressed: (){
-                                  Get.to(MainPage());
+                                  Get.to(MainPage(
+                                    selectedcase: "3",
+                                  ));
                                 },
                               ),
                               Text("",style: TextStyle(fontSize:  screenwidth*0.01),),
@@ -220,7 +236,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                 children: [
                   GestureDetector(
                     onTap: (){
-                      Get.to(MainPage());
+                      Get.to(MainPage(
+                        selectedcase: "4",
+                      ));
                     },
                     child: Container(
                         height: screenwidth*0.4,
@@ -239,7 +257,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                                   icon: Image.asset("assets/image/people.png"),
                                   iconSize: screenwidth*0.2,
                                   onPressed: (){
-                                    Get.to(MainPage());
+                                    Get.to(MainPage(
+                                      selectedcase: "4",
+                                    ));
                                   },
                                 ),
                                 Text("",style: TextStyle(fontSize:  screenwidth*0.01),),
@@ -255,7 +275,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                   ),
                   GestureDetector(
                     onTap: (){
-                      Get.to(MainPage());
+                      Get.to(MainPage(
+                        selectedcase: "5",
+                      ));
                     },
                     child: Container(
                         height: screenwidth*0.4,
@@ -274,7 +296,9 @@ class _SelectCaseState extends State<SelectCasePage>{
                                   icon: Image.asset("assets/image/wheelchair.png"),
                                   iconSize: screenwidth*0.2,
                                   onPressed: (){
-                                    Get.to(MainPage());
+                                    Get.to(MainPage(
+                                      selectedcase: "5",
+                                    ));
                                   },
                                 ),
                                 Text("",style: TextStyle(fontSize:  screenwidth*0.01),),

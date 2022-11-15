@@ -18,7 +18,8 @@ class Departure extends StatefulWidget{
   bool start;
   bool stop;
   TextEditingController controller;
-  Departure({required this.locs,required this.query, required this.start,required this.stop, required this.controller});
+  String selectedcase;
+  Departure({required this.locs,required this.query,required this.selectedcase, required this.start,required this.stop, required this.controller});
   @override
    _DepartureState createState() => _DepartureState();
 }
@@ -121,6 +122,7 @@ class _DepartureState extends State<Departure> {
                               return Navigator.push(context,
                                   MaterialPageRoute(
                                       builder: (context) => Departure(
+                                        selectedcase: widget.selectedcase,
                                         locs: locs,
                                         query: devarrvText,
                                         start: true,
@@ -193,7 +195,9 @@ class _DepartureState extends State<Departure> {
           ),
         ),
         onWillPop: (){
-          Get.off(MainPage());
+          Get.off(MainPage(
+            selectedcase: widget.selectedcase,
+          ));
           return Future(() => true);
         }
     );
@@ -220,7 +224,9 @@ class _DepartureState extends State<Departure> {
                       flag = true;
                       widget.controller.text = loc.place_name;
                       print([widget.start,widget.stop,double.parse(loc.lat),double.parse(loc.lng),loc.place_name]);
-                      Get.to(MainPage(),arguments: [widget.start,widget.stop,double.parse(loc.lat),double.parse(loc.lng) ,loc.place_name]);
+                      Get.to(MainPage(
+                        selectedcase: widget.selectedcase,
+                      ),arguments: [widget.start,widget.stop,double.parse(loc.lat),double.parse(loc.lng) ,loc.place_name]);
                     },
                     child: Column(
                       children: [

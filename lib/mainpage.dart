@@ -20,6 +20,8 @@ import '../model/getaddr_api_adapter.dart';
 
 
 class MainPage extends StatefulWidget{
+  String selectedcase;
+  MainPage({required this.selectedcase});
   @override
   _MainPageState createState() => _MainPageState();
 
@@ -47,6 +49,7 @@ class _MainPageState extends State<MainPage>{
 
   List<AddrLoc> locs = [];
   List<PathDetail> pathes = [];
+  String orders = "0";
 
   Future<String> _loadKeyAsset() async {
     return await rootBundle.loadString('assets/json/kakaorestapi.json');
@@ -55,7 +58,7 @@ class _MainPageState extends State<MainPage>{
   _loadLoc(loc) async {
     String REST_API_KEY = await _loadKeyAsset();
     REST_API_KEY = REST_API_KEY.split(":")[1].split("}")[0].split("\"")[1];
-    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
+    String baseUrl = "";//"https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
     print(REST_API_KEY);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -72,7 +75,7 @@ class _MainPageState extends State<MainPage>{
   }
 
   _loadPath(deplat,deplng,arrvlat,arrvlng) async {
-    String baseUrl = "http://10.200.91.116:8000/haruapp/getPathes?deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    String baseUrl = "http://192.168.0.103:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
     print(baseUrl);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -175,6 +178,7 @@ class _MainPageState extends State<MainPage>{
                                           return Navigator.push(context,
                                               MaterialPageRoute(
                                                   builder: (context) => Departure(
+                                                    selectedcase: widget.selectedcase,
                                                     locs: locs,
                                                     query: startText,
                                                     start: true,
@@ -245,6 +249,7 @@ class _MainPageState extends State<MainPage>{
                                         return Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) => Departure(
+                                                  selectedcase: widget.selectedcase,
                                                   locs: locs,
                                                   query: stopText,
                                                   start: false,
@@ -279,7 +284,7 @@ class _MainPageState extends State<MainPage>{
                           ]
                       ),
                     ),
-                    KakaoMapshow(),
+                    // KakaoMapshow(),
                     Container(
                       margin: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
                       child:TextButton(
@@ -292,6 +297,7 @@ class _MainPageState extends State<MainPage>{
                                 return Navigator.push(context,
                                     MaterialPageRoute(
                                         builder: (context) => TabPage(
+                                          selectedcase: widget.selectedcase,
                                           path: pathes,
                                           dep: _depController.text,
                                           dep_lat: hasdep_lat,
@@ -301,6 +307,7 @@ class _MainPageState extends State<MainPage>{
                                           arrv_lng: hasarrv_lng,
                                           dep_controller: _depController,
                                           arrv_controller: _arrvController,
+                                          orders: orders,
                                         )
                                     )
                                 );
@@ -517,7 +524,7 @@ class KakaoMapshow extends StatelessWidget {
                     function setBounds() {
                         map.setBounds(bounds);
                     }
-                  
+                   
                   ''',
 
                 ),

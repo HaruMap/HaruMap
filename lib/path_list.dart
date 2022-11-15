@@ -5,7 +5,9 @@ import 'package:harumap2/mainpage.dart';
 import 'package:harumap2/model/model_path.dart';
 import 'package:harumap2/path_info.dart';
 import 'package:harumap2/pathdetail.dart';
+import 'package:kakaomap_webview/kakaomap_webview.dart';
 
+import 'model/getpath_api_adapter.dart';
 import 'model/model_addr.dart';
 import 'path/deparriv_list.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +20,8 @@ double dep_lng = 0.0;
 String arrv = "";
 double arrv_lat = 0.0;
 double arrv_lng= 0.0;
+String selectedcase = "";
+String orders = "";
 
 class TabPage extends StatefulWidget{
 
@@ -30,7 +34,11 @@ class TabPage extends StatefulWidget{
   double arrv_lng;
   TextEditingController dep_controller;
   TextEditingController arrv_controller;
-  TabPage({required this.path,
+  String selectedcase;
+  String orders;
+  TabPage({
+    required this.selectedcase,
+    required this.path,
     required this.dep,
     required this.dep_lat,
     required this.dep_lng,
@@ -38,7 +46,8 @@ class TabPage extends StatefulWidget{
     required this.arrv_lat,
     required this.arrv_lng,
     required this.dep_controller,
-    required this.arrv_controller
+    required this.arrv_controller,
+    required this.orders
   });
 
   @override
@@ -49,7 +58,7 @@ class TabPage extends StatefulWidget{
 TextEditingController _selectController = TextEditingController(text: "추천순");
 class _TabState extends State<TabPage> with TickerProviderStateMixin {
   final Map<int,String> _selectValue = {0:'추천순',1:'최소 시간순',2:'최소 환승순',3:'최소 도보순'};
-  // final Map<int,String> _valueList =  {1:'추천순',2:'최소 시간순',3:'최소 환승순',4:'최소 도보순'};
+  // final Map<String,int> _valueList =  {'추천순',2:'최소 시간순',3:'최소 환승순',4:'최소 도보순'};
   final String _selectedValue = '추천순';
 
   late TabController _tabController;
@@ -65,6 +74,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    selectedcase = widget.selectedcase;
     path = widget.path;
     dep = widget.dep;
     dep_lat = widget.dep_lat;
@@ -72,6 +82,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
     arrv = widget.arrv;
     arrv_lat = widget.arrv_lat;
     arrv_lng = widget.arrv_lng;
+    orders = widget.orders;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
@@ -219,7 +230,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                                         padding: EdgeInsets.all(8),
                                         itemCount: 4,
                                         itemBuilder: (context,int index){
-                                          return _buildList(index,height,width);
+                                          return _buildList(index,height,width,orders);
                                         },
                                         separatorBuilder: (context, int index){
                                           return Divider();
@@ -271,12 +282,27 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
       ),
     );
   }
+  List<PathDetail> newpathes = [];
+  _loadPath(deplat,deplng,arrvlat,arrvlng) async {
+    String baseUrl = "http://192.168.0.103:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${widget.orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    print(baseUrl);
+    final response = await http.get(
+      Uri.parse(baseUrl),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      setState(() {
+        newpathes = parsePathes(convert.utf8.decode(response.bodyBytes));
+      });
+    }else{
+      throw Exception("failed to load data");
+    }
+  }
   final List<String> _selectValueText = ["이동 불편 지수가 적은 최적의 경로를 추천합니다.",
   "시간이 적게 걸리는 순서로 경로를 추천합니다.",
   "환승을 적게 하는 순서로 경로를 추천합니다.",
   "적게 걷는 순서로 경로를 추천합니다."];
-  Widget _buildList(int index, double height, double width) {
-    print(index);
+  Widget _buildList(int index, double height, double width, String order) {
     return Container(
       height: height*0.15,
         child: TextButton(
@@ -310,21 +336,27 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
           ),
           onPressed: (){
             _selectController.text = _selectValue[index]!;
-            Navigator.push(context,
-                MaterialPageRoute(
-                    builder: (context) => TabPage(
-                        path: path,
+            order = "${index}";
+            _loadPath(dep_lat,dep_lng,arrv_lat,arrv_lng).whenComplete((){
+              return Navigator.push(context,
+                  MaterialPageRoute(
+                      builder: (context) => TabPage(
+                        selectedcase: widget.selectedcase,
+                        path: newpathes,
                         dep: dep,
                         dep_lat: dep_lat,
                         dep_lng: dep_lng,
                         arrv: arrv,
                         arrv_lat: arrv_lat,
                         arrv_lng: arrv_lng,
-                      dep_controller: widget.dep_controller,
-                      arrv_controller: widget.arrv_controller,
-                    )
-                )
-            );
+                        dep_controller: widget.dep_controller,
+                        arrv_controller: widget.arrv_controller,
+                        orders: order,
+                      )
+                  )
+              );
+            });
+
 
           },
         ),
@@ -433,7 +465,7 @@ class _PathListPageState extends State<PathListPage>{
                             padding: EdgeInsets.all(8),
                             itemCount: path.length,
                             itemBuilder: (context,int index){
-                              return _makepath(path[index]);
+                              return _makepath(path[index], index);
                             },
                             separatorBuilder: (context, int index){
                               return Divider();
@@ -450,35 +482,42 @@ class _PathListPageState extends State<PathListPage>{
         ),
         onWillPop: (){
           Flag = false;
-          Get.off(MainPage());
+          Get.off(MainPage(
+            selectedcase: selectedcase,
+          ));
           return Future(() => true);
         }
     );
   }
 
-  Widget _makepath(PathDetail _pathes) {
+  Widget _makepath(PathDetail _pathes, int index) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     Map icons = {'지하철': Icons.directions_subway,
                   "버스": Icons.directions_bus,
                   "도보": Icons.directions_walk,};
-    List sub_color = [Colors.blueAccent,Colors.green, Colors.orange, Colors.lightBlue, Colors.deepPurple, Colors.brown];
+    List sub_color = [Color(0xff0052a4),Color(0xff00a84d),Color(0xffef7c1c),Color(0xff00a5de),Color(0xff996cac),Color(0xffcd7c2f),
+      Color(0xff747f00),Color(0xffe6186c),Color(0xffbdb092)];
     List<Widget> containers = [];
+
+    List corcolors = [];
     for(int i=0; i<_pathes.totaldescription.length; i++){
-      List<String> totaldesc = _pathes.totaldescription[i].split(":");
-      var kind = totaldesc[0].split(" ")[0];
-      var time = int.parse(totaldesc[1].split(" ")[1]);
+      List<dynamic> totaldesc = _pathes.totaldescription[i];
+      var kind = totaldesc[0];
+      var time = totaldesc[1];
       var color = Colors.white10;
       if (kind == "지하철"){
-        color = sub_color[int.parse(totaldesc[1].split(" ")[2])-1];
+        color = sub_color[totaldesc[2]-1];
+        corcolors.add(color.toHex);
       }
       if (kind == "버스"){
-        color = Colors.indigo;
+        color = Color(0xff0068b7);
+        corcolors.add(color.toHex);
       }
       if (kind == "도보"){
         color = Colors.grey;
+        corcolors.add(color.toHex);
       }
-
       containers.add(
         Container(
           child: Icon(
@@ -525,6 +564,7 @@ class _PathListPageState extends State<PathListPage>{
                         arrv: arrv,
                         arrv_lat: arrv_lat,
                         arrv_lng: arrv_lng,
+                        corcolor: corcolors,
                       )
                     )
                   );

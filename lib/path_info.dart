@@ -19,7 +19,8 @@ class PathInfoPage extends StatefulWidget{
   String arrv;
   double arrv_lat;
   double arrv_lng;
-  PathInfoPage({required this.path, required this.dep, required this.dep_lat, required this.dep_lng, required this.arrv, required this.arrv_lat, required this.arrv_lng});
+  List<dynamic> corcolor;
+  PathInfoPage({required this.path, required this.dep, required this.dep_lat, required this.dep_lng, required this.arrv, required this.arrv_lat, required this.arrv_lng, required this.corcolor});
 
   @override
   _PathInfoState createState() => _PathInfoState();
@@ -33,6 +34,7 @@ String arrv = "";
 double arrv_lat = 0.0;
 double arrv_lng= 0.0;
 bool _expanded = true;
+List<List> kakaocor = [];
 
 class _PathInfoState extends State<PathInfoPage>{
 
@@ -47,6 +49,17 @@ class _PathInfoState extends State<PathInfoPage>{
     arrv_lng = widget.arrv_lng;
     screenheight = MediaQuery.of(context).size.height;
     screenwidth = MediaQuery.of(context).size.width;
+    print(widget.corcolor);
+
+    for (int i=0; i<widget.corcolor.length; i++){
+      var cor = path.coordinate[i];
+      var tmpcor = [];
+      for (int j=0; j<cor.length; j++){
+        tmpcor.add([cor[j][2],cor[j][1]]);
+      }
+      kakaocor.add(tmpcor);
+    }
+    print(kakaocor[0][0]);
     return Scaffold(
         backgroundColor: Color.fromARGB(255, 245, 245, 245),
         appBar: AppBar(
@@ -98,23 +111,13 @@ class _PathInfoState extends State<PathInfoPage>{
                     showMapTypeControl: true,
                     showZoomControl: true,
                     draggableMarker: true,
-                    polyline: KakaoFigure(
-                      path: [
-                        KakaoLatLng(lat: 33.45080604081833, lng: 126.56900858718982),
-                        KakaoLatLng(lat: 33.450766588506054, lng: 126.57263147947938),
-                        KakaoLatLng(lat: 33.45162008091554, lng: 126.5713226693152)
-                      ],
-                      strokeColor: Colors.blue,
-                      strokeWeight: 2.5,
-                      strokeColorOpacity: 0.9,
-                    ),
                     customScript: '''
                   var markers = [];   
                   var complete_dep = true;
                   var complete_arrv = true;
                   var i = 0;
                   var bounds = new kakao.maps.LatLngBounds();
-                                                             
+                  
                   function addMarker(position) {              
                     var marker = new kakao.maps.Marker({position: position});              
                     marker.setMap(map);              
@@ -146,13 +149,13 @@ class _PathInfoState extends State<PathInfoPage>{
                             yAnchor: 2
                        
                         });
+                        
                   setBounds()
             
                   var zoomControl = new kakao.maps.ZoomControl();
                   map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);              
                   var mapTypeControl = new kakao.maps.MapTypeControl();
                   map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-                  
                   
                   function panTo(lat,lng) {
                       var moveLatLon = new kakao.maps.LatLng(lat,lng);
@@ -161,7 +164,25 @@ class _PathInfoState extends State<PathInfoPage>{
                   }   
                   function setBounds() {
                       map.setBounds(bounds);
-                  }
+                  }             
+                  
+                  for (var i=0; i<${widget.corcolor.length};i++){
+                    var cor = ${kakaocor}
+                    var color = ${widget.corcolor}
+                    var linePath = [];
+                    for (var j=0; j<cor[i].length; j++){
+                      linePath.push(new kakao.maps.LatLng(cor[i][j][0],cor[i][j][1]));
+                    }
+                    var polyline = new kakao.maps.Polyline({
+                          path: linePath, // 선을 구성하는 좌표배열 입니다
+                          strokeWeight: 7, // 선의 두께 입니다
+                          strokeColor: color[i], // 선의 색깔입니다
+                          strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                          strokeStyle: 'solid' // 선의 스타일입니다
+                      }); 
+                      polyline.setMap(map);           
+                  } 
+                  
                   
                   ''',
                   ),
@@ -194,7 +215,8 @@ class _detaildescription extends State<detaildescription>{
     Map icons = {'지하철': Icons.directions_subway,
       "버스": Icons.directions_bus,
       "도보": Icons.directions_walk,};
-    List sub_color = [Colors.blueAccent,Colors.green, Colors.orange, Colors.lightBlue, Colors.deepPurple, Colors.brown];
+    List sub_color = [Color(0xff0052a4),Color(0xff00a84d),Color(0xffef7c1c),Color(0xff00a5de),Color(0xff996cac),Color(0xffcd7c2f),
+      Color(0xff747f00),Color(0xffe6186c),Color(0xffbdb092)];
     List<double> circle_num = [];
     List<Widget> containers = [];
     List<Widget> leftlines = [];
@@ -203,29 +225,28 @@ class _detaildescription extends State<detaildescription>{
     bool walk = false;
 
     for(int i=0; i<_pathes.description.length; i++){
-      List<String> desc = _pathes.description[i].split(":");
+      List<dynamic> desc = _pathes.description[i];
       List<Widget> subwaydesc = [];
       List<Widget> busdesc = [];
 
-      var kind = desc[0].split(" ")[0];
+      var kind = desc[0];
       var color = Colors.white10;
 
       if (kind == "지하철"){
         List<Widget> subwaystops = [];
-        var subway = desc[1].split(",");
-        var start = subway[0];
-        var stop = subway[1];
-        var transferok = subway[2];
-        var subwaytime = subway[3];
-        var togo = subway[4];
-        var subway_color = int.parse(subway[5])-1;
+        var subway = desc;
+        var start = subway[2];
+        var stop = subway[3];
+        var subwaytime = subway[4];
+        // var togo = subway[4];
+        var subway_color = subway[1]-1;
         color = sub_color[subway_color];
-        var fastout = desc[1].split("(")[1].split(")")[0].split("/");
-        var out = desc[1].split("(")[2].split(")")[0].split("/");
-        var stopby = desc[1].split("(")[3].split(")")[0];
-        var stopbynum = int.parse(stopby.split("-")[0]);
-        var stopbyname = stopby.split("/");
-        for (int i=0; i<stopbynum-1; i++){
+
+        // var fastout = desc[1].split("(")[1].split(")")[0].split("/");
+        // var out = desc[1].split("(")[2].split(")")[0].split("/");
+        var stopby = subway[5];
+        var stopbynum = stopby[0];
+        for (int i=2; i<stopbynum-1; i++){
           subwaystops.add(
             Row(
               children: [
@@ -239,7 +260,7 @@ class _detaildescription extends State<detaildescription>{
                   ),
                 ),
                 Container(
-                  child: Text("${stopbyname[i]}",
+                  child: Text("${stopby[i]}",
                     style: TextStyle(fontSize: screenwidth*0.035,
                       fontFamily: "NotoSans",
                       color: Colors.black,),
@@ -277,14 +298,14 @@ class _detaildescription extends State<detaildescription>{
                   ),
                   margin: EdgeInsets.fromLTRB(80, 5, 3, 5),
                 ),
-                Container(
-                  child: Text("빠른 하차: ${fastout}",
-                    style: TextStyle(fontSize: screenwidth*0.04,
-                      fontFamily: "NotoSans",
-                      color: Colors.black,),
-                  ),
-                  margin: EdgeInsets.fromLTRB(80, 5, 3, 5),
-                ),
+                // Container(
+                //   child: Text("빠른 하차: ${fastout}",
+                //     style: TextStyle(fontSize: screenwidth*0.04,
+                //       fontFamily: "NotoSans",
+                //       color: Colors.black,),
+                //   ),
+                //   margin: EdgeInsets.fromLTRB(80, 5, 3, 5),
+                // ),
                 Column(
                   children: subwaystops,
                 ),
@@ -297,14 +318,14 @@ class _detaildescription extends State<detaildescription>{
                   ),
                   margin: EdgeInsets.fromLTRB(80, 15, 3, 5),
                 ),
-                Container(
-                  child: Text("출구: ${out}",
-                    style: TextStyle(fontSize: screenwidth*0.04,
-                      fontFamily: "NotoSans",
-                      color: Colors.black,),
-                  ),
-                  margin: EdgeInsets.fromLTRB(80, 5, 3, 5),
-                ),
+                // Container(
+                //   child: Text("출구: ${out}",
+                //     style: TextStyle(fontSize: screenwidth*0.04,
+                //       fontFamily: "NotoSans",
+                //       color: Colors.black,),
+                //   ),
+                //   margin: EdgeInsets.fromLTRB(80, 5, 3, 5),
+                // ),
               ],
             )
         );
@@ -343,22 +364,19 @@ class _detaildescription extends State<detaildescription>{
       }
       if (kind == "버스"){
         List<Widget> busstops = [];
-        color = Colors.indigo;
-        var bus = desc[1].split(",");
-        var bus_path = desc[1].split("(")[1].split(")")[0];
-        var bus_num = desc[1].split("[")[1].split("]")[0];
-        var start = bus[0];
-        var stop = bus[1];
-        var bustime = bus[2];
-        var bus_stopby = int.parse(bus_path.split("-")[0]);
-        var bus_stopby_name = bus_path.split("-")[1].split("/");
-        var bus_soon_arr = bus_num.split("/");
+        color = Color(0xff0068b7);
+        var bus = desc;
+        var start = bus[2];
+        var stop = bus[3];
+        var bustime = bus[4];
+        var bus_stopby_num = bus[5][0];
+        var bus_soon_arr = bus[1];
         List<Widget> bus_soons = [];
         for (int i=0; i<bus_soon_arr.length; i++){
-          var bus_soon = bus_soon_arr[i].split(",");
+          var bus_soon = bus_soon_arr[i];
           var bus_soon_num = bus_soon[0];
-          var bus_soon_time = bus_soon[1];
-          var bus_soon_state = bus_soon[2];
+          // var bus_soon_time = bus_soon[1];
+          // var bus_soon_state = bus_soon[2];
           var bus_soon_margin = 5;
           if (i == 0){
             bus_soon_margin = 101;
@@ -374,20 +392,20 @@ class _detaildescription extends State<detaildescription>{
                     ),
                     margin: EdgeInsets.fromLTRB(bus_soon_margin*1.0, 5, 3, 5),
                   ),
-                  Container(
-                    child: Text("${bus_soon_state}",
-                      style: TextStyle(fontSize: screenwidth*0.04,
-                        fontFamily: "NotoSans",
-                        color: Colors.black,),
-                    ),
-                    margin: EdgeInsets.fromLTRB(2, 5, 3, 5),
-                  )
+                  // Container(
+                  //   child: Text("${bus_soon_state}",
+                  //     style: TextStyle(fontSize: screenwidth*0.04,
+                  //       fontFamily: "NotoSans",
+                  //       color: Colors.black,),
+                  //   ),
+                  //   margin: EdgeInsets.fromLTRB(2, 5, 3, 5),
+                  // )
                 ],
               )
           );
         }
 
-        for (int i=0; i<bus_stopby-1; i++){
+        for (int i=1; i<bus_stopby_num-1; i++){
           busstops.add(
             Row(
               children: [
@@ -401,7 +419,7 @@ class _detaildescription extends State<detaildescription>{
                   ),
                 ),
                 Container(
-                  child: Text("${bus_stopby_name[i]}",
+                  child: Text("${bus[5][i]}",
                     style: TextStyle(fontSize: screenwidth*0.035,
                       fontFamily: "NotoSans",
                       color: Colors.black,),
@@ -427,7 +445,7 @@ class _detaildescription extends State<detaildescription>{
                   margin: EdgeInsets.fromLTRB(80, 55, 3, 5),
                 ),
                 Container(
-                  child: Text("${bus_stopby}개 정류소 이동",
+                  child: Text("${bus_stopby_num}개 정류소 이동",
                     style: TextStyle(fontSize: screenwidth*0.04,
                       fontFamily: "NotoSans",
                       color: Colors.black,),
@@ -471,7 +489,7 @@ class _detaildescription extends State<detaildescription>{
         }
 
         circle_num.add(
-            bus_stopby!*1.0
+            bus_stopby_num!*1.0
         );
         rightdesc.add(
             Column(
@@ -482,20 +500,29 @@ class _detaildescription extends State<detaildescription>{
       }
       if (kind == "도보"){
         color = Colors.grey;
-        var walk = desc[1].split(",");
-        var direction = walk[0].removeAllWhitespace;
-        var meter = walk[1];
-        var walk_time = walk[2];
+        var walk = desc;
+        var direction = "";
+        var meter = "";
+        // var walk_time = "";
         var walk_descrip = "";
-        if(walk.length >=4 ){
-          walk_descrip = walk[3];
-        }
         var walkdetail = "";
-        if (direction == "직진"){
+        if(walk.length == 2){
+          direction = "직진";
+          meter = walk[1];
           walkdetail = "${meter} ${direction}하세요.";
         }
-        if (direction == "좌회전" || direction == "우회전"){
-          walkdetail = "${direction} 후 ${walk_descrip} ${meter} 이동하세요.";
+        if (walk.length == 3){
+          direction = walk[1];
+          meter = walk[2];
+          // var walk_time = walk[3];
+          walkdetail = "${direction} 후 ${meter} 이동하세요.";
+        }
+        if (walk.length == 4){
+          direction = walk[1];
+          meter = walk[3];
+          // var walk_time = walk[2];
+          walk_descrip = walk[2];
+          walkdetail = "${direction} 후 ${walk_descrip}를 따라 ${meter} 이동하세요.";
         }
         if (direction == "횡단보도"){
           walkdetail = "${direction}를 건너세요.";
@@ -564,21 +591,25 @@ class _detaildescription extends State<detaildescription>{
 
       }
     }
+    Map<int, Color> corcolors = {1:Colors.white,2:Colors.white,3:Colors.white};
     for(int i=0; i<_pathes.totaldescription.length; i++) {
-      List<String> totaldesc = _pathes.totaldescription[i].split(":");
+      List<dynamic> totaldesc = _pathes.totaldescription[i];
 
-      var kind = totaldesc[0].split(" ")[0];
-      var time = int.parse(totaldesc[1].split(" ")[1]);
+      var kind = totaldesc[0];
+      var time = totaldesc[1];
       var color = Colors.white10;
 
       if (kind == "지하철") {
-        color = sub_color[int.parse(totaldesc[1].split(" ")[2]) - 1];
+        color = sub_color[totaldesc[2]- 1];
+        corcolors[1] = color;
       }
       if (kind == "버스") {
-        color = Colors.indigo;
+        color = Color(0xff0068b7);
+        corcolors[2] = color;
       }
       if (kind == "도보") {
         color = Colors.grey;
+        corcolors[3] = color;
       }
       containers.add(
           Expanded(child: Container(
@@ -623,7 +654,7 @@ class _detaildescription extends State<detaildescription>{
               Container(
                 margin: EdgeInsets.fromLTRB(6.5, 5, 3, 3),
                 width: 2.5,
-                height: circle_num[i]!*41,
+                height: circle_num[i]!*screenwidth*0.06,
                 color: color,
               ),
               Container(
