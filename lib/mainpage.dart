@@ -1,16 +1,14 @@
 
-import 'dart:ffi';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:harumap2/model/getpath_api_adapter.dart';
-import 'package:harumap2/model/model_path.dart';
-import 'package:harumap2/path/deparriv_list.dart';
+import '../model/getpath_api_adapter.dart';
+import '../model/model_path.dart';
+import '../path/deparriv_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
-import 'package:harumap2/path_list.dart';
-import 'package:harumap2/selectcase.dart';
+import '../path_list.dart';
+import '../selectcase.dart';
 import 'package:kakaomap_webview/kakaomap_webview.dart';
 
 import 'model/model_addr.dart';
@@ -36,14 +34,11 @@ bool stopok = false;
 String dep = "";
 String arrv = "";
 
-TextEditingController _depController = TextEditingController( text: " ");
-TextEditingController _arrvController = TextEditingController( text: " ");
+TextEditingController depController = TextEditingController( text: " ");
+TextEditingController arrvController = TextEditingController( text: " ");
 
 class _MainPageState extends State<MainPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-
-
   String startText = "";
   String stopText = "";
 
@@ -75,7 +70,7 @@ class _MainPageState extends State<MainPage>{
   }
 
   _loadPath(deplat,deplng,arrvlat,arrvlng) async {
-    String baseUrl = "http://192.168.0.103:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    String baseUrl = "http://:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
     print(baseUrl);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -98,19 +93,21 @@ class _MainPageState extends State<MainPage>{
 
   @override
   Widget build(BuildContext context){
+    var fontsizescale = 1.0;
+    if(widget.selectedcase == "0"){
+      fontsizescale = 1.5;
+    }
     screenheight = MediaQuery.of(context).size.height;
     screenwidth = MediaQuery.of(context).size.width;
     startText = "";
     stopText = "";
-
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
         child: Scaffold(
           backgroundColor: Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
             elevation: 0.0,
             backgroundColor: Colors.white,
-            title: Text("하루 지도",
+            title: Text("하루지도",
               style: TextStyle(fontSize: screenwidth*0.06,
                   fontFamily: "NotoSans",
                   color: Color.fromARGB(233, 94, 208, 184),
@@ -119,6 +116,26 @@ class _MainPageState extends State<MainPage>{
               overflow: TextOverflow.ellipsis,
             ),
             centerTitle: true,
+            actions: <Widget>[
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: IconButton(
+                      onPressed: (){
+                        dep_ok = false;
+                        arrv_ok = false;
+                        startok = false;
+                        stopok = false;
+                        depController.text= " ";
+                        arrvController.text= " ";
+                        Get.offAll(SelectCasePage());
+                      },
+                      icon: Icon(
+                        Icons.home_outlined,
+                        color: Color.fromARGB(233, 94, 208, 184),
+                      )
+                  )
+              ),
+            ],
           ),
           resizeToAvoidBottomInset: false,
           key: _scaffoldKey,
@@ -138,7 +155,7 @@ class _MainPageState extends State<MainPage>{
                               margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
                               child:
                                   TextField(
-                                    controller: _depController,
+                                    controller: depController,
                                     textInputAction: TextInputAction.go,
                                     onSubmitted: (text) {
                                       startText = text;
@@ -150,7 +167,7 @@ class _MainPageState extends State<MainPage>{
                                                     height: screenheight*0.1,
                                                     child:Center(
                                                       child: Text("값을 입력해주세요",
-                                                          style: TextStyle(fontSize: screenwidth*0.045,
+                                                          style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                             fontFamily: "NotoSans",
                                                             color: Colors.black,)),
                                                     )
@@ -159,7 +176,7 @@ class _MainPageState extends State<MainPage>{
                                                   Center(
                                                     child: TextButton(
                                                       child: Text('확인',
-                                                          style: TextStyle(fontSize: screenwidth*0.045,
+                                                          style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                             fontFamily: "NotoSans",
                                                             color: Colors.black,)),
                                                       onPressed: (){
@@ -183,7 +200,7 @@ class _MainPageState extends State<MainPage>{
                                                     query: startText,
                                                     start: true,
                                                     stop: false,
-                                                    controller: _depController,
+                                                    controller: depController,
                                                   )
                                               )
                                           );
@@ -192,8 +209,8 @@ class _MainPageState extends State<MainPage>{
                                       }
                                     },
                                     decoration: InputDecoration(
-                                        labelText: _depController.text,
-                                        prefixText: "출발지 : ",
+                                        labelText: depController.text,
+                                        prefixText: "출발지 ",
                                         fillColor: Colors.white,
                                         filled: true,
                                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -211,7 +228,7 @@ class _MainPageState extends State<MainPage>{
                             ),
                             Container(
                                 child: TextField(
-                                  controller: _arrvController,
+                                  controller: arrvController,
                                   textInputAction: TextInputAction.go,
                                   onSubmitted: (text) async {
                                     stopText = text;
@@ -223,7 +240,7 @@ class _MainPageState extends State<MainPage>{
                                                   height: screenheight*0.1,
                                                   child: Center(
                                                     child: Text("값을 입력해주세요",
-                                                        style: TextStyle(fontSize: screenwidth*0.045,
+                                                        style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                           fontFamily: "NotoSans",
                                                           color: Colors.black,)),
                                                   )
@@ -232,7 +249,7 @@ class _MainPageState extends State<MainPage>{
                                                 Center(
                                                   child: TextButton(
                                                     child: Text('확인',
-                                                        style: TextStyle(fontSize: screenwidth*0.045,
+                                                        style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                           fontFamily: "NotoSans",
                                                           color: Colors.black,)),
                                                     onPressed: (){
@@ -254,7 +271,7 @@ class _MainPageState extends State<MainPage>{
                                                   query: stopText,
                                                   start: false,
                                                   stop: true,
-                                                  controller: _arrvController,
+                                                  controller: arrvController,
                                                 )
                                             )
                                         );
@@ -263,8 +280,8 @@ class _MainPageState extends State<MainPage>{
                                     }
                                   },
                                   decoration: InputDecoration(
-                                      labelText: _arrvController.text,
-                                      prefixText: "도착지 : ",
+                                      labelText: arrvController.text,
+                                      prefixText: "도착지 ",
                                       fillColor: Colors.white,
                                       filled: true,
                                       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -299,14 +316,14 @@ class _MainPageState extends State<MainPage>{
                                         builder: (context) => TabPage(
                                           selectedcase: widget.selectedcase,
                                           path: pathes,
-                                          dep: _depController.text,
+                                          dep: depController.text,
                                           dep_lat: hasdep_lat,
                                           dep_lng: hasdep_lng,
-                                          arrv: _arrvController.text,
+                                          arrv: arrvController.text,
                                           arrv_lat: hasarrv_lat,
                                           arrv_lng: hasarrv_lng,
-                                          dep_controller: _depController,
-                                          arrv_controller: _arrvController,
+                                          dep_controller: depController,
+                                          arrv_controller: arrvController,
                                           orders: orders,
                                         )
                                     )
@@ -320,7 +337,7 @@ class _MainPageState extends State<MainPage>{
                                           height: screenheight*0.1,
                                           child:Center(
                                             child: Text("값을 입력해주세요",
-                                                style: TextStyle(fontSize: screenwidth*0.045,
+                                                style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                   fontFamily: "NotoSans",
                                                   color: Colors.black,)),
                                           )
@@ -329,7 +346,7 @@ class _MainPageState extends State<MainPage>{
                                         Center(
                                           child: TextButton(
                                             child:Text('확인',
-                                                style: TextStyle(fontSize: screenwidth*0.045,
+                                                style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                   fontFamily: "NotoSans",
                                                   color: Colors.black,
                                                 )
@@ -352,7 +369,7 @@ class _MainPageState extends State<MainPage>{
                               ),
                               child: Center(
                                 child: Text("경로 확인!",
-                                    style: TextStyle(fontSize: screenwidth*0.048,
+                                    style: TextStyle(fontSize: screenwidth*0.048*fontsizescale,
                                       fontFamily: "NotoSans",
                                       color: Colors.white,
                                         fontWeight: FontWeight.bold)
@@ -373,8 +390,8 @@ class _MainPageState extends State<MainPage>{
           arrv_ok = false;
           startok = false;
           stopok = false;
-          _depController.text= " ";
-          _arrvController.text= " ";
+          depController.text= " ";
+          arrvController.text= " ";
           Get.offAll(SelectCasePage());
           return Future(() => true);
         }

@@ -1,17 +1,16 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harumap2/mainpage.dart';
-import 'package:harumap2/model/model_path.dart';
-import 'package:harumap2/path_info.dart';
-import 'package:harumap2/pathdetail.dart';
+import '../mainpage.dart';
+import '../model/model_path.dart';
+import '../path_info.dart';
 import 'package:kakaomap_webview/kakaomap_webview.dart';
 
 import 'model/getpath_api_adapter.dart';
-import 'model/model_addr.dart';
-import 'path/deparriv_list.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+
+import 'selectcase.dart';
 
 List<PathDetail> path = [];
 String dep = "";
@@ -55,11 +54,10 @@ class TabPage extends StatefulWidget{
 
 }
 
+var fontsizescale = 1.0;
 TextEditingController _selectController = TextEditingController(text: "추천순");
 class _TabState extends State<TabPage> with TickerProviderStateMixin {
   final Map<int,String> _selectValue = {0:'추천순',1:'최소 시간순',2:'최소 환승순',3:'최소 도보순'};
-  // final Map<String,int> _valueList =  {'추천순',2:'최소 시간순',3:'최소 환승순',4:'최소 도보순'};
-  final String _selectedValue = '추천순';
 
   late TabController _tabController;
   @override
@@ -72,6 +70,10 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
   }
   @override
   Widget build(BuildContext context) {
+    fontsizescale = 1.0;
+    if(widget.selectedcase == "0"){
+      fontsizescale = 1.2;
+    }
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     selectedcase = widget.selectedcase;
@@ -83,208 +85,239 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
     arrv_lat = widget.arrv_lat;
     arrv_lng = widget.arrv_lng;
     orders = widget.orders;
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 245, 245),
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.white,
-        title: Text("하루 지도",
-          style: TextStyle(fontSize: width*0.06,
-              fontFamily: "NotoSans",
-              color: Color.fromARGB(233, 94, 208, 184),
-              fontWeight: FontWeight.bold),
-          textScaleFactor: 1.0,
-          overflow: TextOverflow.ellipsis,
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Default(widget.dep_controller,widget.arrv_controller,height,width),
-          Container(
-            height: height*0.08,
-            color: Colors.white,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(10, 5.0, 10, 5.0),
-                  height: height,
-                  width: width*0.6,
-                  child: TabBar(
-                      indicatorWeight: 1,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: Colors.white,
-                      unselectedLabelColor: Color(0xFFDDDDDD),
-                      labelColor: Colors.black,
-                      unselectedLabelStyle: TextStyle(color: Colors.black, fontSize: width*0.04),
-                      labelStyle: TextStyle(
-                          color: Colors.black, fontSize: width*0.05, fontWeight: FontWeight.bold),
-                      isScrollable: true,
-                      controller: _tabController,
-                      tabs: [
-                        Tab(
-                          child: Text("전체",
-                            style: TextStyle(
-                                fontFamily: "NotoSans"),
-                            textScaleFactor: 1.0,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Tab(
-                          child: Text("버스",
-                            style: TextStyle(
-                                fontFamily: "NotoSans"),
-                            textScaleFactor: 1.0,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Tab(
-                          child: Text("지하철",
-                            style: TextStyle(
-                                fontFamily: "NotoSans"),
-                            textScaleFactor: 1.0,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Tab(
-                          child: Text("버스+지하철",
-                            style: TextStyle(
-                                fontFamily: "NotoSans"),
-                            textScaleFactor: 1.0,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ]
-                  ),
-                ),
-
-                Container(
-                  margin: EdgeInsets.fromLTRB(10, 10.0, 10, 0.0),
-                  alignment: Alignment.bottomLeft,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(233, 94, 208, 184),
-                    borderRadius: BorderRadius.circular(width*0.03),
-
-                  ),
-                  height: height*0.05,
-                  // width: width*0.3,
-                  child: TextButton(
-                    // style: TextButton.styleFrom(backgroundColor: Color.fromARGB(233, 94, 208, 184), shape: RoundedRectangleBorder(
-                    //     borderRadius: BorderRadius.all(Radius.circular(height*0.01))
-                    // ), ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("${_selectController.text}",
-                          style: TextStyle(
-                              fontFamily: "NotoSans", fontSize: width*0.035,color: Colors.white, fontWeight: FontWeight.bold),
-                          textScaleFactor: 1.0,
-                          overflow: TextOverflow.ellipsis,),
-                        Icon(Icons.keyboard_arrow_down,size:  width*0.05,color: Colors.white,)
-                      ],
-                    ),
-                    onPressed: (){
-                      showDialog(context: context,
-                          builder: (BuildContext ctx) {
-                        return AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(height*0.05))
-                          ),
-                          content: SizedBox(
-                              height: height*0.08,
-                              child: Column(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                                    alignment: Alignment.topLeft,
-                                    child: Text("정렬 기준",
-                                      style: TextStyle(
-                                          fontFamily: "NotoSans",
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: width*0.065),
-                                      textScaleFactor: 1.0,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 1,
-                                    width: width*0.7,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                          ),
-                         actionsAlignment: MainAxisAlignment.start,
-                          actions: [
-                            Container(
-                              height: height*0.4,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.separated(
-                                        padding: EdgeInsets.all(8),
-                                        itemCount: 4,
-                                        itemBuilder: (context,int index){
-                                          return _buildList(index,height,width,orders);
-                                        },
-                                        separatorBuilder: (context, int index){
-                                          return Divider();
-                                        },
-                                      ),
-                                    ),
-                                  ],
-
-                                ),
-
-                            )
-                         ],
-                        );
-                      });
-                    }
-                  ),
-                ),
-              ],
+    return WillPopScope(
+        child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 245, 245, 245),
+          appBar: AppBar(
+            elevation: 0.0,
+            backgroundColor: Colors.white,
+            title: Text("하루지도",
+              style: TextStyle(fontSize: width*0.06,
+                  fontFamily: "NotoSans",
+                  color: Color.fromARGB(233, 94, 208, 184),
+                  fontWeight: FontWeight.bold),
+              textScaleFactor: 1.0,
+              overflow: TextOverflow.ellipsis,
             ),
+            centerTitle: true,
+            actions: <Widget>[
+              Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: IconButton(
+                      onPressed: (){
+                        dep_ok = false;
+                        arrv_ok = false;
+                        startok = false;
+                        stopok = false;
+                        depController.text= " ";
+                        arrvController.text= " ";
+                        Get.offAll(SelectCasePage());
+                      },
+                      icon: Icon(
+                        Icons.home_outlined,
+                        color: Color.fromARGB(233, 94, 208, 184),
+                      )
+                  )
+              ),
+            ],
           ),
-          Expanded(
-              child: Container(
-                  height: height*0.1,
-                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                child: TabBarView(
-                  controller: _tabController,
+          body: Column(
+            children: [
+              Default(widget.dep_controller,widget.arrv_controller,height,width),
+              Container(
+                height: height*0.08,
+                color: Colors.white,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: PathListPage()
+                      margin: EdgeInsets.fromLTRB(10, 5.0, 10, 5.0),
+                      height: height,
+                      width: width*0.6,
+                      child: TabBar(
+                          indicatorWeight: 1,
+                          indicatorSize: TabBarIndicatorSize.label,
+                          indicatorColor: Colors.white,
+                          unselectedLabelColor: Color(0xFFDDDDDD),
+                          labelColor: Colors.black,
+                          unselectedLabelStyle: TextStyle(color: Colors.black, fontSize: width*0.04*fontsizescale),
+                          labelStyle: TextStyle(
+                              color: Colors.black, fontSize: width*0.05*fontsizescale , fontWeight: FontWeight.bold),
+                          isScrollable: true,
+                          controller: _tabController,
+                          tabs: [
+                            Tab(
+                              child: Text("전체",
+                                style: TextStyle(
+                                    fontFamily: "NotoSans"),
+                                textScaleFactor: 1.0,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Tab(
+                              child: Text("버스",
+                                style: TextStyle(
+                                    fontFamily: "NotoSans"),
+                                textScaleFactor: 1.0,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Tab(
+                              child: Text("지하철",
+                                style: TextStyle(
+                                    fontFamily: "NotoSans"),
+                                textScaleFactor: 1.0,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Tab(
+                              child: Text("버스+지하철",
+                                style: TextStyle(
+                                    fontFamily: "NotoSans"),
+                                textScaleFactor: 1.0,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ]
+                      ),
                     ),
+
                     Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: PathListPage()
+                      margin: EdgeInsets.fromLTRB(10, 10.0, 10, 0.0),
+                      alignment: Alignment.bottomLeft,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(233, 94, 208, 184),
+                        borderRadius: BorderRadius.circular(width*0.03),
+
+                      ),
+                      height: height*0.05*fontsizescale,
+                      child: TextButton(
+                        // style: TextButton.styleFrom(backgroundColor: Color.fromARGB(233, 94, 208, 184), shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.all(Radius.circular(height*0.01))
+                        // ), ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text("${_selectController.text}",
+                                style: TextStyle(
+                                    fontFamily: "NotoSans", fontSize: width*0.035*fontsizescale ,color: Colors.white, fontWeight: FontWeight.bold),
+                                textScaleFactor: 1.0,
+                                overflow: TextOverflow.ellipsis,),
+                              Icon(Icons.keyboard_arrow_down,size:  width*0.05,color: Colors.white,)
+                            ],
+                          ),
+                          onPressed: (){
+                            showDialog(context: context,
+                                builder: (BuildContext ctx) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(height*0.05))
+                                    ),
+                                    content: SizedBox(
+                                      height: height*0.08,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(10, 5, 0, 3),
+                                            alignment: Alignment.topLeft,
+                                            child: Text("정렬 기준",
+                                              style: TextStyle(
+                                                  fontFamily: "NotoSans",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: width*0.065*fontsizescale ),
+                                              textScaleFactor: 1.0,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Container(
+                                            height: 1,
+                                            width: width*0.7,
+                                            decoration: BoxDecoration(
+                                                color: Colors.black
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                    ),
+                                    actionsAlignment: MainAxisAlignment.start,
+                                    actions: [
+                                      Container(
+                                        height: height*0.4*fontsizescale,
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: ListView.separated(
+                                                padding: EdgeInsets.all(8),
+                                                itemCount: 4,
+                                                itemBuilder: (context,int index){
+                                                  return _buildList(index,height,width,orders);
+                                                },
+                                                separatorBuilder: (context, int index){
+                                                  return Divider();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+
+                                        ),
+
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
+                      ),
                     ),
-                    Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: PathListPage()
-                    ),
-                    Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: PathListPage()
-                    )
                   ],
-                )
+                ),
+              ),
+              Expanded(
+                  child: Container(
+                      height: height*0.1,
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: PathListPage()
+                          ),
+                          Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: PathListPage()
+                          ),
+                          Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: PathListPage()
+                          ),
+                          Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: PathListPage()
+                          )
+                        ],
+                      )
+                  )
               )
-          )
-        ],
-      ),
+            ],
+          ),
+        ),
+        onWillPop: (){
+          dep_ok = false;
+          arrv_ok = false;
+          startok = false;
+          stopok = false;
+          depController.text= " ";
+          arrvController.text= " ";
+          Get.offAll(MainPage(selectedcase: selectedcase));
+          return Future(() => true);
+        }
     );
   }
   List<PathDetail> newpathes = [];
   _loadPath(deplat,deplng,arrvlat,arrvlng) async {
-    String baseUrl = "http://192.168.0.103:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${widget.orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    String baseUrl = "http://:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${widget.orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
     print(baseUrl);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -304,7 +337,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
   "적게 걷는 순서로 경로를 추천합니다."];
   Widget _buildList(int index, double height, double width, String order) {
     return Container(
-      height: height*0.15,
+      height: height*0.15*fontsizescale,
         child: TextButton(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -315,7 +348,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                     fontFamily: "NotoSans",
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontSize: width*0.05),
+                    fontSize: width*0.05*fontsizescale ),
                 textScaleFactor: 1.0,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -323,13 +356,13 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
               Flexible(child: RichText(
                 overflow: TextOverflow.ellipsis,
                 maxLines: 3,
-                strutStyle: StrutStyle(fontSize:width*0.03 ),
+                strutStyle: StrutStyle(fontSize:width*0.03*fontsizescale ),
                 text: TextSpan(
                   text: _selectValueText[index],
                   style: TextStyle(
                       fontFamily: "NotoSans",
                       color: Colors.black,
-                      fontSize: width*0.03),
+                      fontSize: width*0.03*fontsizescale ),
                 ),
               ))
             ],
@@ -364,7 +397,6 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
 
   }
   Widget Default(TextEditingController depcontroller, TextEditingController arrvcontroller, height, width) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -379,7 +411,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                       controller: depcontroller,
                       decoration: InputDecoration(
                         labelText: depcontroller.text,
-                        prefixText: "출발지 : ",
+                        prefixText: "출발지 ",
                         fillColor: Colors.white,
                         filled: true,
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -400,7 +432,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                       controller: arrvcontroller,
                       decoration: InputDecoration(
                         labelText: arrvcontroller.text,
-                        prefixText: "도착지 : ",
+                        prefixText: "도착지 ",
                         fillColor: Colors.white,
                         filled: true,
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -444,7 +476,6 @@ class _PathListPageState extends State<PathListPage>{
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return WillPopScope(
         child:Scaffold(
           body: SingleChildScrollView(
@@ -523,18 +554,18 @@ class _PathListPageState extends State<PathListPage>{
           child: Icon(
             icons[kind],
             color: color,
-            size: 25,
+            size: 25*fontsizescale,
           ),
-          margin: EdgeInsets.fromLTRB(10, 5, 0, 10),
+          margin: EdgeInsets.fromLTRB(10, 0, 2, 10),
         ),
       );
       containers.add(
         Container(
           child: Text("${time}분",
-            style:TextStyle(fontSize: 10,
+            style:TextStyle(fontSize: 15*fontsizescale ,
                 fontFamily: "NotoSans",
                 color: Colors.black,) ,),
-          margin: EdgeInsets.fromLTRB(2, 5, 3, 10),
+          margin: EdgeInsets.fromLTRB(2, 10*fontsizescale, 3, 10),
         )
       );
     }
@@ -542,7 +573,7 @@ class _PathListPageState extends State<PathListPage>{
         // padding: EdgeInsets.fromLTRB(10, 2, 10, 10),
         margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
         width: width*0.9,
-        height: height*0.17,
+        height: height*0.18*fontsizescale,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(width*0.1),
@@ -565,6 +596,7 @@ class _PathListPageState extends State<PathListPage>{
                         arrv_lat: arrv_lat,
                         arrv_lng: arrv_lng,
                         corcolor: corcolors,
+                        selectedcase: selectedcase,
                       )
                     )
                   );
@@ -578,16 +610,34 @@ class _PathListPageState extends State<PathListPage>{
                         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                         margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                         child: Text("${_pathes.totaltime}분 ",
-                          style:TextStyle(fontSize: 30,
+                          style:TextStyle(fontSize: 30*fontsizescale ,
                             fontFamily: "NotoSans",
                             color: Colors.black,
                           fontWeight: FontWeight.bold) ,),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: containers
-                      )
+                      Container(
+                        height: height*0.1*fontsizescale,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ListView.separated(
+                                  padding: EdgeInsets.all(10),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: containers.length,
+                                  itemBuilder: (context,int index){
+                                    return containers[index];
+                                  },
+                                  separatorBuilder: (context, int index){
+                                    return const Divider();
+                                  },
+                                ),
+                              ),
+                            ]
+                        ),
+                      ),
+
                     ],
                   ),
                 ),

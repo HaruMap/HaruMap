@@ -11,7 +11,10 @@ import '../model/model_addr.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import '../selectcase.dart';
 
+
+var fontsizescale = 1.0;
 class Departure extends StatefulWidget{
   List<AddrLoc> locs;
   String query;
@@ -51,6 +54,10 @@ class _DepartureState extends State<Departure> {
 
   @override
   Widget build(BuildContext context) {
+    fontsizescale = 1.0;
+    if(widget.selectedcase == "0"){
+      fontsizescale = 1.5;
+    }
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -61,7 +68,7 @@ class _DepartureState extends State<Departure> {
           appBar: AppBar(
             elevation: 0.0,
             backgroundColor: Colors.white,
-            title: Text("하루 지도",
+            title: Text("하루지도",
               style: TextStyle(fontSize: screenwidth*0.06,
                   fontFamily: "NotoSans",
                   color: Color.fromARGB(233, 94, 208, 184),
@@ -70,6 +77,26 @@ class _DepartureState extends State<Departure> {
               overflow: TextOverflow.ellipsis,
             ),
             centerTitle: true,
+            actions: <Widget>[
+              Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: IconButton(
+                      onPressed: (){
+                        dep_ok = false;
+                        arrv_ok = false;
+                        startok = false;
+                        stopok = false;
+                        depController.text= " ";
+                        arrvController.text= " ";
+                        Get.offAll(SelectCasePage());
+                      },
+                      icon: Icon(
+                        Icons.home_outlined,
+                        color: Color.fromARGB(233, 94, 208, 184),
+                      )
+                  )
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Container(
@@ -94,7 +121,7 @@ class _DepartureState extends State<Departure> {
                                         height: screenheight*0.1,
                                         child:Center(
                                           child: Text("값을 입력해주세요",
-                                              style: TextStyle(fontSize: screenwidth*0.045,
+                                              style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                 fontFamily: "NotoSans",
                                                 color: Colors.black,)),
                                         )
@@ -103,7 +130,7 @@ class _DepartureState extends State<Departure> {
                                       Center(
                                         child: TextButton(
                                           child: Text('확인',
-                                              style: TextStyle(fontSize: screenwidth*0.045,
+                                              style: TextStyle(fontSize: screenwidth*0.045*fontsizescale,
                                                 fontFamily: "NotoSans",
                                                 color: Colors.black,)),
                                           onPressed: (){
@@ -167,7 +194,7 @@ class _DepartureState extends State<Departure> {
                             color: Color.fromARGB(233, 94, 208, 184),
                           ),
                           child: Text("검색 결과",
-                                style: TextStyle(fontSize: screenwidth*0.04,
+                                style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
                                     fontFamily: "NotoSans",
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold)
@@ -236,7 +263,7 @@ class _DepartureState extends State<Departure> {
                               Icon(
                                 Icons.location_on,
                                 color: Color.fromARGB(233, 94, 208, 184),
-                                size: screenwidth*0.08,
+                                size: screenwidth*0.08*fontsizescale,
                               ),
                               Container(
                                 width: width*0.7,
@@ -245,22 +272,36 @@ class _DepartureState extends State<Departure> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("${loc.place_name}",
-                                        style: TextStyle(fontSize: screenwidth*0.05,
-                                          fontFamily: "NotoSans",
-                                          fontWeight: FontWeight.bold,),
-                                      textScaleFactor: 1.0,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                    Row(
+                                          children: [
+                                          Flexible(child: RichText(
+                                            maxLines: 3,
+                                            text: TextSpan(
+                                              text: "${loc.place_name}",
+                                              style: TextStyle(fontSize: screenwidth * 0.05*fontsizescale,
+                                                fontFamily: "NotoSans",
+                                                color: Colors.black,),
+
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                    Text("",style: TextStyle(fontSize:  screenwidth*0.01),),
-                                    Text("${address}",
-                                        style: TextStyle(fontSize: screenwidth*0.035,
-                                          fontFamily: "NotoSans",
-                                          color: Colors.grey,),
-                                      textScaleFactor: 1.0,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                    Text("",style: TextStyle(fontSize:  screenwidth*0.01*fontsizescale),),
+                                    Row(
+                                      children: [
+                                        Flexible(child: RichText(
+                                          maxLines: 3,
+                                          text: TextSpan(
+                                            text: "${address}",
+                                            style: TextStyle(fontSize: screenwidth * 0.035*fontsizescale,
+                                              fontFamily: "NotoSans",
+                                              color: Colors.grey,),
+
+                                          ),
+                                        ),
+                                        )
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -268,7 +309,7 @@ class _DepartureState extends State<Departure> {
 
                             ],
                           ),
-                          margin: EdgeInsets.fromLTRB(0, 0, 5, 5),
+                          margin: EdgeInsets.fromLTRB(0, 5, 5, 5),
                         ),
                       ],
                     ),

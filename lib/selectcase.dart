@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:harumap2/mainpage.dart';
+
+import 'mainpage.dart';
 
 class SelectCasePage extends StatefulWidget{
 
@@ -13,7 +14,6 @@ class SelectCasePage extends StatefulWidget{
 class _SelectCaseState extends State<SelectCasePage>{
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     var screenheight = MediaQuery.of(context).size.height;
     var screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -21,7 +21,7 @@ class _SelectCaseState extends State<SelectCasePage>{
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Text("하루 지도",
+        title: Text("하루지도",
           style: TextStyle(fontSize: screenwidth*0.06,
               fontFamily: "NotoSans",
               color: Color.fromARGB(233, 94, 208, 184),
@@ -47,7 +47,7 @@ class _SelectCaseState extends State<SelectCasePage>{
                     Text("이용자 유형 선택 ",
                         style: TextStyle(fontSize: screenwidth*0.06,
                             fontFamily: "NotoSans",
-                            color: Color.fromARGB(255, 108, 108, 108),
+                            color: Colors.black,
                             fontWeight: FontWeight.bold
                         )
                     ),

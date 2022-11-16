@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harumap2/selectcase.dart';
+import 'selectcase.dart';
 
 class StartPage extends StatefulWidget {
   
@@ -21,7 +21,6 @@ class _StartPageState extends State<StartPage>{
   }
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       backgroundColor: Color.fromARGB(233, 104, 231, 205),
       body: Center(
