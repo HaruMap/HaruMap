@@ -25,8 +25,8 @@ import API.api
 
 # 출발지/도착지 주소 입력
 # 출발지, 도착지 샘플
-w_sx, w_sy = 126.94687065007022, 37.5635841072725  # 이대 포스코관
-w_ex, w_ey = 127.03257402230341, 37.483659133375106 # 서초구청
+w_sx, w_sy = 126.94690455779745, 37.56365169724841  # 이대 포스코관
+w_ex, w_ey = 127.04633964847908, 37.492754715601414 # 강남 세브란스 병원
 
 # ================================================ 주변 정류소 POI ================================================
 
@@ -58,7 +58,7 @@ pathdetails_bus = []
 
 for s in s_poi:
     for e in e_poi:
-        print('= new s, e =')
+        print(f's : {s} / e : {e}')
 
         sx = geocoding.geocoding(s)[0]
         sy = geocoding.geocoding(s)[1]
@@ -294,6 +294,7 @@ for s in s_poi:
             # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
             coor_transport = coordinate.coor_transport(path['subPath'])
             coor_walk = s_coor + e_coor
+            # print(coor_walk)
 
             '''
             path_loop.sub_avg_congestion(path['subPath'])
@@ -401,14 +402,14 @@ for s in s_poi:
             pathdetails.append(in_pathdetails)
             pathdetails_subbus.append(in_pathdetails)
             # print(pathdetails); print() # ; break
-            print(len(pathdetails))
-            print(len(pathdetails_subbus))
+            # print(len(pathdetails))
+            # print(len(pathdetails_subbus))
             # =============================================================================
 
             cnt_path_subbus += 1
 
             '''
-            # ========= API 요금 방지 ==========s
+            # ========= API 요금 방지 ==========
             break
             # =================================
             '''
@@ -436,6 +437,10 @@ elif op_transport == 3: # '지하철+버스' 선택
 
 # 일단 휠체어 이용자로 가정함 (추후 받아온 사용자 정보 & 정렬 기준 기반 재산출)
 # 1) 지하철
+'''
+for idx in range(len(total_path_sub)):
+    total_path_sub[idx]['score'] = score.score_type1(total_path_sub[idx], 1)
+'''
 
 # 2) 버스
 for idx in range(len(total_path_bus)):
@@ -447,6 +452,7 @@ for idx in range(len(total_path_subbus)):
 
 # ================================================ 사용자 지정 유형/순서로 정렬 ================================================
 
+print()
 print('지하철 경로 수 :', len(total_path_sub))
 print('버스 경로 수 :', len(total_path_bus))
 print('버스 + 지하철 경로 수 :', len(total_path_subbus))
@@ -463,35 +469,60 @@ op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도�
 print()
 
 # 최종 반환 경로
-fin_view_path = []
-fin_drf_view_path = []
+send_drf = []
+fin_total_drf_path = {}
 
 # 일단 샘플은 subbus 경로를 보여줌!
 if op_sort == 1:
 
-    # 이동불편지수 낮은 순
-    fin_view_path = sort_path_by_score.sort_score(total_path_subbus)
-    fin_drf_view_path = sort_path_by_score.sort_score(pathdetails)
+    # 이동불편지수 낮은 순 (subbus)
+    fin_view_path_subbus, fin_drf_path_subbus = sort_path_by_score.sort_score(total_path_subbus, pathdetails_subbus)
+    # 이동불편지수 낮은 순 (sub)
+    fin_view_path_sub, fin_drf_path_sub = sort_path_by_score.sort_score(total_path_sub, pathdetails_sub)
+    # 이동불편지수 낮은 순 (bus)
+    fin_view_path_bus, fin_drf_path_bus = sort_path_by_score.sort_score(total_path_bus, pathdetails_bus)
+    # 이동불편지수 낮은 순 (전체)
+    total_path = total_path_subbus + total_path_sub + total_path_bus
+    total_pathdetails = pathdetails_subbus + pathdetails_sub + pathdetails_bus
+    fin_view_path, fin_drf_path = sort_path_by_score.sort_score(total_path, total_pathdetails)
+
+    # drf 데이터 전달
+    '''
+    [0] fin_drf_path
+    [1] fin_drf_path_subbus
+    [2] fin_drf_path_sub
+    [3] fin_drf_path_bus
+    '''
+    fin_total_drf_path['tot'] = fin_drf_path
+    # fin_total_drf_path['sub'] = fin_drf_path_sub
+    # fin_total_drf_path['bus'] = fin_drf_path_bus
+    fin_total_drf_path['subbus'] = fin_drf_path_subbus # -> 이동불편지수 [전체, 지하철, 버스, 버스 + 지하철]
+
+    ''' final data '''
+    send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
+
 
 elif op_sort == 2:
 
     # 최소 시간 순
-    fin_view_path = sort_path_by_score.sort_time(total_path_subbus)
+    fin_view_path_subbus = sort_path_by_score.sort_time(total_path_subbus)
 
 elif op_sort == 3:
 
     # 최소 도보 순
-    fin_view_path = sort_path_by_score.sort_walk(total_path_subbus)
+    fin_view_path_subbus = sort_path_by_score.sort_walk(total_path_subbus)
 
 elif op_sort == 4:
 
     # 최소 환승 순
-    fin_view_path = sort_path_by_score.sort_transfer(total_path_subbus)
+    fin_view_path_subbus = sort_path_by_score.sort_transfer(total_path_subbus)
 
 '''
 print('sample path results :')
 print(total_path_subbus[0])
 print()
 '''
+
+# [전체, 지하철, 버스, 버스 + 지하철]
 
 print('Done.')

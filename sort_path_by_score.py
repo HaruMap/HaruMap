@@ -1,7 +1,7 @@
 import numpy as np
 
 # 이동불편지수 낮은 순
-def sort_score(total_paths):
+def sort_score(total_paths, drf_paths):
 
     paths = []
     scores = []
@@ -14,10 +14,13 @@ def sort_score(total_paths):
     score_sorted = np.sort(scores) # 오름차순 정렬 (이동불편지수가 낮은 경로를 우선으로 정렬)
     score_sorted_idx = np.argsort(scores)
     paths_sorted = [paths[i] for i in score_sorted_idx]
+    
+    ''' drf 전달 데이터 이동불편지수 낮은 순으로 정렬 '''
+    drf_sorted = [drf_paths[i] for i in score_sorted_idx]
 
     # print(paths_sorted)
     # print(score_sorted)
-    return paths_sorted
+    return paths_sorted, drf_sorted
 
 # 최소 시간 순
 def sort_time(total_paths):
