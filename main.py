@@ -89,10 +89,15 @@ for s in s_poi:
         # ================================================ 경로 정보 저장 ================================================
 
         # 지하철
+        pathdetails = []
         for idx, path in enumerate(path_subway):
 
             trans_descrip = []
             trans_t = []
+
+            # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
+            coor_transport = coordinate.coor_transport(path['subPath'])
+            coor_walk = s_coor + e_coor
 
             trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
@@ -127,17 +132,50 @@ for s in s_poi:
                 'score' : 0 # 추후 이동불편지수 산출 후 값 넣기 & sort
             }
 
+            # =============================================================================
+            # drf 전달 데이터
+            totaldescription = []
+            totaldescription.append(('도보', round(s_t / 60)))
+
+            for t in resp_t:
+                # print(t)
+                if t[0] == 1:
+                    totaldescription.append(('지하철', t[1]))
+                elif t[0] == 2:
+                    totaldescription.append(('버스', t[1]))
+
+            totaldescription.append(('도보', round(e_t / 60)))
+
+            in_pathdetails = {}
+            in_pathdetails = {
+                'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                'totaldescription' : totaldescription,
+                'description' : fin_descrip,
+                'coor' : s_coor + coor_transport + e_coor,
+                # 'score' : 0
+            }
+            pathdetails.append(in_pathdetails)
+            print(pathdetails); print(); break
+            # =============================================================================
+
             cnt_path_sub += 1
 
             # ========= API 요금 방지 ==========
             break
             # =================================
 
+        # =============================================================
         # 버스
+        # =============================================================
+        pathdetails = []
         for idx, path in enumerate(path_bus):
             
             trans_descrip = []
             trans_t = []
+
+            # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
+            coor_transport = coordinate.coor_transport(path['subPath'])
+            coor_walk = s_coor + e_coor
 
             trans_description, total_bus_info = path_description.description_transport(path) # 각 path 별 이동 description
             trans_descrip.append(trans_description)
@@ -201,13 +239,41 @@ for s in s_poi:
                 'score' : 0
             }
 
+            # =============================================================================
+            # drf 전달 데이터
+            totaldescription = []
+            totaldescription.append(('도보', round(s_t / 60)))
+
+            for t in resp_t:
+                # print(t)
+                if t[0] == 1:
+                    totaldescription.append(('지하철', t[1]))
+                elif t[0] == 2:
+                    totaldescription.append(('버스', t[1]))
+
+            totaldescription.append(('도보', round(e_t / 60)))
+
+            in_pathdetails = {}
+            in_pathdetails = {
+                'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                'totaldescription' : totaldescription,
+                'description' : fin_descrip,
+                'coor' : s_coor + coor_transport + e_coor,
+                # 'score' : 0
+            }
+            pathdetails.append(in_pathdetails)
+            # print(pathdetails); print(); break
+            # =============================================================================
+
             cnt_path_bus += 1
 
             # ========= API 요금 방지 ==========
             break
             # =================================
 
+        # =============================================================
         # 지하철 + 버스
+        # =============================================================
         pathdetails = []
         for idx, path in enumerate(path_subbus):
             
@@ -266,6 +332,8 @@ for s in s_poi:
                     
                     bus_wait_time_classification = classification.classification_time_bus(bus_wait_time)
 
+            # ===================================================================
+            # 이동불편지수 산출 데이터
             total_path_subbus[cnt_path_subbus] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
@@ -294,6 +362,7 @@ for s in s_poi:
                 },
                 'score' : 0
             }
+            # ===================================================================
 
             # =============================================================================
             # drf 전달 데이터
@@ -318,7 +387,7 @@ for s in s_poi:
                 # 'score' : 0
             }
             pathdetails.append(in_pathdetails)
-            print(pathdetails); print(); break
+            # print(pathdetails); print(); break
             # =============================================================================
 
             cnt_path_subbus += 1
