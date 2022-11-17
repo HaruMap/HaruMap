@@ -155,7 +155,7 @@ for s in s_poi:
                 # 'score' : 0
             }
             pathdetails.append(in_pathdetails)
-            print(pathdetails); print(); break
+            # print(pathdetails); print(); break
             # =============================================================================
 
             cnt_path_sub += 1
@@ -387,7 +387,8 @@ for s in s_poi:
                 # 'score' : 0
             }
             pathdetails.append(in_pathdetails)
-            # print(pathdetails); print(); break
+            # print(pathdetails); print() # ; break
+            print(len(pathdetails))
             # =============================================================================
 
             cnt_path_subbus += 1
