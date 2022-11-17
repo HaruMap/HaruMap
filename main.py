@@ -298,17 +298,16 @@ for s in s_poi:
             # =============================================================================
             # drf 전달 데이터
             totaldescription = []
-            totaldescription.append('도보 1 : {0}'.format(round(s_t / 60)))
-            sub_t_cnt, bus_t_cnt = 0, 0
+            totaldescription.append(('도보', round(s_t / 60)))
 
             for t in resp_t:
+                # print(t)
                 if t[0] == 1:
-                    sub_t_cnt += 1
-                    totaldescription.append('지하철 {0} : {1}'.format(sub_t_cnt, t[1]))
+                    totaldescription.append(('지하철', t[1]))
                 elif t[0] == 2:
-                    bus_t_cnt += 1
-                    totaldescription.append('버스 {0} : {1}'.format(bus_t_cnt, t[1]))
-            totaldescription.append('도보 2 : {0}'.format(round(e_t / 60)))
+                    totaldescription.append(('버스', t[1]))
+
+            totaldescription.append(('도보', round(e_t / 60)))
 
             in_pathdetails = {}
             in_pathdetails = {
@@ -316,7 +315,7 @@ for s in s_poi:
                 'totaldescription' : totaldescription,
                 'description' : fin_descrip,
                 'coor' : s_coor + coor_transport + e_coor,
-                'score' : 0
+                # 'score' : 0
             }
             pathdetails.append(in_pathdetails)
             print(pathdetails); print(); break
