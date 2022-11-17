@@ -51,7 +51,7 @@ def score_type1(path_detail, op):
             return round(score, 4)
 
         except:
-            return None
+            return 10000 # score 계산 불가
 
     # 2) 버스만
     if op == 2:
@@ -86,7 +86,7 @@ def score_type1(path_detail, op):
             return round(score, 4)
 
         except:
-            return None
+            return 10000
 
     # 3) 지하철 + 버스
     if op == 3:
@@ -129,7 +129,7 @@ def score_type1(path_detail, op):
             return round(score, 4)
         
         except:
-            return None
+            return 10000
 
 # 유아차 이용자, 다리 다친 사람 등
 def score_type2(path_detail):

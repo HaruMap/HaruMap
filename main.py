@@ -25,8 +25,8 @@ import API.api
 
 # 출발지/도착지 주소 입력
 # 출발지, 도착지 샘플
-w_sx, w_sy = 126.94690455779745, 37.56365169724841  # 이대 포스코관
-w_ex, w_ey = 127.04633964847908, 37.492754715601414 # 강남 세브란스 병원
+w_sx, w_sy = 126.94700645685643, 37.5636066932157 # 이대 포스코관 
+w_ex, w_ey = 127.032734543897, 37.483588810333 # 서초구청
 
 # ================================================ 주변 정류소 POI ================================================
 
@@ -121,18 +121,19 @@ for s in s_poi:
             total_path_sub[cnt_path_sub] = {
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # 총 이동시간 (대기시간 아직 미포함)
-                    'description' : fin_descrip, # 이동경로 description = [도보 출발 경로, [대중교통 경로], 도보 도착 경로] 형태
-                    # 'coordinate' : [],
+                    'totaldescription' : [],
+                    'description' : fin_descrip,
+                    'coordinate' : s_coor + coor_transport + e_coor,
                     'summary' : []
                 },
                 'subway' : {
-                    'congestion' : 0,
-                    'waittime' : 0,
-                    'pathtime' : 0,
+                    'congestion' : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], # classification.classification_sub(avg_sub_congestion), # min value 만 추출?
+                    'waittime' : 0, # (wait_time.get_sub_wt()), # (단위 : sec)
+                    'pathtime' : classification.path_time(sub_t), # (단위 : min)
                     'service' : 0
                 },
                 'walk' : {
-                    'pathtime' : 0,
+                    'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                     'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                     'slope' : 0,
                     'roadtype' : 0,
@@ -230,8 +231,9 @@ for s in s_poi:
 
                 'info' : {
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                    'totaldescription' : [],
                     'description' : fin_descrip,
-                    'coordinate' : [],
+                    'coordinate' : s_coor + coor_transport + e_coor,
                     'summary' : []
                 },
                 'bus' : {
@@ -437,10 +439,8 @@ elif op_transport == 3: # '지하철+버스' 선택
 
 # 일단 휠체어 이용자로 가정함 (추후 받아온 사용자 정보 & 정렬 기준 기반 재산출)
 # 1) 지하철
-'''
 for idx in range(len(total_path_sub)):
     total_path_sub[idx]['score'] = score.score_type1(total_path_sub[idx], 1)
-'''
 
 # 2) 버스
 for idx in range(len(total_path_bus)):
@@ -476,15 +476,27 @@ fin_total_drf_path = {}
 if op_sort == 1:
 
     # 이동불편지수 낮은 순 (subbus)
-    fin_view_path_subbus, fin_drf_path_subbus = sort_path_by_score.sort_score(total_path_subbus, pathdetails_subbus)
+    if total_path_subbus == None or pathdetails_subbus == None:
+        pass
+    else:
+        fin_view_path_subbus, fin_drf_path_subbus = sort_path_by_score.sort_score(total_path_subbus, pathdetails_subbus)
     # 이동불편지수 낮은 순 (sub)
-    fin_view_path_sub, fin_drf_path_sub = sort_path_by_score.sort_score(total_path_sub, pathdetails_sub)
+    if total_path_sub == None or pathdetails_sub == None:
+        pass
+    else:
+        fin_view_path_sub, fin_drf_path_sub = sort_path_by_score.sort_score(total_path_sub, pathdetails_sub)
     # 이동불편지수 낮은 순 (bus)
-    fin_view_path_bus, fin_drf_path_bus = sort_path_by_score.sort_score(total_path_bus, pathdetails_bus)
+    if total_path_bus == None or pathdetails_bus == None:
+        pass
+    else:
+        fin_view_path_bus, fin_drf_path_bus = sort_path_by_score.sort_score(total_path_bus, pathdetails_bus)
     # 이동불편지수 낮은 순 (전체)
-    total_path = total_path_subbus + total_path_sub + total_path_bus
+    total_path = sort_path_by_score.dict_to_list(total_path_subbus, total_path_sub, total_path_bus)
     total_pathdetails = pathdetails_subbus + pathdetails_sub + pathdetails_bus
-    fin_view_path, fin_drf_path = sort_path_by_score.sort_score(total_path, total_pathdetails)
+    if total_path == None or total_pathdetails == None:
+        pass
+    else:
+        fin_view_path, fin_drf_path = sort_path_by_score.sort_score(total_path, total_pathdetails)
 
     # drf 데이터 전달
     '''
@@ -494,12 +506,13 @@ if op_sort == 1:
     [3] fin_drf_path_bus
     '''
     fin_total_drf_path['tot'] = fin_drf_path
-    # fin_total_drf_path['sub'] = fin_drf_path_sub
-    # fin_total_drf_path['bus'] = fin_drf_path_bus
+    fin_total_drf_path['sub'] = fin_drf_path_sub
+    fin_total_drf_path['bus'] = fin_drf_path_bus
     fin_total_drf_path['subbus'] = fin_drf_path_subbus # -> 이동불편지수 [전체, 지하철, 버스, 버스 + 지하철]
 
     ''' final data '''
     send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
+    print(send_drf)
 
 
 elif op_sort == 2:

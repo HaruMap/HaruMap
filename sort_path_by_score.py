@@ -6,11 +6,10 @@ def sort_score(total_paths, drf_paths):
     paths = []
     scores = []
     sort_path = []
-
+    # print(total_paths)
     for idx in range(len(total_paths)):
         paths.append(total_paths[idx])
         scores.append(total_paths[idx]['score'])
-
     score_sorted = np.sort(scores) # 오름차순 정렬 (이동불편지수가 낮은 경로를 우선으로 정렬)
     score_sorted_idx = np.argsort(scores)
     paths_sorted = [paths[i] for i in score_sorted_idx]
@@ -63,3 +62,18 @@ def sort_walk(total_paths):
 # 최소 환승 순
 def sort_transfer(total_paths):
     return
+
+# total dict to list
+def dict_to_list(total_paths1, total_paths2, total_paths3):
+
+    cnt = 0
+    paths_sum = {}
+    
+    for path in total_paths1.values():
+        paths_sum[cnt] = path
+    for path in total_paths2.values():
+        paths_sum[cnt] = path
+    for path in total_paths3.values():
+        paths_sum[cnt] = path
+    
+    return paths_sum
