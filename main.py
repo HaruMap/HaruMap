@@ -471,7 +471,7 @@ if op_sort == 1:
 
     # 이동불편지수 낮은 순
     fin_view_path = sort_path_by_score.sort_score(total_path_subbus)
-    fin_drf_view_path = sort_path_by_core.sort_score(pathdetails)
+    fin_drf_view_path = sort_path_by_score.sort_score(pathdetails)
 
 elif op_sort == 2:
 
