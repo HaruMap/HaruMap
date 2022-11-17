@@ -50,12 +50,21 @@ cnt_path_sub, cnt_path_bus, cnt_path_subbus = 0, 0, 0 # 경로 수 초기화
 # ================================================ geocoding (대중교통 출발지/도착지) ================================================
 
 # geocoding -> 경로 수 : s_poi * e_poi 로 추후 수정
+        
+# 대중교통 유형별 모든 경로 저장
+pathdetails_subbus = []
+pathdetails_sub = []
+pathdetails_bus = []
+
 for s in s_poi:
     for e in e_poi:
+        print('= new s, e =')
+
         sx = geocoding.geocoding(s)[0]
         sy = geocoding.geocoding(s)[1]
         ex = geocoding.geocoding(e)[0]
         ey = geocoding.geocoding(e)[1]
+
         # print(sx, sy, ex, ey)
 
         # ================================================ 도보 경로 검색 ================================================
@@ -155,6 +164,7 @@ for s in s_poi:
                 # 'score' : 0
             }
             pathdetails.append(in_pathdetails)
+            pathdetails_sub.append(in_pathdetails)
             # print(pathdetails); print(); break
             # =============================================================================
 
@@ -262,6 +272,7 @@ for s in s_poi:
                 # 'score' : 0
             }
             pathdetails.append(in_pathdetails)
+            pathdetails_bus.append(in_pathdetails)
             # print(pathdetails); print(); break
             # =============================================================================
 
@@ -386,9 +397,12 @@ for s in s_poi:
                 'coor' : s_coor + coor_transport + e_coor,
                 # 'score' : 0
             }
+
             pathdetails.append(in_pathdetails)
+            pathdetails_subbus.append(in_pathdetails)
             # print(pathdetails); print() # ; break
             print(len(pathdetails))
+            print(len(pathdetails_subbus))
             # =============================================================================
 
             cnt_path_subbus += 1
