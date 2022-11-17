@@ -4,56 +4,6 @@ from avg_slope import getSlope
 from getRoadview import getImg
 from detect import detect
 
-'''[{'address_name': '서울 서대문구 대현동 11-1',
-  'category_group_code': '',
-  'category_group_name': '',
-  'category_name': '교육,학문 > 학교부속시설',
-  'distance': '',
-  'id': '1716999305',
-  'phone': '02-3277-2114',
-  'place_name': '이화여자대학교 연구협력관',
-  'place_url': 'http://place.map.kakao.com/1716999305',
-  'road_address_name': '서울 서대문구 이화여대길 52',
-  'x': '126.9497992174468',
-  'y': '37.56796693225186'},
-
-  [{'address_name': '서울 마포구 염리동 8-85',
-  'category_group_code': 'SW8',
-  'category_group_name': '지하철역',
-  'category_name': '교통,수송 > 지하철,전철 > 수도권2호선',
-  'distance': '',
-  'id': '21160628',
-  'phone': '02-6110-2411',
-  'place_name': '이대역 2호선',
-  'place_url': 'http://place.map.kakao.com/21160628',
-  'road_address_name': '서울 마포구 신촌로 지하 180',
-  'x': '126.94642954546576',
-  'y': '37.556814718869'},
-
-[{'address_name': '서울 용산구 동자동 43-205',
-  'category_group_code': '',
-  'category_group_name': '',
-  'category_name': '교통,수송 > 기차,철도 > 기차역 > KTX정차역',
-  'distance': '',
-  'id': '9113903',
-  'phone': '1544-7788',
-  'place_name': '서울역',
-  'place_url': 'http://place.map.kakao.com/9113903',
-  'road_address_name': '서울 용산구 한강대로 405',
-  'x': '126.970606917394',
-  'y': '37.5546788388674'}
-[{'address_name': '서울 중구 남대문로5가 541',
-  'category_group_code': 'PO3',
-  'category_group_name': '공공기관',
-  'category_name': '사회,공공기관 > 외국기관 > 대사관,영사관,외국공관',
-  'distance': '',
-  'id': '588112976',
-  'phone': '02-748-4114',
-  'place_name': '주한독일대사관',
-  'place_url': 'http://place.map.kakao.com/588112976',
-  'road_address_name': '서울 중구 한강대로 416',
-  'x': '126.97398152773339',
-  'y': '37.5552094173624'}, '''
 
 # op 경로탐색 옵션 { 0: 추천 (기본값), 4: 추천+대로우선, 10: 최단, 30: 최단거리+계단제외}
 s_t, s_d, s_coor, s_descrip, s_roadType = API_path_walk.path_walk(126.9497992174468,37.56796693225186,126.94642954546576 ,37.556814718869, op=30) # 출발지 -> 인근 출발 정류소 경로
