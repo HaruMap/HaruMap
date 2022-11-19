@@ -7,12 +7,12 @@ import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
 
-from models.experimental import attempt_load
-from utils.datasets import LoadStreams, LoadImages
-from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
+from walk.models.experimental import attempt_load
+from walk.utils.datasets import LoadStreams, LoadImages
+from walk.utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
     scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path
-from utils.plots import plot_one_box
-from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
+from walk.utils.plots import plot_one_box
+from walk.utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 parser = argparse.ArgumentParser(conflict_handler='resolve')
 parser.add_argument('--weights', nargs='+', type=str, default='C:/Project/haruzido/HaruMap/walk/last.pt', help='model.pt path(s)')
@@ -48,10 +48,10 @@ device = select_device(opt.device)
 half = device.type != 'cpu'  # half precision only supported on CUDA
 
 # Load model
-model = torch.load("C:/Project/haruzido/model.pt")#attempt_load(weights, map_location=device)  # load FP32 model
+#model = torch.load("C:/Project/haruzido/model.pt")#attempt_load(weights, map_location=device)  # load FP32 model
 #torch.save(model, f'./model.pt')
-stride = int(model.stride.max())  # model stride
-imgsz = check_img_size(imgsz, s=stride)  # check img_size
+#stride = int(model.stride.max())  # model stride
+#imgsz = check_img_size(imgsz, s=stride)  # check img_size
 
 
 #if trace:
@@ -61,7 +61,10 @@ if half:
     model.half()  # to FP16
 
 
-def detect(imageurl: str, save_img=False):
+def detect(model, imageurl: str, save_img=False):
+    stride = int(model.stride.max()) 
+    imgsz = check_img_size(640, s=stride) 
+
     parser.add_argument('--source', type=str, default=imageurl, help='source')  # file/folder, 0 for webcam
     opt = parser.parse_args()
     source = opt.source

@@ -15,8 +15,10 @@ import API_sub_congestion
 import sys
 import os
 import numpy as np
+import torch
 
-from walk import avg_slope_upgrade
+from walk import avg_slope_upgrade, finalwalk
+
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
@@ -130,6 +132,12 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 # fin_descrip = s_descrip + trans_descrip + e_descrip
                 fin_descrip = s_descrip + trans_description + e_descrip
 
+                # ===================================================================
+                # 도보 장애물
+                model = torch.load("C:/Project/haruzido/model.pt")
+                url = finalwalk.roadview(coor_walk) # url은 카카오로드뷰 url을 담은 리스트
+                # count = finalwalk.obD(model,url) # count는 경로에서 마주치는 장애물 개수 
+
                 total_path_sub[cnt_path_sub] = {
                     'info' : {
                         'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # 총 이동시간 (대기시간 아직 미포함)
@@ -149,7 +157,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
-                        'obstruction' : 0
+                        'obstruction' : count
                     },
                     'score' : 0 # 추후 이동불편지수 산출 후 값 넣기 & sort
                 }
@@ -244,6 +252,13 @@ def main(w_sx, w_sy, w_ex, w_ey):
                             continue
                         
                         bus_wait_time_classification = classification.classification_time_bus(bus_wait_time)
+                
+                # ===================================================================
+                # 도보 장애물
+                model = torch.load("C:/Project/haruzido/model.pt")
+                url = finalwalk.roadview(coor_walk) # url은 카카오로드뷰 url을 담은 리스트
+                # count = finalwalk.obD(model,url) # count는 경로에서 마주치는 장애물 개수 
+
 
                 total_path_bus[cnt_path_bus] = {
 
@@ -264,7 +279,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0,
                         'roadtype' : 0,
-                        'obstruction' : 0
+                        'obstruction' : count
                     },
                     'score' : 0
                 }
@@ -376,6 +391,12 @@ def main(w_sx, w_sy, w_ex, w_ey):
                             continue
                         
                         bus_wait_time_classification = classification.classification_time_bus(bus_wait_time)
+                
+                # ===================================================================
+                # 도보 장애물
+                model = torch.load("C:/Project/haruzido/model.pt")
+                url = finalwalk.roadview(coor_walk) # url은 카카오로드뷰 url을 담은 리스트
+                # count = finalwalk.obD(model,url) # count는 경로에서 마주치는 장애물 개수 
 
                 # ===================================================================
                 # 이동불편지수 산출 데이터
@@ -403,7 +424,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
-                        'obstruction' : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        'obstruction' : count
                     },
                     'score' : 0
                 }
@@ -443,11 +464,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 cnt_path_subbus += 1
 
-                '''
+                
                 # ========= API 요금 방지 ==========
                 break
                 # =================================
-                '''
+                
                 
 
         
@@ -599,7 +620,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
         ''' final data '''
         send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
-        # print(send_drf)
+        print(send_drf)
 
         return send_drf
 
