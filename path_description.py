@@ -58,14 +58,23 @@ def description_transport(path):
     # print(path['subPath'])
     # print()
     total_bus_info = []
+    total_sub_stationID = []
 
     # 이동 경로에서 각 구간마다 description 생성 후 return
     for p in path['subPath']:
         
-        # print(p)
-
         # subway
         if p['trafficType'] == 1:
+
+            # print(p)
+            # subway station ID 
+            '''
+            print(p['startID'])
+            print(p['endID'])
+            '''
+            startId = p['startID']
+            endID = p['endID']
+            total_sub_stationID.append((startId, endID))
             
             # 이동시간
             t = p['sectionTime']
@@ -136,5 +145,5 @@ def description_transport(path):
             # print(descrip); print()
 
             description.append(tuple(descrip))
-
-    return description, total_bus_info
+    
+    return description, total_bus_info, total_sub_stationID

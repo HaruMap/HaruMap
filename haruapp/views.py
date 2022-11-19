@@ -22,7 +22,9 @@ def getPathes(request):
     arrv_lat = request.GET['arrvlat']
     arrv_lng = request.GET['arrvlng']
 
+    print('start.')
     print(dep_lat, dep_lng, arrv_lat, arrv_lng)
+    print()
 
     result = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat)
     path1 = PathDetail([result])
