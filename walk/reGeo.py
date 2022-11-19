@@ -1,3 +1,4 @@
+print('Done. (here reGeo)')
 import pandas as pd
 import requests 
 import json
@@ -13,8 +14,9 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(
 import API.api
 
 def reGeo_function():
-    x=input('위도 : ')
-    y=input('경도 : ')
+    
+    x = input('위도 : ')
+    y = input('경도 : ')
 
     url =  'https://dapi.kakao.com/v2/local/geo/coord2address.json?x={0}&y={1}&input_coord=WGS84'.format(x, y)
     headers = {

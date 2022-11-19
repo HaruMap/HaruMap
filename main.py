@@ -12,11 +12,11 @@ import API_path_walk
 import API_path_transport
 import API_sub_congestion
 
-import walk
-
 import sys
 import os
 import numpy as np
+
+from walk import avg_slope_upgrade
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
@@ -144,7 +144,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'walk' : {
                         'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : 0,
+                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
                         'obstruction' : 0
                     },
@@ -387,7 +387,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'walk' : {
                         'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : 0,
+                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
                         'obstruction' : 0
                     },
@@ -537,7 +537,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
         ''' final data '''
         send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
-        print(send_drf[0])
+        # print(send_drf[0])
 
         return send_drf
 
