@@ -22,12 +22,13 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
 
 def main(w_sx, w_sy, w_ex, w_ey):
+
     # ================================================ 출발지/도착지 입력 ================================================
 
     # 출발지/도착지 주소 입력
     # 출발지, 도착지 샘플
-    # w_sx, w_sy = 126.94700645685643, 37.5636066932157 # 이대 포스코관 
-    # w_ex, w_ey = 127.032734543897, 37.483588810333 # 서초구청
+    w_sx, w_sy = 126.94700645685643, 37.5636066932157 # 이대 포스코관 
+    w_ex, w_ey = 127.032734543897, 37.483588810333 # 서초구청
 
     # ================================================ 주변 정류소 POI ================================================
 
@@ -466,7 +467,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
     '''
 
     # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
-    op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도보, 4:환승) : '))
+    # op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도보, 4:환승) : '))
+    op_sort = 1
     print()
 
     # 최종 반환 경로
@@ -494,10 +496,20 @@ def main(w_sx, w_sy, w_ex, w_ey):
         # 이동불편지수 낮은 순 (전체)
         total_path = sort_path_by_score.dict_to_list(total_path_subbus, total_path_sub, total_path_bus)
         total_pathdetails = pathdetails_subbus + pathdetails_sub + pathdetails_bus
+        '''
+        print('total path :')
+        print(total_path)
+        print('total pathdetails :')
+        print(total_pathdetails)
+        '''
+        # print('len :', len(total_path))
+        # print('len :', len(total_pathdetails))
         if total_path == None or total_pathdetails == None:
             pass
         else:
             fin_view_path, fin_drf_path = sort_path_by_score.sort_score(total_path, total_pathdetails)
+            print('len :', len(fin_view_path))
+            print('len :', len(fin_drf_path))
 
         # drf 데이터 전달
         '''

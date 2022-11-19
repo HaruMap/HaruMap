@@ -7,6 +7,7 @@ def sort_score(total_paths, drf_paths):
     scores = []
     sort_path = []
     # print(total_paths)
+
     for idx in range(len(total_paths)):
         paths.append(total_paths[idx])
         scores.append(total_paths[idx]['score'])
@@ -68,12 +69,19 @@ def dict_to_list(total_paths1, total_paths2, total_paths3):
 
     cnt = 0
     paths_sum = {}
+    # print(total_paths1)
     
     for path in total_paths1.values():
         paths_sum[cnt] = path
+        cnt += 1
     for path in total_paths2.values():
         paths_sum[cnt] = path
+        cnt += 1
     for path in total_paths3.values():
         paths_sum[cnt] = path
+        cnt += 1
+    
+    print(cnt)
+    # print(paths_sum.keys())
     
     return paths_sum

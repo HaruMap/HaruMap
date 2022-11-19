@@ -15,12 +15,14 @@ import main
 @api_view(['GET'])
 def getPathes(request):
 
-    #쿼리 받아오는거 => runserver했을때 url: http://localhost:8000/haruapp/getPathes?deplat=38.7&deplng=127.5&arrvlat=37.8&arrvlng=128.5 
+    # 쿼리 받아오는거 => runserver했을때 url: http://localhost:8000/haruapp/getPathes?deplat=38.7&deplng=127.5&arrvlat=37.8&arrvlng=128.5
+
     dep_lat = request.GET['deplat']
     dep_lng = request.GET['deplng']
     arrv_lat = request.GET['arrvlat']
     arrv_lng = request.GET['arrvlng']
-    print(dep_lat,dep_lng,arrv_lat,arrv_lng)
+
+    print(dep_lat, dep_lng, arrv_lat, arrv_lng)
 
     result = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat)
     path1 = PathDetail([result])
