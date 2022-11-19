@@ -18,7 +18,7 @@ def getImg(x,y):
     ## 로드뷰 가져올 위경도
     lat,lng = [x,y]
     ## url에 접근한다.
-    url = 'file:///C:/Users/rjh09/Desktop/CAPSTONE/%EB%8F%84%EB%B3%B4/roadview.html' + "?lat="+str(lat)+"&lng="+str(lng) #roadview.html과 이 파일이 같은 경로에 있어야 함
+    url = 'http://localhost:8080/roadview.html' + "?lat="+str(lat)+"&lng="+str(lng) #roadview.html과 이 파일이 같은 경로에 있어야 함
     driver.get(url)
     driver.implicitly_wait(3)
     time.sleep(3)
