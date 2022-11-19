@@ -110,7 +110,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_transport = coordinate.coor_transport(path['subPath'])
                 coor_walk = s_coor + e_coor
 
-                trans_description, total_bus_info, total_sub_stationID = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
                 trans_descrip.append(trans_description)
                 # print('{0}) subway totalTime :'.format(idx), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
@@ -149,10 +149,12 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 totaldescription = []
                 totaldescription.append(('도보', round(s_t / 60)))
 
+                sub_linenum_cnt = 0
                 for t in resp_t:
                     # print(t)
                     if t[0] == 1:
-                        totaldescription.append(('지하철', t[1]))
+                        totaldescription.append(('지하철', t[1], int(total_linenum[sub_linenum_cnt])))
+                        sub_linenum_cnt += 1
                     elif t[0] == 2:
                         totaldescription.append(('버스', t[1]))
 
@@ -190,7 +192,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_transport = coordinate.coor_transport(path['subPath'])
                 coor_walk = s_coor + e_coor
 
-                trans_description, total_bus_info, total_sub_stationID = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
                 trans_descrip.append(trans_description)
                 # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
@@ -258,10 +260,12 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 totaldescription = []
                 totaldescription.append(('도보', round(s_t / 60)))
 
+                sub_linenum_cnt = 0
                 for t in resp_t:
                     # print(t)
                     if t[0] == 1:
-                        totaldescription.append(('지하철', t[1]))
+                        totaldescription.append(('지하철', t[1], int(total_linenum[sub_linenum_cnt])))
+                        sub_linenum_cnt += 1
                     elif t[0] == 2:
                         totaldescription.append(('버스', t[1]))
 
@@ -304,7 +308,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 path_loop.sub_avg_congestion(path['subPath'])
                 '''
 
-                trans_description, total_bus_info, total_sub_stationID = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
                 trans_descrip.append(trans_description)
                 # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
@@ -385,10 +389,12 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 totaldescription = []
                 totaldescription.append(('도보', round(s_t / 60)))
 
+                sub_linenum_cnt = 0
                 for t in resp_t:
-                    # print(t)
+                    # print(t) # -> 예 : (2, 11)
                     if t[0] == 1:
-                        totaldescription.append(('지하철', t[1]))
+                        totaldescription.append(('지하철', t[1], int(total_linenum[sub_linenum_cnt]))) # , sub_linenum))
+                        sub_linenum_cnt += 1
                     elif t[0] == 2:
                         totaldescription.append(('버스', t[1]))
 
@@ -468,7 +474,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
     # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
     # op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도보, 4:환승) : '))
-    op_sort = 3
+    op_sort = 1
     print()
 
     # 최종 반환 경로
@@ -520,7 +526,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
         ''' final data '''
         send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
-        # print(send_drf)
+        print(send_drf)
 
         return send_drf
 

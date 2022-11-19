@@ -8,11 +8,11 @@ def coor_transport(paths):
         # 지하철
         if path['trafficType'] == 1:
             for station in path['passStopList']['stations']:
-                coor.append((1, station['x'], station['y']))
+                coor.append((1, float(station['x']), float(station['y'])))
 
         # 버스
         elif path['trafficType'] == 2:
             for station in path['passStopList']['stations']:
-                coor.append((2, station['x'], station['y']))
+                coor.append((2, float(station['x']), float(station['y'])))
 
     return coor

@@ -75,7 +75,7 @@ def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
             
             x = obj['geometry']['coordinates'][0]
             y = obj['geometry']['coordinates'][1]
-            coor.append((3, x, y))
+            coor.append((3, float(x), float(y)))
 
             descrip.append(obj['properties']['description'])
 
@@ -84,7 +84,7 @@ def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
             for xy in obj['geometry']['coordinates']:
                 x = xy[0]
                 y = xy[1]
-                coor.append((3, x, y))
+                coor.append((3, float(x), float(y)))
             
             d += int(obj['properties']['distance'])
             t += int(obj['properties']['time'])

@@ -60,6 +60,8 @@ def description_transport(path):
     total_bus_info = []
     total_sub_stationID = []
 
+    total_linenum = []
+
     # 이동 경로에서 각 구간마다 description 생성 후 return
     for p in path['subPath']:
         
@@ -98,6 +100,8 @@ def description_transport(path):
             # print(descrip); print()
 
             description.append(tuple(descrip))
+
+            total_linenum.append(str(p['lane'][0]['subwayCode']))
             
 
         # bus 
@@ -145,5 +149,7 @@ def description_transport(path):
             # print(descrip); print()
 
             description.append(tuple(descrip))
+
+    # print(total_linenum)
     
-    return description, total_bus_info, total_sub_stationID
+    return description, total_bus_info, total_sub_stationID, total_linenum
