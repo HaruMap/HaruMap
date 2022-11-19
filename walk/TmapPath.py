@@ -20,17 +20,15 @@ def coor2img(coor, imglist):
             if j == 0:
                 imglist.append(left)
                 imglist.append(right)
+
             else:
                 #중복제거
+                leftflag, rightflag = 'True', 'True'
                 for existurl in imglist:
-                    if left[25:-9] not in existurl:
-                        leftflag = 'True'
-                    else:
+                    if left[25:-9] in existurl:
                         leftflag = 'False'
 
-                    if right[25:-9] not in existurl:
-                        rightflag = 'True'
-                    else:
+                    if right[25:-9] in existurl:
                         rightflag = 'False'
 
                 if leftflag == 'True':
@@ -38,10 +36,8 @@ def coor2img(coor, imglist):
                 if rightflag == 'True':
                     imglist.append(right)
         except:
-            print('shit')
             continue
                 
-
 def getObj(imglist, obj):
     for url in imglist:
         obj_dict = detect(url) #로드뷰에서 물체정보 dict 받아옴
@@ -84,7 +80,6 @@ for i in searchOpt:
     print("경로상 로드뷰 이미지\n",image)
     totalImage.append(image)
 
-
 # =============================== 3. Object Detection ===============================
     totalObs = 0
     obs = {}
@@ -98,22 +93,22 @@ for i in searchOpt:
     print("경로에서 마주치는 총 장애물 개수: ", obj)
     totalObj.append(obj)
 
-    # totalObs = s_obj + e_obj
-
 # =============================== 4. 전체 경로 경사도 얻기 ===============================
     slope = []
     totalSlope.append(getSlope(Coord))
     # totalSlope.append(slope)
 
+# =============================== 5. 전체 경로 출력 ===============================
 list = ['추천', '추천+대로우선','최단', '최단거리+계단제외']
-
 print(f'\n================ {depart}부터 {dest}까지의 경로 ================')
 for i in range(len(list)):
+    print('======== ', list[i], '========')
     print('전체 거리: ', totalDist[i], 'km')
     print('전체 소요시간: ', totalTime[i],'min')
     print('전체 노면 정보: ', totalRoad[i])
     print('전체 좌표: ', totalCoord[i],)
     print('경로 설명: ', totalDescrip[i])
+    print('로드뷰 이미지: ', totalImage[i])
     print('총 장애물 수: ', totalObj[i])
     print('총 경사도: ', totalSlope[i])
     print('================================================================\n')
