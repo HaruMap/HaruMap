@@ -403,7 +403,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
-                        'obstruction' : 0
+                        'obstruction' : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     },
                     'score' : 0
                 }

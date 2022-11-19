@@ -15,7 +15,7 @@ from utils.plots import plot_one_box
 from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 parser = argparse.ArgumentParser(conflict_handler='resolve')
-parser.add_argument('--weights', nargs='+', type=str, default='last.pt', help='model.pt path(s)')
+parser.add_argument('--weights', nargs='+', type=str, default='C:/Project/haruzido/HaruMap/walk/last.pt', help='model.pt path(s)')
 parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
 parser.add_argument('--conf-thres', type=float, default=0.25, help='object confidence threshold')
 parser.add_argument('--iou-thres', type=float, default=0.45, help='IOU threshold for NMS')
@@ -48,13 +48,14 @@ device = select_device(opt.device)
 half = device.type != 'cpu'  # half precision only supported on CUDA
 
 # Load model
-model = attempt_load(weights, map_location=device)  # load FP32 model
+model = torch.load("C:/Project/haruzido/model.pt")#attempt_load(weights, map_location=device)  # load FP32 model
+#torch.save(model, f'./model.pt')
 stride = int(model.stride.max())  # model stride
 imgsz = check_img_size(imgsz, s=stride)  # check img_size
 
 
-if trace:
-    model = TracedModel(model, device, opt.img_size)
+#if trace:
+#    model = TracedModel(model, device, opt.img_size)
 
 if half:
     model.half()  # to FP16
