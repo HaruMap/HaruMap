@@ -145,7 +145,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'walk' : {
                         'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
                         'obstruction' : 0
                     },
@@ -390,7 +390,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'walk' : {
                         'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
                         'obstruction' : 0
                     },
