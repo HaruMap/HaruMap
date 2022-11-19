@@ -1,15 +1,15 @@
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.alert import Alert
 from reGeo import getReGeo
 
-def getSlope(x, y):
-    query_txt = getReGeo(x, y)
 
+def getSlope(walkpath_list):
     option = Options()
     option.add_argument("disable-infobars")
     option.add_argument("disable-extensions")
@@ -17,22 +17,37 @@ def getSlope(x, y):
     option.add_argument("headless")     # background 실행
     option.add_experimental_option("detach", True)
     option.add_experimental_option('excludeSwitches',['enable-logging'])
+    # s = Service(ChromeDriverManager().install())
+    # driver = webdriver.Chrome(service=s, options=option)
     driver = webdriver.Chrome('./chromedriver.exe', options=option)
 
     driver.get("https://webgis.neins.go.kr/popup/searchGCadastralPopup.do")
     time.sleep(1)
+    
+    new_addr = []
+    for i in range(len(walkpath_list)):
+        query_txt = getReGeo(walkpath_list[i][1], walkpath_list[i][0])
+        new_addr.append(query_txt)
+    
+    new_addr = set(new_addr)    # 주소 중복 제거
+    new_addr = list(new_addr)
+    
+    try:
+        for i in range(len(new_addr)):
+            query_txt = new_addr[i]
+            
+            driver.find_element(By.ID, "queryText").click()
+            element = driver.find_element(By.ID, "queryText")
+            element.send_keys(query_txt)
+            element.send_keys("\n")
+            time.sleep(1)
+            
+            # 담기 버튼
+            adress = driver.find_element(By.XPATH, '//*[@id="popupRatepoint"]/div[2]/div[3]/ul/li/a')
+            driver.execute_script("arguments[0].click();", adress)
+            time.sleep(0.5)
 
-    try: 
-        driver.find_element(By.ID, "queryText").click()
-        element = driver.find_element(By.ID, "queryText")
-        element.send_keys(query_txt)
-        element.send_keys("\n")
-        time.sleep(1)
-
-        # 담기 버튼
-        adress = driver.find_element(By.XPATH, '//*[@id="popupRatepoint"]/div[2]/div[3]/ul/li/a')
-        driver.execute_script("arguments[0].click();", adress)
-        time.sleep(0.5)
+            driver.find_element(By.ID, "queryText").clear()
 
         # 분석 버튼
         driver.find_element(By.CLASS_NAME, 'popup_submit').click()
@@ -81,18 +96,12 @@ def getSlope(x, y):
         elif result >= 10:
             slope_class = 3
 
-        # 결과(평균 경사도, 경사도 class) 출력
-        #print(result)
-        return(slope_class)
+        ten_over = 0
+        for i in range(5):
+            if temp_int[i+3] > 0:
+                ten_over += temp_int[i+3]
+        
+        return slope_class, ten_over
 
     except:
         return("x")
-
-# a = [[37.5629489890138, 126.9475600537903], [37.56304897395293, 126.94736840176604], [37.562296279226665, 126.94711844582949], [37.56219073161583, 126.94687680417238], [37.56061866593298, 126.94541031561539], [37.55998818498755, 126.94548254907482], [37.55993541493839, 126.94557143135383], [37.55984098023148, 126.94550199590753], [37.55712185978877, 126.94593814411803], [37.556969108231414, 126.94641032762054]]
-# slope = []
-
-# for i in range(len(a)):
-#     print(i+1,'/',len(a), end=' ')
-#     slope.append(getSlope(a[i][1], a[i][0]))
-
-# print(slope)
