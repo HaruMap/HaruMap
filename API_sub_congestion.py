@@ -14,11 +14,12 @@ import API.api
 # updn: 상행/내선 : 0 or 하행/외선 : 1
 # mm: 분 (10분 단위)
 
-# input: sub_congestion(555, 'MON', '07', 1, '50') # 광화문
+# input: sub_congestion(555, 'MON', 7, 1, 48) # 광화문
 # output: [3, 9, 18, 10, 7, 10, 7, 3]
 
 def sub_congestion(station_id, dow, hh, updown, mm):
     stationCode = station_id
+    mm = 10*(mm // 10)
 
     if updown == 1:
         updn = 0
