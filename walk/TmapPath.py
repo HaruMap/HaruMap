@@ -1,7 +1,7 @@
 from path import getPath
 from getRoadview import getImg
 from detect import detect
-from slopeUp import getSlope
+from avg_slope import getSlope
 
 # import requests
 # import json
@@ -15,16 +15,32 @@ from slopeUp import getSlope
 
 def coor2img(coor, imglist):
     for j in range(len(coor)):
-            try:
-                left, right = getImg(coor[j][0], coor[j][1])
+        try:
+            left, right = getImg(coor[j][0], coor[j][1])
+            if j == 0:
+                imglist.append(left)
+                imglist.append(right)
+            else:
                 #중복제거
                 for existurl in imglist:
                     if left[25:-9] not in existurl:
-                        imglist.append(left)
+                        leftflag = 'True'
+                    else:
+                        leftflag = 'False'
+
                     if right[25:-9] not in existurl:
-                        imglist.append(right)
-            except:
-                continue
+                        rightflag = 'True'
+                    else:
+                        rightflag = 'False'
+
+                if leftflag == 'True':
+                    imglist.append(left)
+                if rightflag == 'True':
+                    imglist.append(right)
+        except:
+            print('shit')
+            continue
+                
 
 def getObj(imglist, obj):
     for url in imglist:
