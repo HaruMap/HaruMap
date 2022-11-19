@@ -31,10 +31,48 @@ def change_subway(df):
     
     return df
 
+
+# 호선 변경
+def sub_line(total_linenum):
+    if total_linenum == '1':
+        subLine = '1001'
+    elif total_linenum == '2':
+        subLine = '1002'
+    elif total_linenum == '3':
+        subLine = '1003'
+    elif total_linenum == '4':
+        subLine = '1004'
+    elif total_linenum == '5':
+        subLine = '1005'
+    elif total_linenum == '6':
+        subLine = '1006'
+    elif total_linenum == '7':
+        subLine = '1007'
+    elif total_linenum == '8':
+        subLine = '1008'
+    elif total_linenum == '9':
+        subLine = '1009'
+    elif total_linenum == '경의중앙선':
+        subLine = '1063'
+    elif total_linenum == '공항철도':
+        subLine = '1065'
+    elif total_linenum == '수인분당선':
+        subLine = '1075'
+    elif total_linenum == '우이신설선':
+        subLine = '1092'
+    
+    return subLine
+
 # 지하철 대기시간 (단위 : sec)
-def get_sub_wt(stationName, subLine, updnline): # ('이대역', 1002, 0 or 1)
+def get_sub_wt(stationName, total_linenum, updown): # ('이대', '2', 1 or 2)
 
     sub_arrival = API_sub_arrival.get_sub_real_time(stationName)
+
+    if updown == 1:
+        updnline = 0
+    
+    elif updown == 2:
+        updnline = 1
 
     statnId = []
     subwayId = []
@@ -64,7 +102,7 @@ def get_sub_wt(stationName, subLine, updnline): # ('이대역', 1002, 0 or 1)
     df2 = df2.replace({'상하행선구분' : '내선'}, 0)
     df2 = df2.replace({'상하행선구분' : '외선'}, 1)
 
-    subid = subLine
+    subid = sub_line(total_linenum)
     updn = updnline
 
     sql = "select * from df2 where 지하철호선ID="+str(subid)+" and 상하행선구분=\'"+str(updn)+"\'"

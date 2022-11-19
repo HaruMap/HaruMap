@@ -7,13 +7,24 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
 
 # SKopenAPI 지하철 혼잡도
-# stationCode: 역사코드
+# station_id: 역사코드
 # dow: 요일
 # hh: 시간
+# updown: 1 : 상행, 2: 하행
 # updn: 상행/내선 : 0 or 하행/외선 : 1
 # mm: 분 (10분 단위)
 
-def sub_congestion(stationCode, dow, hh, updn, mm):
+# input: sub_congestion(555, 'MON', '07', 1, '50') # 광화문
+# output: [3, 9, 18, 10, 7, 10, 7, 3]
+
+def sub_congestion(station_id, dow, hh, updown, mm):
+    stationCode = station_id
+
+    if updown == 1:
+        updn = 0
+    
+    elif updown == 2:
+        updn = 1
 
     if mm == 0:
         mm = '00'
