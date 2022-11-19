@@ -112,12 +112,13 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 trans_descrip = []
                 trans_t = []
+                # updown = [] # 1 : 상행, 2 : 하행 
 
                 # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
                 coor_transport = coordinate.coor_transport(path['subPath'])
                 coor_walk = s_coor + e_coor
 
-                trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
                 # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
                 # print('{0}) subway totalTime :'.format(idx), path_time.totaltime(path))
@@ -183,11 +184,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 cnt_path_sub += 1
 
-                '''
+                
                 # ========= API 요금 방지 ==========
                 break
                 # =================================
-                '''
+                
 
             # =============================================================
             # 버스
@@ -202,7 +203,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_transport = coordinate.coor_transport(path['subPath'])
                 coor_walk = s_coor + e_coor
 
-                trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
                 # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
                 # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
@@ -297,11 +298,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 cnt_path_bus += 1
 
-                '''
+                
                 # ========= API 요금 방지 ==========
                 break
                 # =================================
-                '''
+                
 
             # =============================================================
             # 지하철 + 버스
@@ -321,13 +322,20 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 path_loop.sub_avg_congestion(path['subPath'])
                 '''
 
-                trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
                 # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
                 # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
                 # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
                 trans_t.append(sub_t + bus_t + walk_t)
+
+                ''' 지하철 상하행 & 역코드 '''
+                '''
+                print(updown) # 상하행
+                print(total_linenum) # 노선
+                print(total_sub_stationID) # 역코드
+                '''
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
                 fin_descrip = s_descrip + trans_descrip + e_descrip
@@ -439,12 +447,12 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 '''
                 
 
-        '''
+        
         # ========= API 요금 방지 ==========
             break
         break
         # =================================
-        '''
+        
         
 
     # ================================================ 샘플 경로 확인 ================================================
