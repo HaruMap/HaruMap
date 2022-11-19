@@ -27,8 +27,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
     # 출발지/도착지 주소 입력
     # 출발지, 도착지 샘플
-    w_sx, w_sy = 126.94691026823334, 37.56357962011273 # 목동역
-    w_ex, w_ey = 126.96299598267201, 37.559468202805974 # 충정로역
+    w_sx, w_sy = 126.9458512336349, 37.5567946331233 # 이대역
+    w_ex, w_ey = 127.02944282002197, 37.55740704697605 # 행당역
 
     # ================================================ 주변 정류소 POI ================================================
 
@@ -132,7 +132,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # 총 이동시간 (대기시간 아직 미포함)
                         'totaldescription' : [],
                         'description' : fin_descrip,
-                        'coordinate' : [s_coor] + [coor_transport] + [e_coor],
+                        'coordinate' : s_coor + coor_transport + e_coor,
                         'summary' : []
                     },
                     'subway' : {
@@ -172,7 +172,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'totaldescription' : totaldescription,
                     'description' : fin_descrip,
-                    'coor' : [s_coor] + [coor_transport] + [e_coor],
+                    'coor' : s_coor + coor_transport + e_coor,
                     # 'score' : 0
                 }
                 pathdetails.append(in_pathdetails)
@@ -182,11 +182,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 cnt_path_sub += 1
 
-                
+                '''
                 # ========= API 요금 방지 ==========
                 break
                 # =================================
-                
+                '''
 
             # =============================================================
             # 버스
@@ -246,7 +246,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                         'totaldescription' : [],
                         'description' : fin_descrip,
-                        'coordinate' : [s_coor] + [coor_transport] + [e_coor],
+                        'coordinate' : s_coor + coor_transport + e_coor,
                         'summary' : []
                     },
                     'bus' : {
@@ -285,7 +285,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'totaldescription' : totaldescription,
                     'description' : fin_descrip,
-                    'coor' : [s_coor] + [coor_transport] + [e_coor],
+                    'coor' : s_coor + coor_transport + e_coor,
                     # 'score' : 0
                 }
                 pathdetails.append(in_pathdetails)
@@ -295,11 +295,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 cnt_path_bus += 1
 
-                
+                '''
                 # ========= API 요금 방지 ==========
                 break
                 # =================================
-                
+                '''
 
             # =============================================================
             # 지하철 + 버스
@@ -370,7 +370,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                         'totaldescription' : [],
                         'description' : fin_descrip,
-                        'coordinate' : [s_coor] + [coor_transport] + [e_coor],
+                        'coordinate' : s_coor + coor_transport + e_coor,
                         'summary' : []
                     },
                     'subway' : {
@@ -416,7 +416,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
                     'totaldescription' : totaldescription,
                     'description' : fin_descrip,
-                    'coor' : [s_coor] + [coor_transport] + [e_coor],
+                    'coor' : s_coor + coor_transport + e_coor,
                     # 'score' : 0
                 }
 
@@ -429,11 +429,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 cnt_path_subbus += 1
 
-                
+                '''
                 # ========= API 요금 방지 ==========
                 break
                 # =================================
-                
+                '''
                 
 
         '''
