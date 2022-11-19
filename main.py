@@ -118,7 +118,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_walk = s_coor + e_coor
 
                 trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
-                trans_descrip.append(trans_description)
+                # trans_descrip.append(trans_description)
+                trans_descrip += trans_description
                 # print('{0}) subway totalTime :'.format(idx), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
                 # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
@@ -202,7 +203,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_walk = s_coor + e_coor
 
                 trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
-                trans_descrip.append(trans_description)
+                # trans_descrip.append(trans_description)
+                trans_descrip += trans_description
                 # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
                 # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
@@ -320,7 +322,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 '''
 
                 trans_description, total_bus_info, total_sub_stationID, total_linenum = path_description.description_transport(path) # 각 path 별 이동 description
-                trans_descrip.append(trans_description)
+                # trans_descrip.append(trans_description)
+                trans_descrip += trans_description
                 # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
                 # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
