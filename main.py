@@ -127,7 +127,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 trans_t.append(sub_t + bus_t + walk_t)
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
-                fin_descrip = s_descrip + trans_descrip + e_descrip
+                # fin_descrip = s_descrip + trans_descrip + e_descrip
+                fin_descrip = s_descrip + trans_description + e_descrip
 
                 total_path_sub[cnt_path_sub] = {
                     'info' : {
@@ -212,7 +213,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 trans_t.append(sub_t + bus_t + walk_t)
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
-                fin_descrip = s_descrip + trans_descrip + e_descrip
+                # fin_descrip = s_descrip + trans_descrip + e_descrip
+                fin_descrip = s_descrip + trans_description + e_descrip
 
                 # 버스 대기시간 누적 (환승 과정) 산출
                 # total_bus_info = [(버스 번호 리스트, 버스 출발 정류소명)]
@@ -338,7 +340,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 '''
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
-                fin_descrip = s_descrip + trans_descrip + e_descrip
+                # fin_descrip = s_descrip + trans_descrip + e_descrip
+                fin_descrip = s_descrip + trans_description + e_descrip
 
                 # 지하철 혼잡도 평균 산출
                 '''
@@ -406,7 +409,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 }
                 # ===================================================================
 
-                # =============================================================================
+                # ===================================================================
                 # drf 전달 데이터
                 totaldescription = []
                 totaldescription.append(('도보', round(s_t / 60)))
