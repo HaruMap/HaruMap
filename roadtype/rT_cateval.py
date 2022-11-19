@@ -3,15 +3,19 @@ def roadType_val(list):
     count=0
     res=0
     sum=0
-  
+    
+    #0 아닌 원소를 새 list에 append
     for j in range(len(list)):
         if list[j]!=0:
-            count+=1
             list_exc0.append(list[j])
-        if count>(len(list)/2):
+            # 24인 원소를 새기
+            if list[j]==24:
+                count+=1
+    
+    # 0빼고도 24인 원소가 반 이상이면 9.5 취급
+    if count>(len(list_exc0)/2):
             res=9.5
             return res
-
 
     for k in range(len(list_exc0)):
         if list_exc0[k]==23:
@@ -19,9 +23,9 @@ def roadType_val(list):
         elif list_exc0[k]==21:
             sum=sum+1.5
         elif list_exc0[k]==22:
-            sum=sum+3
+            sum=sum+5
         elif list_exc0[k]==24:
-            sum=sum+9.5
+            sum=sum+14
     
     res=sum/len(list_exc0)
 
