@@ -129,6 +129,19 @@ def getSlope(walkpath_list):
     
     except:
         return("x")
+    
+def getSlope_wheelCat(slopeCat):
+    if slopeCat[0] == 0:
+        return 0.5
+    elif slopeCat[0] == 1:
+        return 3
+    elif slopeCat[0] == 2:
+        return 5
+    elif slopeCat[0] == 3 and slopeCat[1]<30:
+        return 7
+    elif slopeCat[0] == 3 and slopeCat[1] >= 30:
+        return 99999
+
 
 def getSlope_wheelCat(slopeCat):
     if slopeCat[0] == 0:
