@@ -7,6 +7,7 @@ import classification
 import path_loop
 import coordinate
 import sort_path_by_score
+import sub_extra_descrpt
 import API_transport_poi
 import API_path_walk
 import API_path_transport
@@ -16,7 +17,7 @@ import sys
 import os
 import numpy as np
 
-from walk import avg_slope_upgrade
+# from walk import avg_slope_upgrade
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
@@ -118,7 +119,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_transport = coordinate.coor_transport(path['subPath'])
                 coor_walk = s_coor + e_coor
 
-                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown, end_exit_num = path_description.description_transport(path) # 각 path 별 이동 description
                 # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
                 # print('{0}) subway totalTime :'.format(idx), path_time.totaltime(path))
@@ -204,7 +205,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 coor_transport = coordinate.coor_transport(path['subPath'])
                 coor_walk = s_coor + e_coor
 
-                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown, end_exit_num = path_description.description_transport(path) # 각 path 별 이동 description
                 # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
                 # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
@@ -324,7 +325,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 path_loop.sub_avg_congestion(path['subPath'])
                 '''
 
-                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
+                trans_description, total_bus_info, total_sub_stationID, total_linenum, updown, end_exit_num = path_description.description_transport(path) # 각 path 별 이동 description
                 # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
                 # print('{0}) subbus totalTime :'.format(idx + 1), path_time.totaltime(path))
@@ -338,6 +339,13 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 print(total_linenum) # 노선
                 print(total_sub_stationID) # 역코드
                 '''
+                sub_fast_getout_list = [] # 지하철 빠른 하차칸 (예 - 4-1)
+                ''' 지하철 빠른 하차 '''
+                for idx in range(len(updown)):
+                    # print(total_sub_stationID[idx][-1], updown[idx], end_exit_num[idx])
+                    sub_fast_getout_list.append(sub_extra_descrpt.fast_getout(total_sub_stationID[idx][-1], int(updown[idx]) - 1, end_exit_num[idx]))
+                # print(sub_fast_getout_list) ################# -> 지하철 빠른 하차칸 path_description.description_transport 에 input 해서 description 에 반영해야 함
+                
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
                 # fin_descrip = s_descrip + trans_descrip + e_descrip
@@ -403,7 +411,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
-                        'obstruction' : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        'obstruction' : 0
                     },
                     'score' : 0
                 }
@@ -442,7 +450,6 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 # =============================================================================
 
                 cnt_path_subbus += 1
-
                 '''
                 # ========= API 요금 방지 ==========
                 break
@@ -450,12 +457,10 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 '''
                 
 
-        
         # ========= API 요금 방지 ==========
             break
         break
         # =================================
-        
         
 
     # ================================================ 샘플 경로 확인 ================================================

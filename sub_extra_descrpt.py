@@ -8,7 +8,9 @@ import pandas as pd
 from pandasql import sqldf
 
 def fast_getout(station_id, updn, exit_no):
-    getout = pd.read_csv('HaruMap\sub_fast.csv', encoding='UTF-8')
+    getout = pd.read_csv(r'C:\Users\user\Desktop\4-2\capstone\code\HaruMap\HaruMap\sub_fast.csv', encoding='UTF-8')
+    # print(getout.shape)
+    
     sql = f"select 빠른하차 from getout where 역코드={station_id} and 상하행={updn} and 출구 like '%{exit_no}번출구%'"
     df = sqldf(sql)
 
