@@ -1,3 +1,7 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+walk/yolov7/
+__pycache__/
+.idea/
+lib/
