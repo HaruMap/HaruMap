@@ -1,4 +1,5 @@
 import re
+import sub_extra_descrpt
 
 # 경로 description 정보
 
@@ -63,6 +64,20 @@ def description_transport(path):
     total_linenum = []
     updown = []
     end_exit_num = []
+    transfer_num = []
+    end_end = []
+    upupdndn = []
+
+    new_2 = list(
+            filter(lambda x: x.get('trafficType') == 1, path['subPath'])
+            )
+    for n in new_2:
+        end_end.append(n['endID'])
+        upupdndn.append(n['wayCode'])
+        try:
+            end_exit_num.append(n['endExitNo'])
+        except:
+            pass
 
     # 이동 경로에서 각 구간마다 description 생성 후 return
     for p in path['subPath']:
@@ -83,13 +98,19 @@ def description_transport(path):
             total_sub_stationID.append((startId, endID))
 
             # 지하철 출구 번호
-            try:
-                end_exit_num.append(p['endExitNo'])
-            except:
-                pass
+            # try:
+            #     end_exit_num.append(p['endExitNo'])
+            # except:
+            #     pass
+
+            # 빠른 환승
+            door = p['door']
+            if door != 'null':
+                transfer_num.append(door)
             
             # 상하행
             updown.append(p['wayCode'])
+
             # 이동시간
             t = p['sectionTime']
             # 경유수
@@ -101,6 +122,19 @@ def description_transport(path):
             for station in stations:
                 list_station.append(station['stationName'])
 
+            # 빠른하차
+            sub_fast_getout_list = [] # 지하철 빠른 하차칸 (예 - 4-1)
+            sub_fast_getout_list.append(sub_extra_descrpt.fast_getout(end_end[-1], upupdndn[-1] - 1, end_exit_num[0]))
+
+            # 승강기 위치 (출발역/환승역)
+            sub_lift_loc_start = [] 
+            sub_lift_loc_start.append(sub_extra_descrpt.lift_yn(p['startID']))
+
+            # 승강기 위치 (환승역/도착역)
+            sub_lift_loc_end = []
+            sub_lift_loc_end.append(sub_extra_descrpt.lift_yn(p['endID']))
+
+
             descrip = []
             descrip.append('지하철')
             descrip.append(p['lane'][0]['subwayCode'])
@@ -108,12 +142,17 @@ def description_transport(path):
             descrip.append(p['endName'])
             descrip.append(t)
             descrip.append(tuple(list_station))
+            descrip.append(tuple(sub_fast_getout_list))
+            descrip.append(tuple(transfer_num))
+            descrip.append(tuple(sub_lift_loc_start))
+            descrip.append(tuple(sub_lift_loc_end))
             # descrip = '지하철 : {0}, {1} 역, {2} 역, {3}, ({4})'.format(str(p['lane'][0]['subwayCode']), p['startName'], p['endName'], t, list_station)
             # print(descrip); print()
 
             description.append(tuple(descrip))
 
             total_linenum.append(str(p['lane'][0]['subwayCode']))
+            
             
 
         # bus 

@@ -360,6 +360,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                     # print(total_sub_stationID[idx][-1], updown[idx], end_exit_num[idx])
                     sub_fast_getout_list.append(sub_extra_descrpt.fast_getout(total_sub_stationID[idx][-1], int(updown[idx]) - 1, end_exit_num[idx]))
                 # print(sub_fast_getout_list) ################# -> 지하철 빠른 하차칸 path_description.description_transport 에 input 해서 description 에 반영해야 함
+
                 
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
@@ -367,9 +368,9 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 fin_descrip = s_descrip + trans_description + e_descrip
 
                 # 지하철 혼잡도 평균 산출
-                '''
-                avg_sub_congestion = path_loop.sub_avg_congestion(path['subPath'])
-                '''
+                
+                # avg_sub_congestion = path_loop.sub_avg_congestion(path['subPath'])
+                
 
                 # 버스 대기시간 누적 (환승 과정) 산출
                 # total_bus_info = [(버스 번호 리스트, 버스 출발 정류소명)]
