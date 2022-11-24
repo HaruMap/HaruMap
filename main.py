@@ -30,8 +30,8 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
     # 출발지/도착지 주소 입력
     # 출발지, 도착지 샘플
-    w_sx, w_sy = 126.9458512336349, 37.5567946331233 # 이대역
-    w_ex, w_ey = 127.02944282002197, 37.55740704697605 # 행당역
+    w_sx, w_sy = 126.94626996300867, 37.55682185433504 # 이대역
+    w_ex, w_ey = 126.97694743999308, 37.57104504631227 # 행당역
 
     # ================================================ 주변 정류소 POI ================================================
 
@@ -153,7 +153,7 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathtime' : classification.path_time(sub_t), # (단위 : min)
                         'service' : 0
                     },
-                    'walk' : {
+                    'walk' : { 
                         'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
