@@ -12,7 +12,7 @@ roadtype=[24, 24, 21, 21, 21, 21, 21, 0, 21, 21, 22, 0, 23]
  
 people={'time':0.0667, 'slope':0.5333, 'roadtype':0.1333, 'obs':0.2667} #wheel
 
-def get_walkscore(coor, people):
+def get_walkscore(coor, roadtype, people):
     # 경사도
     slope = getSlope(coor) 
 
@@ -27,7 +27,7 @@ def get_walkscore(coor, people):
     # 카테고리 변수
     slopecat = slope_val(slope) # 경사도
     obscat = obs_val(obscount,len(coor)) # 장애물
-    timecat = time_val(len(coor)) # 이동시간
+    timecat = time_val(len(coor)) # 이동시간 ----> 수정??
     roadcat = roadtype_val(roadtype)
 
     # 이동 불편 지수
