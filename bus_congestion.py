@@ -58,17 +58,21 @@ def busCon_result(arsId):
     bus_con_list = [arsId]
     bus_con_list.append(bus_list[0].find('stNm').text)
     for i in range(len(bus_list)):
-        div1 = int(bus_list[i].find('rerdie_Div1').text)
-        div2 = int(bus_list[i].find('rerdie_Div2').text)
-        bus1_num = int(bus_list[i].find('reride_Num1').text)
-        bus2_num = int(bus_list[i].find('reride_Num2').text)
-        list_part = [bus_list[i].find('rtNm').text, div1, bus1_num, div2, bus2_num]
-        bus_con_list.append(list_part)
+        try:
+            div1 = int(bus_list[i].find('rerdie_Div1').text)
+            div2 = int(bus_list[i].find('rerdie_Div2').text)
+            bus1_num = int(bus_list[i].find('reride_Num1').text)
+            bus2_num = int(bus_list[i].find('reride_Num2').text)
+            list_part = [bus_list[i].find('rtNm').text, div1, bus1_num, div2, bus2_num]
+            bus_con_list.append(list_part)
+        except:
+            pass
     
     return bus_con_list
 
 
-def getBusCon_all(bus_list):
+def getBusCon_all(arsId):
+    bus_list = busCon_result(arsId)
     bs_arsId = bus_list[0]  #정류소 고유번호(str)
     bs_name = bus_list[1]   #정류소 명(str)
     print('<', bs_arsId,'-', bs_name,'>')
@@ -82,7 +86,7 @@ def getBusCon_all(bus_list):
         if div1 == 0:
             print('첫번째 버스: 정보미제공')
         elif div1 == 1 or div1 == 2:
-            print('첫번째 버스 승차인원:', bus1_num, '명')
+            print('첫번째 버스 승차인원:', con1, '명')
         elif div1 == 3:
             print('첫번째 버스: 만차')
         else:
@@ -97,7 +101,7 @@ def getBusCon_all(bus_list):
         if div2 == 0:
             print('두번째 버스: 정보미제공')
         elif div2 == 1 or div2 == 2:
-            print('두번째 버스 승차인원:', bus2_num, '명')
+            print('두번째 버스 승차인원:', con2, '명')
         elif div2 == 3:
             print('두번째 버스: 만차')
         else:
@@ -109,7 +113,9 @@ def getBusCon_all(bus_list):
                 bus2_con = '혼잡'
             print('두번째 버스 혼잡도:', bus2_con)
 
-def getBusCon_cb(bus_list, bus_name):
+
+def getBusCon_cb(arsId, bus_name):
+    bus_list = busCon_result(arsId)
     bs_arsId = bus_list[0]  #정류소 고유번호(str)
     bs_name = bus_list[1]   #정류소 명(str)
     print('<', bs_arsId,'-', bs_name,'>')
@@ -124,7 +130,7 @@ def getBusCon_cb(bus_list, bus_name):
             if div1 == 0:
                 print('첫번째 버스: 정보미제공')
             elif div1 == 1 or div1 == 2:
-                print('첫번째 버스 승차인원:', bus1_num, '명')
+                print('첫번째 버스 승차인원:', con1, '명')
             elif div1 == 3:
                 print('첫번째 버스: 만차')
             else:
@@ -139,7 +145,7 @@ def getBusCon_cb(bus_list, bus_name):
             if div2 == 0:
                 print('두번째 버스: 정보미제공')
             elif div2 == 1 or div2 == 2:
-                print('두번째 버스 승차인원:', bus2_num, '명')
+                print('두번째 버스 승차인원:', con2, '명')
             elif div2 == 3:
                 print('두번째 버스: 만차')
             else:
@@ -150,8 +156,34 @@ def getBusCon_cb(bus_list, bus_name):
                 elif con2 == 5:
                     bus2_con = '혼잡'
                 print('두번째 버스 혼잡도:', bus2_con)
+                
 
+def bus_cong(arsId, bus_name):
+    bus_list = busCon_result(arsId)
+    bus1_con = int
+    con_score_dict = dict
+    for i in range(len(bus_list)-2):
+        if bus_name in bus_list[i+2][0]:
+            div1 = bus_list[i+2][1]
+            con1 = bus_list[i+2][2]
+            if div1 == 0:
+                bus1_con = 0
+            elif div1 == 1 or div1 == 2:
+                if con1 < 15:
+                    bus1_con = 1    #여유
+                elif con1 >= 15 and con1 < 20:
+                    bus1_con = 2    #보통
+                elif con1 >=20:
+                    bus1_con = 3    #혼잡
+            elif div1 == 3:
+                bus1_con = 4    #만차
+            else:
+                if con1 == 3:
+                    bus1_con = 1
+                elif con1 == 4:
+                    bus1_con = 2
+                elif con1 == 5:
+                    bus1_con = 3
 
-# print(busCon_result('13211'))
-# getBusCon_all(busCon_result('13211'))
-getBusCon_cb(busCon_result('13211'), '742')
+    return bus1_con
+

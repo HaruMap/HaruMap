@@ -43,7 +43,7 @@ def getSlope(walkpath_list):
     option.add_experimental_option('excludeSwitches',['enable-logging'])
     # s = Service(ChromeDriverManager().install())
     # driver = webdriver.Chrome(service=s, options=option)
-    driver = webdriver.Chrome(executable_path='C:\Project\haruzido\HaruMap\chromedriver.exe', options=option)
+    driver = webdriver.Chrome(executable_path='chromedriver.exe', options=option)
 
     driver.get("https://webgis.neins.go.kr/popup/searchGCadastralPopup.do")
     time.sleep(1)

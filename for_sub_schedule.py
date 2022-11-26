@@ -8,7 +8,7 @@ from pandasql import sqldf
 
 def st_id_change(total_sub_stationID):
 
-    change_ID = pd.read_csv('HaruMap\sub_info.csv', encoding='euc-kr')
+    change_ID = pd.read_csv('sub_info.csv', encoding='euc-kr')
 
     a = []
     b = []
@@ -22,20 +22,20 @@ def st_id_change(total_sub_stationID):
 
     for i in range(len(stations_list)):
         for_sql_1 = stations_list['startID'][i]
-        sql1 = f"select 전철역코드 from change_ID where 외부코드 = {for_sql_1}"
+        sql1 = f"select 전철역명 from change_ID where 외부코드 = {for_sql_1}"
 
         beta1 = sqldf(sql1)
-        value = beta1['전철역코드'][0]
+        value = beta1['전철역명'][0]
         start_list.append(str(value))
 
     end_list = []
 
     for i in range(len(stations_list)):
         for_sql_2 = stations_list['endID'][i]
-        sql2 = f"select 전철역코드 from change_ID where 외부코드 = {for_sql_2}"
+        sql2 = f"select 전철역명 from change_ID where 외부코드 = {for_sql_2}"
 
         beta2 = sqldf(sql2)
-        value = beta2['전철역코드'][0]
+        value = beta2['전철역명'][0]
         end_list.append(str(value))
 
     final_stcd = []

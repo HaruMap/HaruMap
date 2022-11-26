@@ -1,8 +1,8 @@
 import API_path_walk
 
-from avg_slope import getSlope
-from getRoadview import getImg
-from detect import detect
+from walk.avg_slope_upgrade import getSlope
+from walk.getRoadview import getImg
+from walk.detect import detect
 
 
 # op 경로탐색 옵션 { 0: 추천 (기본값), 4: 추천+대로우선, 10: 최단, 30: 최단거리+계단제외}
@@ -22,22 +22,6 @@ except:
 #                 23: 차량 통행이 불가능한 보행자도로,
 #                 24: 쾌적하지 않은 도로
 
-print("-------------------------------- 출발지-근처 정류장까지의 정보 --------------------------------")
-print("전체 보행좌표: ", s_coor)
-print('전체 노면 정보: ', s_roadType)
-print('전체 거리: ', s_d, 'km')
-print('전체 소요시간: ', s_t,'min')
-print('길 안내 정보: ',s_descrip)
-
-print("\n\n-------------------------------- 근처 정류장-도착지까지의 정보 --------------------------------")
-print("전체 보행좌표: ", e_coor)
-print('전체 노면 정보: ', e_roadType)
-print('전체 거리: ', e_d, 'km')
-print('전체 소요시간: ', e_t,'min')
-print('길 안내 정보: ',e_descrip)
-print('\n')
-
-# =============================== 1. 전체 경로 경사도 얻기 ===============================
 s_slope, e_slope = [], []
 
 def coor2slope(coor, slopeList):

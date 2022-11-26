@@ -20,13 +20,7 @@ import API.api
 def sub_congestion(station_id, dow, hh, updown, mm):
     stationCode = station_id
     mm = 10*(mm // 10)
-
-    if updown == 1:
-        updn = 0
-    
-    elif updown == 2:
-        updn = 1
-
+    updn = updown
     if mm == 0:
         mm = '00'
     

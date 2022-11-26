@@ -2,6 +2,7 @@ import datetime
 import day
 import API_sub_congestion
 from datetime import date
+import classification
 
 now = datetime.datetime.now()
 # print(now)
@@ -34,13 +35,13 @@ def sub_avg_congestion(paths):
             congestion_ = API_sub_congestion.sub_congestion(stationCode, d, h, updown, m) # 추후 대기시간 반영
             cnt += 1
             
-            sum_congestion += congestion_
+            min_cong = min(congestion_)
+            sum_congestion.append(min_cong)
             # print(congestion_)
 
-    # print(sum_congestion)
-    avg_congestion = [sum_congestion[idx] / cnt for idx in range(len(sum_congestion))]
+    max_cong = max(sum_congestion)
     # print(avg_congestion)
 
-    return avg_congestion
+    return max_cong
         
 

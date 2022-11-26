@@ -12,7 +12,7 @@ options = webdriver.ChromeOptions()
 # 창 숨기는 옵션 추가
 options.add_argument("headless")
 # driver = webdriver.Chrome(executable_path='C:\Project\haruzido\HaruMap\walk\chromedriver.exe', options=options)
-driver = webdriver.Chrome(executable_path='C:\Project\haruzido\HaruMap\chromedriver.exe', options=options)
+driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
 
 def getImg(x,y):
 

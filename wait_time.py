@@ -64,88 +64,81 @@ def sub_line(total_linenum):
     return subLine
 
 # 지하철 대기시간 (단위 : sec)
-def get_sub_wt(stationName, total_linenum, updown): # ('이대', '2', 1 or 2)
-
-    sub_arrival = API_sub_arrival.get_sub_real_time(stationName)
-
-    if updown == 1:
-        updnline = 0
-    
-    elif updown == 2:
-        updnline = 1
-
-    statnId = []
-    subwayId = []
-    statnNm = []
-    updnLine = []
-    barvlDt = []
-    recptnDt = []
-    arvlMsg2 = []
-    arvlMsg3 = []
-    arvlCd = [] # (0:진입, 1:도착, 2:출발, 3:전역출발, 4:전역진입, 5:전역도착, 99:운행중)
-
-    for u in sub_arrival['realtimeArrivalList']:
-        statnId.append(u['statnId'])
-        subwayId.append(u['subwayId'])
-        statnNm.append(u['statnNm'])
-        updnLine.append(u['updnLine'])
-        barvlDt.append(u['barvlDt'])
-        recptnDt.append(u['recptnDt'])
-        arvlMsg2.append(u['arvlMsg2'])
-        arvlMsg3.append(u['arvlMsg3'])
-        arvlCd.append(u['arvlCd'])
-
-    df2 = pd.DataFrame({'지하철역ID':statnId, '지하철호선ID':subwayId, '지하철역명':statnNm, '상하행선구분': updnLine, '열차도착예정시간 (초)': barvlDt, '열차도착정보를 생성한 시각': recptnDt, '첫번째도착메세지': arvlMsg2, '두번째도착메세지': arvlMsg3, '도착코드': arvlCd})
-
-    df2 = df2.replace({'상하행선구분' : '상행'}, 0)
-    df2 = df2.replace({'상하행선구분' : '하행'}, 1)
-    df2 = df2.replace({'상하행선구분' : '내선'}, 0)
-    df2 = df2.replace({'상하행선구분' : '외선'}, 1)
-
-    subid = sub_line(total_linenum)
-    updn = updnline
-
-    sql = "select * from df2 where 지하철호선ID="+str(subid)+" and 상하행선구분=\'"+str(updn)+"\'"
-
-    # f_data = sqldf("select * from df2 where 지하철호선ID=1006 and 상하행선구분='상행'")
-    f_data = sqldf(sql) # dataframe
-
-    date_time_str = f_data['열차도착정보를 생성한 시각'][0][:-2]
-
-    date_time = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
-
-    second_eta = []
-    eeta = []
-
-    for i in range(len(f_data)):
-        eta = f_data['열차도착예정시간 (초)'][i]
-        eta = int(eta)
-
-        arrival_time = date_time + relativedelta(seconds=eta)
-        second_eta.append(arrival_time)
-        eeta.append(i+1)
-    
-    ETA = pd.DataFrame({'지하철':eeta, '도착시간':second_eta})
-    arrival_time = ETA['도착시간'].apply(lambda dt: datetime(dt.year, dt.month, dt.day, dt.hour,10*(dt.minute // 10)))
-
-    f_data = change_subway(f_data)
-
-    wait_time = f_data['열차도착예정시간 (초)']
-    wait_line = list(f_data['지하철호선ID'])
-    wait_updn = list(f_data['상하행선구분'])
-    wait_time = list(wait_time)
-
-    wait_Time = []
-
-    for i in range(len(wait_time)):
-        wait_Time.append(int(wait_time[i]))
+def get_sub_wt(stationName, total_linenum, updn): # ('이대', '2', 1 or 2)
 
     wait_sub = []
     
-    for i in range(len(wait_Time)):
-        wait_sub.append((wait_line[i], wait_updn[i], arrival_time[i], wait_Time[i]))
+    for st in range(len(stationName)):
+        sub_arrival = API_sub_arrival.get_sub_real_time(stationName[st][0])
 
-    return wait_sub # [('2호선', '내선', Timestamp('2022-11-04 16:00:00'), 169), ('2호선', '내선', Timestamp('2022-11-04 16:00:00'), 410)] 이런 식으로 결과 나옴!
+        statnId = []
+        subwayId = []
+        statnNm = []
+        updnLine = []
+        barvlDt = []
+        recptnDt = []
+        arvlMsg2 = []
+        arvlMsg3 = []
+        arvlCd = [] # (0:진입, 1:도착, 2:출발, 3:전역출발, 4:전역진입, 5:전역도착, 99:운행중)
+
+        for u in sub_arrival['realtimeArrivalList']:
+            statnId.append(u['statnId'])
+            subwayId.append(u['subwayId'])
+            statnNm.append(u['statnNm'])
+            updnLine.append(u['updnLine'])
+            barvlDt.append(u['barvlDt'])
+            recptnDt.append(u['recptnDt'])
+            arvlMsg2.append(u['arvlMsg2'])
+            arvlMsg3.append(u['arvlMsg3'])
+            arvlCd.append(u['arvlCd'])
+
+        df2 = pd.DataFrame({'지하철역ID':statnId, '지하철호선ID':subwayId, '지하철역명':statnNm, '상하행선구분': updnLine, '열차도착예정시간 (초)': barvlDt, '열차도착정보를 생성한 시각': recptnDt, '첫번째도착메세지': arvlMsg2, '두번째도착메세지': arvlMsg3, '도착코드': arvlCd})
+
+        df2 = df2.replace({'상하행선구분' : '상행'}, 0)
+        df2 = df2.replace({'상하행선구분' : '하행'}, 1)
+        df2 = df2.replace({'상하행선구분' : '내선'}, 0)
+        df2 = df2.replace({'상하행선구분' : '외선'}, 1)
+
+        subid = sub_line(total_linenum[st])
+
+        sql = "select * from df2 where 지하철호선ID="+str(subid)+" and 상하행선구분=\'"+str(updn[st]-1)+"\'"
+        # f_data = sqldf("select * from df2 where 지하철호선ID=1006 and 상하행선구분='상행'")
+        f_data = sqldf(sql) # dataframe
+
+        date_time_str = f_data['열차도착정보를 생성한 시각'][0][:-2]
+
+        date_time = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+
+        second_eta = []
+        eeta = []
+
+        for i in range(len(f_data)):
+            eta = f_data['열차도착예정시간 (초)'][i]
+            eta = int(eta)
+
+            arrival_time = date_time + relativedelta(seconds=eta)
+            second_eta.append(arrival_time)
+            eeta.append(i+1)
+        
+        ETA = pd.DataFrame({'지하철':eeta, '도착시간':second_eta})
+        arrival_time = ETA['도착시간'].apply(lambda dt: datetime(dt.year, dt.month, dt.day, dt.hour,10*(dt.minute // 10)))
+
+        f_data = change_subway(f_data)
+
+        wait_time = f_data['열차도착예정시간 (초)']
+        wait_line = list(f_data['지하철호선ID'])
+        wait_updn = list(f_data['상하행선구분'])
+        wait_time = list(wait_time)
+
+        wait_Time = []
+
+        for i in range(len(wait_time)):
+            wait_Time.append(int(wait_time[i]))
+        
+        for i in range(len(wait_Time)):
+            wait_sub.append( wait_Time[i])
+
+    return sum(wait_sub) # [('2호선', '내선', Timestamp('2022-11-04 16:00:00'), 169), ('2호선', '내선', Timestamp('2022-11-04 16:00:00'), 410)] 이런 식으로 결과 나옴!
 
 # 버스 대기시간 (단위 : sec)
 def get_bus_wt(stationID, lowBus):

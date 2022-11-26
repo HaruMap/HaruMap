@@ -203,4 +203,4 @@ def description_transport(path):
 
     # print(total_linenum)
     
-    return description, total_bus_info, total_sub_stationID, total_linenum, updown, end_exit_num
+    return description, total_bus_info, total_sub_stationID, total_linenum, updown

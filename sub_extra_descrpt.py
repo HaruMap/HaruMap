@@ -8,7 +8,7 @@ import pandas as pd
 from pandasql import sqldf
 
 def fast_getout(station_id, updn, exit_no):
-    getout = pd.read_csv(r'HaruMap\sub_fast.csv', encoding='UTF-8')
+    getout = pd.read_csv(r'sub_fast.csv', encoding='UTF-8')
     # print(getout.shape)
     
     sql = f"select 빠른하차 from getout where 역코드={station_id} and 상하행={updn} and 출구 like '%{exit_no}번출구%'"
@@ -30,7 +30,7 @@ def fast_getout(station_id, updn, exit_no):
 # station_id: 역코드
 
 def lift_yn(station_id):
-    y_or_no = pd.read_csv('HaruMap\sub_lifts.csv', encoding='euc-kr')
+    y_or_no = pd.read_csv('sub_lifts.csv', encoding='euc-kr')
     sql = f"select * from y_or_no where 역코드={station_id}"
     df = sqldf(sql)
 
