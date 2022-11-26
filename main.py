@@ -76,8 +76,9 @@ def walk_all(w_sx, w_sy, w_ex, w_ey, s_poi, e_poi):
                     }
     return walk_all_dict
 
-def main(w_sx, w_sy, w_ex, w_ey, user):
+def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
     user = int(user)
+    op_sort = int(op_sort)
 
     # ================================================ 출발지/도착지 입력 ================================================
 
@@ -536,7 +537,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
 
     # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
-    # op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도보, 4:환승) : '))
+    # op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 4:도보, 3:환승) : '))
     op_sort = 1
     print()
 
@@ -638,8 +639,13 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
         print(send_drf)
 
         return send_drf
-
+        
     elif op_sort == 3:
+
+        # 최소 환승 순
+        fin_view_path_subbus = sort_path_by_score.sort_transfer(total_path_subbus)
+
+    elif op_sort == 4:
 
         # 최소 도보 순
 
@@ -687,10 +693,6 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
         return send_drf
 
-    elif op_sort == 4:
-
-        # 최소 환승 순
-        fin_view_path_subbus = sort_path_by_score.sort_transfer(total_path_subbus)
 
     '''
     print('sample path results :')
