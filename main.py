@@ -160,6 +160,23 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'roadtype' : 0,
                         'obstruction' : count
                     },
+                    '''
+                    'walk_s' : {
+                        'pathtime' : classification.path_time_walk(round((s_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : s_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(s_roadtype),
+                        'obstruction' : walk.obs_val(count),
+                        'walk_s_score' : score.get_walkscore(coor,s_roadtype,people), #세 para 입력
+                    },
+                    'walk_e' : {
+                        'pathtime' : classification.path_time_walk(round((e_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(e_roadtype),
+                        'obstruction' : walk.obs_val(count), #walk/category,,, count??
+                        'walk_e_score' : score.get_walkscore(coor,e_roadtype,people), #세 para 입력, walk/score
+                    },'''
                     'score' : 0 # 추후 이동불편지수 산출 후 값 넣기 & sort
                 }
 
@@ -282,6 +299,23 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'roadtype' : 0,
                         'obstruction' : count
                     },
+                     '''
+                    'walk_s' : {
+                        'pathtime' : classification.path_time_walk(round((s_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : s_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(s_roadtype),
+                        'obstruction' : walk.obs_val(count),
+                        'walk_s_score' : score.get_walkscore(coor,s_roadtype,people), #세 para 입력
+                    },
+                    'walk_e' : {
+                        'pathtime' : classification.path_time_walk(round((e_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(e_roadtype),
+                        'obstruction' : walk.obs_val(count), #walk/category,,, count??
+                        'walk_e_score' : score.get_walkscore(coor,e_roadtype,people), #세 para 입력, walk/score
+                    },'''
                     'score' : 0
                 }
 
@@ -435,6 +469,23 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'roadtype' : 0,
                         'obstruction' : count
                     },
+                     '''
+                    'walk_s' : {
+                        'pathtime' : classification.path_time_walk(round((s_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : s_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(s_roadtype),
+                        'obstruction' : walk.obs_val(count),
+                        'walk_s_score' : score.get_walkscore(coor,s_roadtype,people), #세 para 입력
+                    },
+                    'walk_e' : {
+                        'pathtime' : classification.path_time_walk(round((e_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(e_roadtype),
+                        'obstruction' : walk.obs_val(count), #walk/category,,, count??
+                        'walk_e_score' : score.get_walkscore(coor,e_roadtype,people), #세 para 입력, walk/score
+                    },'''
                     'score' : 0
                 }
                 # ===================================================================
