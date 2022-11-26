@@ -12,7 +12,7 @@ people={'time':0.1429, 'slope':0.5714, 'obs':0.2857}
 #1:8:2:4=1/8:1/1:1/4:1/2
 #1:4:2=1/4:1/1:1/2=0.1429:0.5714:0.2857      
 
-def get_walkscore(coor, roadtype, people):
+def get_walkscore(coor, people):
     # 경사도
     slope = getSlope(coor) 
 
