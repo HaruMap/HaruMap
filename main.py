@@ -30,8 +30,13 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
     # 출발지/도착지 주소 입력
     # 출발지, 도착지 샘플
+<<<<<<< HEAD
     w_sx, w_sy = 126.94626996300867, 37.55682185433504 # 이대역
     w_ex, w_ey = 126.97694743999308, 37.57104504631227 # 행당역
+=======
+    w_sx, w_sy = 126.94272978780354, 37.56132067013671 # 이대부고
+    w_ex, w_ey = 126.95414246013237, 37.545715866461855 # 공덕 초등학교
+>>>>>>> 83c74411af67370fca99f51785b325a2481d0a95
 
     # ================================================ 주변 정류소 POI ================================================
 
@@ -135,9 +140,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
                 # ===================================================================
                 # 도보 장애물
+                '''
                 model = torch.load("C:/Project/haruzido/model.pt")
                 url = finalwalk.roadview(coor_walk) # url은 카카오로드뷰 url을 담은 리스트
                 # count = finalwalk.obD(model,url) # count는 경로에서 마주치는 장애물 개수 
+                '''
 
                 total_path_sub[cnt_path_sub] = {
                     'info' : {
@@ -158,8 +165,25 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
-                        'obstruction' : count
+                        'obstruction' : 0, # count
                     },
+                    '''
+                    'walk_s' : {
+                        'pathtime' : classification.path_time_walk(round((s_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : s_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(s_roadtype),
+                        'obstruction' : walk.obs_val(count),
+                        'walk_s_score' : score.get_walkscore(coor,s_roadtype,people), #세 para 입력
+                    },
+                    'walk_e' : {
+                        'pathtime' : classification.path_time_walk(round((e_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(e_roadtype),
+                        'obstruction' : walk.obs_val(count), #walk/category,,, count??
+                        'walk_e_score' : score.get_walkscore(coor,e_roadtype,people), #세 para 입력, walk/score
+                    },'''
                     'score' : 0 # 추후 이동불편지수 산출 후 값 넣기 & sort
                 }
 
@@ -256,9 +280,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 
                 # ===================================================================
                 # 도보 장애물
+                '''
                 model = torch.load("C:/Project/haruzido/model.pt")
                 url = finalwalk.roadview(coor_walk) # url은 카카오로드뷰 url을 담은 리스트
                 # count = finalwalk.obD(model,url) # count는 경로에서 마주치는 장애물 개수 
+                '''
 
 
                 total_path_bus[cnt_path_bus] = {
@@ -280,8 +306,25 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0,
                         'roadtype' : 0,
-                        'obstruction' : count
+                        'obstruction' : 0, # count
                     },
+                     '''
+                    'walk_s' : {
+                        'pathtime' : classification.path_time_walk(round((s_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : s_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(s_roadtype),
+                        'obstruction' : walk.obs_val(count),
+                        'walk_s_score' : score.get_walkscore(coor,s_roadtype,people), #세 para 입력
+                    },
+                    'walk_e' : {
+                        'pathtime' : classification.path_time_walk(round((e_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(e_roadtype),
+                        'obstruction' : walk.obs_val(count), #walk/category,,, count??
+                        'walk_e_score' : score.get_walkscore(coor,e_roadtype,people), #세 para 입력, walk/score
+                    },'''
                     'score' : 0
                 }
 
@@ -403,9 +446,11 @@ def main(w_sx, w_sy, w_ex, w_ey):
                 
                 # ===================================================================
                 # 도보 장애물
+                '''
                 model = torch.load("C:/Project/haruzido/model.pt")
                 url = finalwalk.roadview(coor_walk) # url은 카카오로드뷰 url을 담은 리스트
                 # count = finalwalk.obD(model,url) # count는 경로에서 마주치는 장애물 개수 
+                '''
 
                 # ===================================================================
                 # 이동불편지수 산출 데이터
@@ -433,8 +478,25 @@ def main(w_sx, w_sy, w_ex, w_ey):
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
                         'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
                         'roadtype' : 0,
-                        'obstruction' : count
+                        'obstruction' : 0 # count
                     },
+                     '''
+                    'walk_s' : {
+                        'pathtime' : classification.path_time_walk(round((s_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : s_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(s_roadtype),
+                        'obstruction' : walk.obs_val(count),
+                        'walk_s_score' : score.get_walkscore(coor,s_roadtype,people), #세 para 입력
+                    },
+                    'walk_e' : {
+                        'pathtime' : classification.path_time_walk(round((e_t) / 60) + walk_t), # (단위 : min)
+                        'pathd' : e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : 0, # avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(coor_walk)),
+                        'roadtype' : walk.roadtype_val(e_roadtype),
+                        'obstruction' : walk.obs_val(count), #walk/category,,, count??
+                        'walk_e_score' : score.get_walkscore(coor,e_roadtype,people), #세 para 입력, walk/score
+                    },'''
                     'score' : 0
                 }
                 # ===================================================================
@@ -696,4 +758,5 @@ def main(w_sx, w_sy, w_ex, w_ey):
     print('Done.')
 
 
-main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333)
+return_val = main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333)
+print(return_val[0]['tot'])
