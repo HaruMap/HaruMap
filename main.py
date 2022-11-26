@@ -754,4 +754,4 @@ def main(w_sx, w_sy, w_ex, w_ey):
 
 
 return_val = main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333)
-print(return_val['tot'][0])
+print(return_val[0]['tot'])
