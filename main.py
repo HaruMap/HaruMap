@@ -19,7 +19,7 @@ import numpy as np
 import torch
 
 from walk import avg_slope_upgrade, finalwalk
-from bus_congestion import *
+from bus_congestion import bus_cong
 from path_loop import sub_avg_congestion
 from for_sub_schedule import st_id_change
 from walk.category import *
@@ -28,56 +28,15 @@ from walk.category import *
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import API.api
 
-def main(w_sx, w_sy, w_ex, w_ey, user):
-
-    # ================================================ 출발지/도착지 입력 ================================================
-
-    # 출발지/도착지 주소 입력
-    # 출발지, 도착지 샘플
-    w_sx, w_sy = 126.94272978780354, 37.56132067013671 # 이대부고
-    w_ex, w_ey = 126.95414246013237, 37.545715866461855 # 공덕 초등학교
-    
+def walk_all(w_sx, w_sy, w_ex, w_ey, s_poi, e_poi):
+    walk_all_dict = {}
     # ================================================ model ================================================
     model = torch.load("model.pt")
-
-    # ================================================ 주변 정류소 POI ================================================
-
-    # 주변 transport poi
-    # 출발지
-    s_poi = API_transport_poi.get_transport_poi(str(w_sx), str(w_sy), '1:2')
-    # 도착지
-    e_poi = API_transport_poi.get_transport_poi(str(w_ex), str(w_ey), '1:2')
-
-    # 출발지, 도착지 정류소명 확인
-    print('출발 정류소 :', s_poi)
-    print('도착 정류소 :', e_poi, '\n')
-
-    # ================================================ 모든 경로 담은 리스트 생성 (추후 이동불편지수 반영) ======================
-
-    total_path_sub = {} # 경로 초기화
-    total_path_bus = {}
-    total_path_subbus = {}
-    cnt_path_sub, cnt_path_bus, cnt_path_subbus = 0, 0, 0 # 경로 수 초기화
-
-    # ================================================ geocoding (대중교통 출발지/도착지) ================================================
-
-    # geocoding -> 경로 수 : s_poi * e_poi 로 추후 수정
-            
-    # 대중교통 유형별 모든 경로 저장
-    pathdetails_subbus = []
-    pathdetails_sub = []
-    pathdetails_bus = []
-
-    '''
-    print(geocoding.geocoding('이대역'))
-    print(geocoding.geocoding('강남역'))
-    s_poi = ['이대역']
-    e_poi = ['강남역']
-    '''
-
+    a = 0
     for s in s_poi:
         for e in e_poi:
             print(f's : {s} / e : {e}')
+            a += 1
 
             sx = geocoding.geocoding(s)[0]
             sy = geocoding.geocoding(s)[1]
@@ -98,6 +57,85 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
             s_descrip = path_description.description_ws(s_descrip)
             # 도보 (도착) description 형태 수정
             e_descrip = path_description.description_we(e_descrip)
+
+            
+            # ===================================================================
+            # 도보 장애물
+            s_url = finalwalk.roadview(s_coor) # url은 카카오로드뷰 url을 담은 리스트
+            e_url = finalwalk.roadview(e_coor) # url은 카카오로드뷰 url을 담은 리스트
+            s_count = finalwalk.obD(model,s_url) # count는 경로에서 마주치는 장애물 개수 
+            e_count = finalwalk.obD(model,e_url) # count는 경로에서 마주치는 장애물 개수 
+
+            walk_all_dict[s+e] = { 
+                        's_info' : [s_t, s_d, s_coor, s_descrip, s_roadType],
+                        'e_info' : [ e_t, e_d, e_coor, e_descrip, e_roadType],
+                        'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
+                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(s_coor)) + avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(e_coor)),
+                        'roadtype' : roadtype_val(s_roadType) + roadtype_val(e_roadType),
+                        'obstruction' : obs_val(s_count,s_t) + obs_val(e_count,e_t), # count
+                    }
+    return walk_all_dict
+
+def main(w_sx, w_sy, w_ex, w_ey, user):
+    user = int(user)
+
+    # ================================================ 출발지/도착지 입력 ================================================
+
+    # 출발지/도착지 주소 입력
+    # 출발지, 도착지 샘플
+    w_sx, w_sy = 126.94272978780354, 37.56132067013671 # 이대부고
+    w_ex, w_ey = 126.95414246013237, 37.545715866461855 # 공덕 초등학교
+
+    # ================================================ 주변 정류소 POI ================================================
+
+    # 주변 transport poi
+    # 출발지
+    s_poi = API_transport_poi.get_transport_poi(str(w_sx), str(w_sy), '1:2')
+    # 도착지
+    e_poi = API_transport_poi.get_transport_poi(str(w_ex), str(w_ey), '1:2')
+
+    # 출발지, 도착지 정류소명 확인
+    print('출발 정류소 :', s_poi)
+    print('도착 정류소 :', e_poi, '\n')
+
+    # ================================================ 도보 전체 list ================================================
+    walk_all_dict = walk_all(w_sx, w_sy, w_ex, w_ey, s_poi, e_poi)
+    walk_time = [1.0,0.94,0.69,1.25,0,0.84]
+    print("walk done")
+
+    # ================================================ 모든 경로 담은 리스트 생성 (추후 이동불편지수 반영) ======================
+
+    total_path_sub = {} # 경로 초기화
+    total_path_bus = {}
+    total_path_subbus = {}
+    cnt_path_sub, cnt_path_bus, cnt_path_subbus = 0, 0, 0 # 경로 수 초기화
+
+    # ================================================ geocoding (대중교통 출발지/도착지) ================================================
+
+    # geocoding -> 경로 수 : s_poi * e_poi 로 추후 수정
+            
+    # 대중교통 유형별 모든 경로 저장
+    pathdetails_subbus = []
+    pathdetails_sub = []
+    pathdetails_bus = []
+
+    for s in s_poi:
+        for e in e_poi:
+            print(f's : {s} / e : {e}')
+
+            sx = geocoding.geocoding(s)[0]
+            sy = geocoding.geocoding(s)[1]
+            ex = geocoding.geocoding(e)[0]
+            ey = geocoding.geocoding(e)[1]
+
+
+            # ================================================ 도보 경로 ================================================
+
+            try:
+                s_t, s_d, s_coor, s_descrip, s_roadType = walk_all_dict[s+e]["s_info"] # 출발지 -> 인근 출발 정류소 경로
+                e_t, e_d, e_coor, e_descrip, e_roadType =  walk_all_dict[s+e]["e_info"] # 인근 도착 정류소 -> 도착지 경로
+            except:
+                continue # 위/경도로 도보 경로가 반환되지 않는다면 cotinue (: 다음 경로 탐색)
 
             # ================================================ 대중교통 경로 검색 ================================================
 
@@ -122,11 +160,10 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
                 trans_descrip = []
                 trans_t = []
-                # updown = [] # 1 : 상행, 2 : 하행 
 
                 # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
                 coor_transport = coordinate.coor_transport(path['subPath'])
-                coor_walk = s_coor + e_coor
+
                 # description
                 trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
                 trans_descrip += trans_description
@@ -137,17 +174,14 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
                 # 도보 (출발) + 대중교통 + 도보 (도착)
                 fin_descrip = s_descrip + trans_description + e_descrip
 
-                # ===================================================================
-                # 도보 장애물
-                s_url = finalwalk.roadview(s_coor) # url은 카카오로드뷰 url을 담은 리스트
-                e_url = finalwalk.roadview(e_coor) # url은 카카오로드뷰 url을 담은 리스트
-                s_count = finalwalk.obD(model,s_url) # count는 경로에서 마주치는 장애물 개수 
-                e_count = finalwalk.obD(model,e_url) # count는 경로에서 마주치는 장애물 개수 
-
                 # =========================== 지하철 아이디 -> 이름 ========================================
                 stationName = st_id_change(total_sub_stationID)
                 
-                # ===================================================================
+                # =========================== 도보 이동 시간 =======================================
+                if walk_time[user] == 0:
+                    pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
+                else:
+                    pathtime = (s_d + e_d)*walk_time[user] + walk_t * 10
 
                 total_path_sub[cnt_path_sub] = {
                     'info' : {
@@ -163,11 +197,11 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
                         'pathtime' : classification.path_time(sub_t), # (단위 : min)
                     },
                     'walk' : { 
-                        'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
+                        'pathtime' : pathtime, # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(s_coor)) + avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(e_coor)),
-                        'roadtype' : roadtype_val(s_roadType) + roadtype_val(e_roadType),
-                        'obstruction' : obs_val(s_count,s_t) + obs_val(e_count,e_t), # count
+                        'slope' : walk_all_dict[s+e]["slope"],
+                        'roadtype' :  walk_all_dict[s+e]["roadtype"],
+                        'obstruction' :  walk_all_dict[s+e]["obstruction"], # count
                     },
                     'score' : 0 # 추후 이동불편지수 산출 후 값 넣기 & sort
                 }
@@ -220,14 +254,10 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
                 # coordinate (출발 도보, 대중교통, 도착 도보, type : list)
                 coor_transport = coordinate.coor_transport(path['subPath'])
-                coor_walk = s_coor + e_coor
 
                 trans_description, total_bus_info, total_sub_stationID, total_linenum, updown = path_description.description_transport(path) # 각 path 별 이동 description
-                # trans_descrip.append(trans_description)
                 trans_descrip += trans_description
-                # print('{0}) bus totalTime :'.format(idx), path_time.totaltime(path))
                 sub_t, bus_t, walk_t, resp_t = path_time.subtime(path)
-                # print('sub_t, bus_t, walk_t :', (sub_t, bus_t, walk_t))
                 trans_t.append(sub_t + bus_t + walk_t)
 
                 # 도보 (출발) + 대중교통 + 도보 (도착)
@@ -264,12 +294,11 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
                     bus_congestion.append(bus_cong(bus_stID_congestion,min_bus_num))
                 
-                # ===================================================================
-                # 도보 장애물
-                s_url = finalwalk.roadview(s_coor) # url은 카카오로드뷰 url을 담은 리스트
-                e_url = finalwalk.roadview(e_coor) # url은 카카오로드뷰 url을 담은 리스트
-                s_count = finalwalk.obD(model,s_url) # count는 경로에서 마주치는 장애물 개수 
-                e_count = finalwalk.obD(model,e_url) # count는 경로에서 마주치는 장애물 개수 
+                # =========================== 도보 이동 시간 =======================================
+                if walk_time[user] == 0:
+                    pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
+                else:
+                    pathtime = (s_d + e_d)*walk_time[user] + walk_t * 10
 
                 total_path_bus[cnt_path_bus] = {
 
@@ -286,11 +315,11 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
                         'pathtime' : classification.path_time(bus_t) # (단위 : min)
                     },
                     'walk' : { 
-                        'pathtime' :classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
+                        'pathtime' : pathtime, # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(s_coor)) + avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(e_coor)),
-                        'roadtype' : roadtype_val(s_roadType) + roadtype_val(e_roadType),
-                        'obstruction' : obs_val(s_count,s_t) + obs_val(e_count,e_t), # count
+                        'slope' : walk_all_dict[s+e]["slope"],
+                        'roadtype' :  walk_all_dict[s+e]["roadtype"],
+                        'obstruction' :  walk_all_dict[s+e]["obstruction"], # count
                     },
                     'score' : 0
                 }
@@ -321,7 +350,6 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
                 }
                 pathdetails.append(in_pathdetails)
                 pathdetails_bus.append(in_pathdetails)
-                # print(pathdetails); print(); break
                 # =============================================================================
 
                 cnt_path_bus += 1
@@ -388,16 +416,15 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
                     bus_congestion.append(bus_cong(bus_stID_congestion,min_bus_num))
             
-                
-                # ===================================================================
-                # 도보 장애물
-                s_url = finalwalk.roadview(s_coor) # url은 카카오로드뷰 url을 담은 리스트
-                e_url = finalwalk.roadview(e_coor) # url은 카카오로드뷰 url을 담은 리스트
-                s_count = finalwalk.obD(model,s_url) # count는 경로에서 마주치는 장애물 개수 
-                e_count = finalwalk.obD(model,e_url) # count는 경로에서 마주치는 장애물 개수 
 
                 # =========================== 지하철 아이디 -> 이름 ========================================
                 stationName = st_id_change(total_sub_stationID)
+
+                # =========================== 도보 이동 시간 =======================================
+                if walk_time[user] == 0:
+                    pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
+                else:
+                    pathtime = (s_d + e_d)*walk_time[user] + walk_t * 10
                 
                 # ===================================================================
                 # 이동불편지수 산출 데이터
@@ -420,11 +447,11 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
                         'pathtime' : classification.path_time(bus_t) # (단위 : min)
                     },
                     'walk' : { 
-                        'pathtime' : classification.path_time_walk(round((s_t + e_t) / 60) + walk_t), # (단위 : min)
+                        'pathtime' : pathtime, # (단위 : min)
                         'pathd' : s_d + e_d, # + walk_d 총 도보거리 (단위 : m)
-                        'slope' : avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(s_coor)) + avg_slope_upgrade.getSlope_wheelCat(avg_slope_upgrade.getSlope(e_coor)),
-                        'roadtype' : roadtype_val(s_roadType) + roadtype_val(e_roadType),
-                        'obstruction' : obs_val(s_count,s_t) + obs_val(e_count,e_t), # count
+                        'slope' : walk_all_dict[s+e]["slope"],
+                        'roadtype' :  walk_all_dict[s+e]["roadtype"],
+                        'obstruction' :  walk_all_dict[s+e]["obstruction"], # count
                     },
                     'score' : 0
                 }
@@ -457,13 +484,9 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
 
                 pathdetails.append(in_pathdetails)
                 pathdetails_subbus.append(in_pathdetails)
-                # print(pathdetails); print() # ; break
-                # print(len(pathdetails))
-                # print(len(pathdetails_subbus))
-                # =============================================================================
 
                 cnt_path_subbus += 1
-                '''
+                
 
                 
                 # ========= API 요금 방지 ==========
@@ -476,7 +499,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
             break
         break
         # =================================
-        '''
+        
 
     # ================================================ 샘플 경로 확인 ================================================
     '''
@@ -492,35 +515,16 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
     '''
     # ================================================ 이동불편지수 산출 ================================================
 
-    # 일단 휠체어 이용자로 가정함 (추후 받아온 사용자 정보 & 정렬 기준 기반 재산출)
-    # 1) 지하철
-    if user == 0:
-        # 고령자
-        print("")
-    elif user == 1:
-        # 다리 부상자
-        print("")
-    elif user == 2:
-        # 유아차
-        print("")
-    elif user == 3:
-        # 임산부
-        print("")
-    elif user == 4:
-        # 일반
-        print("")
-    elif user == 5:
-        # 휠체어
-        for idx in range(len(total_path_sub)):
-            total_path_sub[idx]['score'] = score.score_type1(total_path_sub[idx], 1)
+    for idx in range(len(total_path_sub)):
+        total_path_sub[idx]['score'] = score.score_type(total_path_sub[idx], 1, user)
 
-        # 2) 버스
-        for idx in range(len(total_path_bus)):
-            total_path_bus[idx]['score'] = score.score_type1(total_path_bus[idx], 2)
+    # 2) 버스
+    for idx in range(len(total_path_bus)):
+        total_path_bus[idx]['score'] = score.score_type(total_path_bus[idx], 2, user)
 
-        # 3) 지하철 + 버스
-        for idx in range(len(total_path_subbus)):
-            total_path_subbus[idx]['score'] = score.score_type1(total_path_subbus[idx], 3)
+    # 3) 지하철 + 버스
+    for idx in range(len(total_path_subbus)):
+        total_path_subbus[idx]['score'] = score.score_type(total_path_subbus[idx], 3, user)
 
     # ================================================ 사용자 지정 유형/순서로 정렬 ================================================
 
@@ -530,11 +534,6 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
     print('버스 + 지하철 경로 수 :', len(total_path_subbus))
     print()
 
-    '''
-    # 대중교통 유형 택1
-    op_transport = int(input('대중교통 유형 택1 (1:지하철, 2:버스, 3:지하철+버스) : '))
-    print()
-    '''
 
     # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
     # op_sort = int(input('정렬 순서 택1 (1:이동불편지수, 2:시간, 3:도보, 4:환승) : '))
@@ -704,5 +703,5 @@ def main(w_sx, w_sy, w_ex, w_ey, user):
     print('Done.')
 
 
-return_val = main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333,5)
-print(return_val[0]['tot'])
+# return_val = main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333,5)
+# print(return_val[0]['tot'])

@@ -60,19 +60,6 @@ def time_val(time):
     elif time>=17:
         return 9.5
 
-# def time_val(time):
-#     if time>=0 and time<:
-#         return 0.5
-#     elif time>=2 and time<6:
-#         return 3
-#     elif time>=6 and time<10:
-#         return 5
-#     elif time>=10 and time<13:
-#         return 7
-#     elif time>=13:
-#         return 9.5
-
-# =================================================================================================
 
 '''
 전체 거리:  ['1.44', '1.44', '1.43', '1.43'] km
@@ -89,4 +76,4 @@ obs=125
 wheel={'time':0.0667, 'slope':0.5333, 'roadtype':0.1333, 'obs':0.2667}
 
 #print('weight :', wheel['slope']*time_val(float(time)))
-print('weight :', wheel['time']*time_val(float(time))+wheel['slope']*slope_val(slope)+wheel['roadtype']*roadtype_val(roadtype)+wheel['obs']*obs_val(obs,float(time)))
+# print('weight :', wheel['time']*time_val(float(time))+wheel['slope']*slope_val(slope)+wheel['roadtype']*roadtype_val(roadtype)+wheel['obs']*obs_val(obs,float(time)))

@@ -21,12 +21,13 @@ def getPathes(request):
     dep_lng = request.GET['deplng']
     arrv_lat = request.GET['arrvlat']
     arrv_lng = request.GET['arrvlng']
+    user = request.GET['user']
 
     print('start.')
     print(dep_lat, dep_lng, arrv_lat, arrv_lng)
     print()
 
-    result = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat)
+    result = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat,user)
     path1 = PathDetail([result])
 
     serial = PathDetailSerializer(path1)

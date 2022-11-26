@@ -109,7 +109,7 @@ def description_transport(path):
                 transfer_num.append(door)
             
             # 상하행
-            updown.append(p['wayCode'])
+            updown.append(p['wayCode']) 
 
             # 이동시간
             t = p['sectionTime']

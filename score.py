@@ -1,7 +1,73 @@
 # 이동불편지수 산출
 
+wheel={
+    "bus": {
+        "bus" : 0.2857,
+        "travel_time" : 0.1429,
+        "congestion": 0.5714,
+        "wait_time": 0.2857,
+    },
+    "subway": {
+        "subway" : 0.5714,
+        "travel_time" : 0.1429,
+        "congestion": 0.5714,
+        "wait_time": 0.2857,
+    },
+    "walk": {
+        "walk" : 0.1429,
+        "travel_time" : 0.0667,
+        "slope" : 0.5333,
+        "roadtype" : 0.1333,
+        "objects" : 0.2667,
+    },
+}
+
+norm ={
+    "bus": {
+        "bus" : 0.2857,
+        "travel_time" : 0.2857,
+        "congestion": 0.1429,
+        "wait_time": 0.5714,
+    },
+    "subway": {
+        "subway" : 0.5714,
+        "travel_time" : 0.5714,
+        "congestion": 0.1429,
+        "wait_time": 0.2857,
+    },
+    "walk": {
+        "walk" : 0.1429,
+        "travel_time" : 0.5333,
+        "slope" : 0.2667,
+        "roadtype" : 0.1333,
+        "objects" : 0.0667,
+    },
+}
+etc ={
+    "bus": {
+        "bus" : 0.2857,
+        "travel_time" : 0.1429,
+        "congestion": 0.2857,
+        "wait_time": 0.5714,
+    },
+    "subway": {
+        "subway" : 0.5714,
+        "travel_time" : 0.1429,
+        "congestion": 0.2857,
+        "wait_time": 0.5714,
+    },
+    "walk": {
+        "walk" : 0.1429,
+        "travel_time" : 0.5333,
+        "slope" : 0.2667,
+        "roadtype" : 0.1333,
+        "objects" : 0.0667,
+    },
+}
+
+user_weight = [etc,etc,wheel,etc,norm,wheel]
 # 휠체어 이용자
-def score_type1(path_detail, op):
+def score_type(path_detail, op, user):
 
     # 이동불편지수 산출
 
@@ -33,27 +99,25 @@ def score_type1(path_detail, op):
             walk_obj = path_detail['walk']['obstruction']
 
             # sub
-            sub_cong_w = 0.5714
-            sub_wait_w = 0.2857
-            sub_path_w = 0.1429
+            sub_cong_w = user_weight[user]["subway"]["congestion"]
+            sub_wait_w = user_weight[user]["subway"]["wait_time"]
+            sub_path_w = user_weight[user]["subway"]["travel_time"]
             # walk
-            walk_path_w = 0.0667
-            walk_slope_w = 0.5333
-            walk_roadtype_w = 0.1333
-            walk_obj_w = 0.2667
+            walk_path_w = user_weight[user]["walk"]["travel_time"]
+            walk_slope_w = user_weight[user]["walk"]["slope"]
+            walk_roadtype_w = user_weight[user]["walk"]["roadtype"]
+            walk_obj_w = user_weight[user]["walk"]["objects"]
             
             # transport type weight
-            sub_w = 0.5714
-            walk_w = 0.1429
+            sub_w = user_weight[user]["subway"]["subway"]
+            walk_w = user_weight[user]["walk"]["walk"]
 
             # respective scores
             sub_score = min(sub_cong) * sub_cong_w + sub_wait * sub_wait_w + sub_path * sub_path_w
-            walk_score = walk_path * walk_path_w # + walk_slope * walk_slope_w + walk_roadtype * walk_roadtype_w + walk_obj * walk_obj_w
+            walk_score = walk_path * walk_path_w  + walk_slope * walk_slope_w + walk_roadtype * walk_roadtype_w + walk_obj * walk_obj_w
 
             score = sub_w * (sub_score) + walk_w * (walk_score)
 
-            # print(sub_score, bus_score, walk_score)
-            # print(score)
 
             return round(score, 4)
 
@@ -75,27 +139,24 @@ def score_type1(path_detail, op):
             walk_obj = path_detail['walk']['obstruction']
 
             # bus
-            bus_cong_w = 0.5714
-            bus_wait_w = 0.2857
-            bus_path_w = 0.1429
+            bus_cong_w = user_weight[user]["bus"]['congestion']
+            bus_wait_w = user_weight[user]["bus"]["wait_time"]
+            bus_path_w = user_weight[user]["bus"]["travel_time"]
             # walk
-            walk_path_w = 0.0667
-            walk_slope_w = 0.5333
-            walk_roadtype_w = 0.1333
-            walk_obj_w = 0.2667
+            walk_path_w = user_weight[user]["walk"]["travel_time"]
+            walk_slope_w = user_weight[user]["walk"]["slope"]
+            walk_roadtype_w = user_weight[user]["walk"]["roadtype"]
+            walk_obj_w = user_weight[user]["walk"]["objects"]
             
             # transport type weight
-            bus_w = 0.2857
-            walk_w = 0.1429
+            bus_w = user_weight[user]['bus']['bus']
+            walk_w = user_weight[user]["walk"]["walk"]
 
             # respective scores
             bus_score = bus_cong * bus_cong_w + min(bus_wait) * bus_wait_w + bus_path * bus_path_w
-            walk_score = walk_path * walk_path_w # + walk_slope * walk_slope_w + walk_roadtype * walk_roadtype_w + walk_obj * walk_obj_w
+            walk_score = walk_path * walk_path_w  + walk_slope * walk_slope_w + walk_roadtype * walk_roadtype_w + walk_obj * walk_obj_w
 
             score = bus_w * (bus_score) + walk_w * (walk_score)
-
-            # print(sub_score, bus_score, walk_score)
-            # print(score)
 
             return round(score, 4)
 
@@ -121,42 +182,35 @@ def score_type1(path_detail, op):
             walk_obj = path_detail['walk']['obstruction']
 
             # sub
-            sub_cong_w = 0.5714
-            sub_wait_w = 0.2857
-            sub_path_w = 0.1429
-            # bus
-            bus_cong_w = 0.5714
-            bus_wait_w = 0.2857
-            bus_path_w = 0.1429
+            sub_cong_w = user_weight[user]["subway"]["congestion"]
+            sub_wait_w = user_weight[user]["subway"]["wait_time"]
+            sub_path_w = user_weight[user]["subway"]["travel_time"]
             # walk
-            walk_path_w = 0.0667
-            walk_slope_w = 0.5333
-            walk_roadtype_w = 0.1333
-            walk_obj_w = 0.2667
+            walk_path_w = user_weight[user]["walk"]["travel_time"]
+            walk_slope_w = user_weight[user]["walk"]["slope"]
+            walk_roadtype_w = user_weight[user]["walk"]["roadtype"]
+            walk_obj_w = user_weight[user]["walk"]["objects"]
+            # walk
+            walk_path_w = user_weight[user]["walk"]["travel_time"]
+            walk_slope_w = user_weight[user]["walk"]["slope"]
+            walk_roadtype_w = user_weight[user]["walk"]["roadtype"]
+            walk_obj_w = user_weight[user]["walk"]["objects"]
             
             # transport type weight
-            sub_w = 0.5714
-            bus_w = 0.2857
-            walk_w = 0.1429
+            sub_w = user_weight[user]["subway"]["subway"]
+            bus_w = user_weight[user]['bus']['bus']
+            walk_w = user_weight[user]["walk"]["walk"]
 
             # respective scores
             sub_score = min(sub_cong) * sub_cong_w + sub_wait * sub_wait_w + sub_path * sub_path_w
             bus_score = bus_cong * bus_cong_w + min(bus_wait) * bus_wait_w + bus_path * bus_path_w
-            walk_score = walk_path * walk_path_w # + walk_slope * walk_slope_w + walk_roadtype * walk_roadtype_w + walk_obj * walk_obj_w
+            walk_score = walk_path * walk_path_w + walk_slope * walk_slope_w + walk_roadtype * walk_roadtype_w + walk_obj * walk_obj_w
 
             score = sub_w * (sub_score) + bus_w * (bus_score) + walk_w * (walk_score)
 
-            # print(sub_score, bus_score, walk_score)
-            # print(score)
 
             return round(score, 4)
         
         except:
             return 10000
 
-# 유아차 이용자, 다리 다친 사람 등
-def score_type2(path_detail):
-
-    score = 0
-
-    return score
