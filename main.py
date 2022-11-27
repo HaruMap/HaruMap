@@ -101,7 +101,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
 
     # ================================================ 도보 전체 list ================================================
     walk_all_dict = walk_all(w_sx, w_sy, w_ex, w_ey, s_poi, e_poi)
-    walk_time = [1.0,0.94,0.69,1.25,0,0.84]
+    walk_time = [1.29, 1.37, 1.63, 1.03, 1, 1.54]
     print("walk done")
 
     # ================================================ 모든 경로 담은 리스트 생성 (추후 이동불편지수 반영) ======================
@@ -179,10 +179,10 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
                 stationName = st_id_change(total_sub_stationID)
                 
                 # =========================== 도보 이동 시간 =======================================
-                if walk_time[user] == 0:
+                if walk_time[user] == 1: # 일반 보행자
                     pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
                 else:
-                    pathtime = (s_d + e_d)*walk_time[user] + walk_t * 10
+                    pathtime = (s_t + e_t) * walk_time[user] + walk_t * walk_time[user]
 
                 total_path_sub[cnt_path_sub] = {
                     'info' : {
