@@ -17,6 +17,7 @@ import sys
 import os
 import numpy as np
 import torch
+import math
 
 from walk import avg_slope_upgrade, finalwalk
 from bus_congestion import bus_cong
@@ -182,7 +183,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
                 if walk_time[user] == 1: # 일반 보행자
                     pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
                 else:
-                    pathtime = (s_t + e_t) * walk_time[user] + walk_t * walk_time[user]
+                    pathtime = round(((s_t + e_t) / 60) * walk_time[user] + walk_t * walk_time[user])
 
                 total_path_sub[cnt_path_sub] = {
                     'info' : {
@@ -225,7 +226,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
 
                 in_pathdetails = {}
                 in_pathdetails = {
-                    'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                    'totaltime' : pathtime + (sub_t + bus_t), # (단위 : min)
                     'totaldescription' : totaldescription,
                     'description' : fin_descrip,
                     'coor' : s_coor + coor_transport + e_coor,
@@ -272,7 +273,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
                 bus_tot_wait_time = 0
                 for bus_tup in total_bus_info:
 
-                    min_bus_wait_time = 999999999999999999
+                    min_bus_wait_time = math.inf
                     min_bus_num = ""
 
                     # print(bus_tup)
@@ -293,13 +294,13 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
                             continue
                         bus_tot_wait_time += min_bus_wait_time
 
-                    bus_congestion.append(bus_cong(bus_stID_congestion,min_bus_num))
+                    bus_congestion.append(bus_cong(bus_stID_congestion, min_bus_num))
                 
                 # =========================== 도보 이동 시간 =======================================
-                if walk_time[user] == 0:
+                if walk_time[user] == 1: # 일반 보행자
                     pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
                 else:
-                    pathtime = (s_d + e_d)*walk_time[user] + walk_t * 10
+                    pathtime = round(((s_t + e_t) / 60) * walk_time[user] + walk_t * walk_time[user])
 
                 total_path_bus[cnt_path_bus] = {
 
@@ -343,7 +344,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
 
                 in_pathdetails = {}
                 in_pathdetails = {
-                    'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                    'totaltime' : pathtime + (sub_t + bus_t), # (단위 : min)
                     'totaldescription' : totaldescription,
                     'description' : fin_descrip,
                     'coor' : s_coor + coor_transport + e_coor,
@@ -422,10 +423,10 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
                 stationName = st_id_change(total_sub_stationID)
 
                 # =========================== 도보 이동 시간 =======================================
-                if walk_time[user] == 0:
+                if walk_time[user] == 1: # 일반 보행자
                     pathtime = classification.path_time_walk(round((s_t + e_t) / 60) + walk_t)
                 else:
-                    pathtime = (s_d + e_d)*walk_time[user] + walk_t * 10
+                    pathtime = round(((s_t + e_t) / 60) * walk_time[user] + walk_t * walk_time[user])
                 
                 # ===================================================================
                 # 이동불편지수 산출 데이터
@@ -476,7 +477,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
 
                 in_pathdetails = {}
                 in_pathdetails = {
-                    'totaltime' : round((s_t + e_t) / 60) + (sub_t + bus_t + walk_t), # (단위 : min)
+                    'totaltime' : pathtime + (sub_t + bus_t), # (단위 : min)
                     'totaldescription' : totaldescription,
                     'description' : fin_descrip,
                     'coor' : s_coor + coor_transport + e_coor,
@@ -705,5 +706,5 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
     print('Done.')
 
 
-# return_val = main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333,5)
-# print(return_val[0]['tot'])
+return_val = main(126.94700645685643, 37.5636066932157, 127.032734543897, 37.483588810333, 5, 1)
+print(return_val[0]['tot'])
