@@ -37,11 +37,11 @@ def roadtype_val(list):
             return res
 
     for k in range(len(list_exc0)):
-        if list_exc0[k]==23:
+        if list_exc0[k]==21:
             sum=sum+0.5       #these values can be changed.
-        elif list_exc0[k]==21:
-            sum=sum+1.5
         elif list_exc0[k]==22:
+            sum=sum+1.5
+        elif list_exc0[k]==23:
             sum=sum+5
         elif list_exc0[k]==24:
             sum=sum+14
