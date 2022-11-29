@@ -11,7 +11,8 @@ import main
 
 # Create your views here.
 
-
+result = []
+sort_path = {}
 @api_view(['GET'])
 def getPathes(request):
 
@@ -28,13 +29,39 @@ def getPathes(request):
     print(dep_lat, dep_lng, arrv_lat, arrv_lng)
     print()
 
-    result = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat,user, opt_sort)
+    result,sort_path = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat,user, opt_sort)
     path1 = PathDetail([result])
 
     serial = PathDetailSerializer(path1)
 
     return Response(serial.data)
 
+@api_view(['GET'])
+def getsortedPathes(request):
 
+    # 쿼리 받아오는거 => runserver했을때 url: http://localhost:8000/haruapp/getPathes?deplat=38.7&deplng=127.5&arrvlat=37.8&arrvlng=128.5
+
+    dep_lat = request.GET['deplat']
+    dep_lng = request.GET['deplng']
+    arrv_lat = request.GET['arrvlat']
+    arrv_lng = request.GET['arrvlng']
+    user = request.GET['user']
+    opt_sort = request.GET['orders']
+    if result:
+
+        sorted_result = main.main_sorted(result,sort_path,user, opt_sort)
+        path1 = PathDetail([sorted_result])
+
+        serial = PathDetailSerializer(path1)
+
+        return Response(serial.data)
+    else:
+        result,sort_path = main.main(dep_lng, dep_lat, arrv_lng, arrv_lat,user, opt_sort)
+        path1 = PathDetail([result])
+
+        serial = PathDetailSerializer(path1)
+
+        return Response(serial.data)
         
+            
 

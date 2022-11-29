@@ -28,8 +28,8 @@ device = select_device("")
 half = device.type != 'cpu'  # half precision only supported on CUDA
 
 # Load model
-#model = torch.load("C:/Project/haruzido/model.pt")#attempt_load(weights, map_location=device)  # load FP32 model
-#torch.save(model, f'./model.pt')
+# model = attempt_load(r"", map_location=device)  # load FP32 model
+# torch.save(model, f'./model.pt')
 #stride = int(model.stride.max())  # model stride
 #imgsz = check_img_size(imgsz, s=stride)  # check img_size
 

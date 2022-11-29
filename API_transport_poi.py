@@ -10,7 +10,7 @@ import API.api
 def get_transport_poi(x, y, stationClass):
 
     # radius = 200 으로 설정함
-    url = 'https://api.odsay.com/v1/api/pointSearch?lang=0&x={0}&y={1}&stationClass={2}&radius=160&&apiKey={3}'.format(x, y, stationClass, API.api.get_transport_poi_key())
+    url = 'https://api.odsay.com/v1/api/pointSearch?lang=0&x={0}&y={1}&stationClass={2}&radius=200&&apiKey={3}'.format(x, y, stationClass, API.api.get_transport_poi_key())
     target = requests.get(url).json()
     # print(target)
 

@@ -19,8 +19,8 @@ def getImage(x,y):
     ## url에 접근한다.
     url = 'http://localhost:8080/roadview.html' + "?lat="+str(lat)+"&lng="+str(lng) #roadview.html과 이 파일이 같은 경로에 있어야 함
     driver.get(url)
-    driver.implicitly_wait(3)
-    time.sleep(3)
+    # driver.implicitly_wait(3)
+    time.sleep(0.5)
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     result = soup.findAll('img')

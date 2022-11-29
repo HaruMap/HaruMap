@@ -46,7 +46,7 @@ def getSlope(walkpath_list):
     driver = webdriver.Chrome(executable_path='chromedriver.exe', options=option)
 
     driver.get("https://webgis.neins.go.kr/popup/searchGCadastralPopup.do")
-    time.sleep(1)
+    time.sleep(0.2)
     
     new_addr = []
     for i in range(len(walkpath_list)):
@@ -64,12 +64,12 @@ def getSlope(walkpath_list):
             element = driver.find_element(By.ID, "queryText")
             element.send_keys(query_txt)
             element.send_keys("\n")
-            time.sleep(1)
+            time.sleep(0.4)
             
             # 담기 버튼
             adress = driver.find_element(By.XPATH, '//*[@id="popupRatepoint"]/div[2]/div[3]/ul/li/a')
             driver.execute_script("arguments[0].click();", adress)
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             driver.find_element(By.ID, "queryText").clear()
 
@@ -84,9 +84,9 @@ def getSlope(walkpath_list):
         except:
             "There is no alert"
 
-        time.sleep(1)
+        time.sleep(0.2)
         driver.switch_to.window(driver.window_handles[-1])
-        time.sleep(1)
+        time.sleep(0.2)
 
         #표 받기
         temp=[]
