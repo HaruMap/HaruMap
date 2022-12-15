@@ -13,6 +13,6 @@ import API.api
 def get_sub_real_time(stationName):
 
     station = stationName
-    url = "http://swopenAPI.seoul.go.kr/api/subway/{0}/json/realtimeStationArrival/0/100/{1}".format(API.api.get_sub_real_time_key(),str(station))
+    url = "http://swopenAPI.seoul.go.kr/api/subway/{0}/json/realtimeStationArrival/0/10/{1}".format(API.api.get_sub_real_time_key(),str(station))
     
     return requests.get(url).json()

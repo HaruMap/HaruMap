@@ -511,18 +511,6 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
         # =================================
         
 
-    # ================================================ 샘플 경로 확인 ================================================
-    ''' 
-    if op_transport == 1: # '지하철만' 선택
-        print('유형 : 지하철')
-        print(total_path_sub[0]) # sample
-    elif op_transport == 2: # '버스만' 선택
-        print('유형 : 버스')
-        print(total_path_bus[0]) # sample
-    elif op_transport == 3: # '지하철+버스' 선택
-        print('유형 : 지하철 + 버스')
-        print(total_path_subbus[0]) # sample
-    '''
     # ================================================ 이동불편지수 산출 ================================================
 
     for idx in range(len(total_path_sub)):
@@ -542,7 +530,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
     print('지하철 경로 수 :', len(total_path_sub))
     print('버스 경로 수 :', len(total_path_bus))
     print('버스 + 지하철 경로 수 :', len(total_path_subbus))
-    print()
+    print(op_sort)
 
 
     # 정렬 기준 택1 (1:이동불편지수, 2:시간 등)
@@ -556,7 +544,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
     sort_path = {}
 
     # 일단 샘플은 subbus 경로를 보여줌!
-    if op_sort == 1:
+    if op_sort == 0:
 
         # 이동불편지수 낮은 순 (subbus)
         if total_path_subbus == None or pathdetails_subbus == None:
@@ -596,13 +584,18 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
         fin_total_drf_path['bus'] = fin_drf_path_bus
         fin_total_drf_path['subbus'] = fin_drf_path_subbus # -> 이동불편지수 [전체, 지하철, 버스, 버스 + 지하철]
 
+
+        sort_path["total_path_subbus"] = total_path_subbus
+        sort_path["total_path_sub"] = total_path_sub
+        sort_path["total_path_bus"] = total_path_bus
+
         ''' final data '''
         send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
-        # print(send_drf[0])
+        print(total_path_subbus[0])
 
-        return send_drf
+        return send_drf,sort_path
 
-    elif op_sort == 2:
+    elif op_sort == 1:
 
         # 최소 시간 순
 
@@ -644,18 +637,16 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
         fin_total_drf_path['bus'] = fin_drf_path_bus
         fin_total_drf_path['subbus'] = fin_drf_path_subbus # -> 이동불편지수 [전체, 지하철, 버스, 버스 + 지하철]
 
+        sort_path["total_path_subbus"] = total_path_subbus
+        sort_path["total_path_sub"] = total_path_sub
+        sort_path["total_path_bus"] = total_path_bus
+
         ''' final data '''
         send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
-        print(send_drf)
 
-        return send_drf
-        
-    elif op_sort == 3:
+        return send_drf,sort_path
 
-        # 최소 환승 순
-        fin_view_path_subbus = sort_path_by_score.sort_transfer(total_path_subbus)
-
-    elif op_sort == 4:
+    elif op_sort == 2:
 
         # 최소 도보 순
 
@@ -703,8 +694,7 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
 
         ''' final data '''
         send_drf.append(fin_total_drf_path) # 최종 drf 전달 데이터
-        # print(send_drf)
-
+        print(send_drf)
         return send_drf,sort_path
 
 
@@ -731,7 +721,7 @@ def main_sorted(result,sort_path,user, op_sort):
     total_path_bus  = sort_path["total_path_bus"]
     fin_total_drf_path = {}
     send_drf = []
-    if op_sort == 1:
+    if op_sort == 0:
 
         # 이동불편지수 낮은 순 (subbus)
         if total_path_subbus == None or pathdetails_subbus == None:
@@ -777,7 +767,7 @@ def main_sorted(result,sort_path,user, op_sort):
 
         return send_drf
 
-    elif op_sort == 2:
+    elif op_sort == 1:
 
         # 최소 시간 순
 
@@ -825,12 +815,8 @@ def main_sorted(result,sort_path,user, op_sort):
 
         return send_drf
         
-    elif op_sort == 3:
 
-        # 최소 환승 순
-        fin_view_path_subbus = sort_path_by_score.sort_transfer(total_path_subbus)
-
-    elif op_sort == 4:
+    elif op_sort == 2:
 
         # 최소 도보 순
 

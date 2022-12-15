@@ -8,9 +8,6 @@ import API.api
 
 # 서울시 역코드로 지하철역별 열차 시간표 정보 검색
 # https://data.seoul.go.kr/dataList/OA-101/A/1/datasetView.do
-# 수인분당선 없음
-# 경의중앙선 있는게있고 없는게 있음
-# 신분당선 없음
 # 외부코드를 역코드로 바꿔야함..! 예) 광화문: 533 -> 2534
 
 import requests

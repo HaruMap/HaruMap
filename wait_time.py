@@ -107,7 +107,7 @@ def get_sub_wt(stationName, total_linenum, updn): # ('이대', '2', 1 or 2)
 
         date_time_str = f_data['열차도착정보를 생성한 시각'][0][:-2]
 
-        date_time = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+        date_time = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:')
 
         second_eta = []
         eeta = []

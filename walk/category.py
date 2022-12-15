@@ -7,13 +7,13 @@ def obs_val(obj, time): # 0.5:9.5 / 1분에 10개를 5점으로 기준 처리
     return round(score,2)
 
 def slope_val(slopeCat): #input 경사도, tenover
-    if slopeCat[0] == 0:
+    if slopeCat == 0:
         return 0.5
-    elif slopeCat[0] == 1:
+    elif slopeCat == 1:
         return 3
-    elif slopeCat[0] == 2:
+    elif slopeCat == 2:
         return 5
-    elif slopeCat[0] == 3 and slopeCat[1]<30:
+    elif slopeCat == 3 and slopeCat[1]<30:
         return 7
     elif slopeCat[0] == 3 and slopeCat[1] >= 30:
         return 9.5
@@ -61,19 +61,3 @@ def time_val(time):
         return 9.5
 
 
-'''
-전체 거리:  ['1.44', '1.44', '1.43', '1.43'] km
-전체 소요시간:  ['20', '20', '21', '21'] min
-전체 노면 정보:  [[0, 24, 24, 24, 21, 21, 21, 21, 21, 21], [0, 24, 24, 24, 21, 21, 21, 21, 21, 21], [0, 24, 24, 24, 21, 21, 21, 21, 21, 21, 21, 21], [0, 24, 24, 24, 21, 21, 21, 21, 21, 21, 21, 21]]
-총 장애물 수:  [89, 125, 154, 154]
-'''
-#sample data
-slope=(1, 11.9)
-time='20'
-roadtype=[0, 24, 24, 24, 21, 21, 21, 21, 21, 21]
-obs=125
-
-wheel={'time':0.0667, 'slope':0.5333, 'roadtype':0.1333, 'obs':0.2667}
-
-#print('weight :', wheel['slope']*time_val(float(time)))
-# print('weight :', wheel['time']*time_val(float(time))+wheel['slope']*slope_val(slope)+wheel['roadtype']*roadtype_val(roadtype)+wheel['obs']*obs_val(obs,float(time)))

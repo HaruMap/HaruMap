@@ -11,7 +11,6 @@ import numpy as np
 options = webdriver.ChromeOptions()
 # 창 숨기는 옵션 추가
 options.add_argument("headless")
-# driver = webdriver.Chrome(executable_path='C:\Project\haruzido\HaruMap\walk\chromedriver.exe', options=options)
 driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
 
 def getImg(x,y):
@@ -19,7 +18,7 @@ def getImg(x,y):
     ## 로드뷰 가져올 위경도
     lat,lng = [x,y]
     ## url에 접근한다.
-    url = 'C:/Users/user/Desktop/4-2/capstone/code/HaruMap/HaruMap/walk/roadview.html' + "?lat="+str(lat)+"&lng="+str(lng) #roadview.html과 이 파일이 같은 경로에 있어야 함
+    url = './roadview.html' + "?lat="+str(lat)+"&lng="+str(lng) 
     driver.get(url)
     # driver.implicitly_wait(3)
     time.sleep(0.5)

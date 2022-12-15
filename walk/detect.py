@@ -18,24 +18,11 @@ from walk.utils.torch_utils import select_device, load_classifier, time_synchron
 class_list = {}
 
 weights, view_img, save_txt, imgsz, trace,augment= 'last.pt',False,False,640,False,False
-# Directories
-# save_dir = Path(increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok))  # increment run
-# (save_dir / 'labels' if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
 
 # Initialize
 set_logging()
 device = select_device("")
-half = device.type != 'cpu'  # half precision only supported on CUDA
-
-# Load model
-# model = attempt_load(r"", map_location=device)  # load FP32 model
-# torch.save(model, f'./model.pt')
-#stride = int(model.stride.max())  # model stride
-#imgsz = check_img_size(imgsz, s=stride)  # check img_size
-
-
-#if trace:
-#    model = TracedModel(model, device, opt.img_size)
+half = device.type != 'cpu'  
 
 
 
@@ -113,8 +100,6 @@ def detect(model, imageurl: str, save_img=False):
                     p, s, im0, frame = path, '', im0s, getattr(dataset, 'frame', 0)
 
                 p = Path(p)  # to Path
-                # save_path = str(save_dir / p.name)  # img.jpg
-                # txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
                 gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
                 if len(det):
                     # Rescale boxes from img_size to im0 size

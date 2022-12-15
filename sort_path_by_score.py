@@ -11,6 +11,7 @@ def sort_score(total_paths, drf_paths):
     for idx in range(len(total_paths)):
         paths.append(total_paths[idx])
         scores.append(total_paths[idx]['score'])
+        print(idx,total_paths[idx]['score'])
     score_sorted = np.sort(scores) # 오름차순 정렬 (이동불편지수가 낮은 경로를 우선으로 정렬)
     score_sorted_idx = np.argsort(scores)
     paths_sorted = [paths[i] for i in score_sorted_idx]

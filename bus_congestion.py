@@ -14,8 +14,8 @@ def getConBus_DT(arsId, busType): #시내 버스 busType = 1
     con_url = 'https://apigw.tmoney.co.kr:5556/gateway/saStationByArsIdGet/v1/stationinfo/getStationByUidCon?serviceKey=01234567890&arsId={0}&busRouteType={1}'.format(arsId, busType)
     headers = {
         "Accept": "application/xml",
-        "Authorization": 'Basic OGUwNThmYzgtYzQ4Yy00NDUwLWI3ZTEtYmZjNWI2NTU4ZjcwOjQ3NjQxMjJhLTRlNTctNDk1NC1hZDdmLTI3MDZhMzEwMGQ0NA==',
-        "x-Gateway-APIKey": "38af334e-2249-4146-a5ea-ab82e2d77181",
+        "Authorization": 'APIKEY',
+        "x-Gateway-APIKey": "APIKEY",
         "Content-Type": 'application/x-www-form-urlencoded',
         "client_id": client_id,
         'client_secret': client_secret,
@@ -33,8 +33,8 @@ def getConBus_T(arsId, busType): #마을 버스 busType = 2
     con_url = 'https://apigw.tmoney.co.kr:5556/gateway/szStationByArsIdGet/v1/stationinfo/getStationByUidCon?serviceKey=01234567890&arsId={0}&busRouteType={1}'.format(arsId, busType)
     headers = {
         "Accept": "application/xml",
-        "Authorization": 'Basic CWYxYmIwYzg0LWYxMTktNGFhMS1iNmQ0LWU1NjM5ZWE0MmZiNTo5NjFhYTgxNy03YzBjLTRlNTAtYmU5Yi02MzVhYmM5YjAwZDQ=',
-        "x-Gateway-APIKey": "23cbe481-4017-4b9d-b978-f328996f546a",
+        "Authorization": 'APIKEY',
+        "x-Gateway-APIKey": "APIKEY",
         "Content-Type": 'application/x-www-form-urlencoded',
         "client_id": client_id,
         'client_secret': client_secret,
