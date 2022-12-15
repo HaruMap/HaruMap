@@ -48,6 +48,7 @@ class _PathInfoState extends State<PathInfoPage>{
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     fontsizescale = 1.0;
     if(widget.selectedcase == "0"){
       fontsizescale = 1.3;
@@ -61,15 +62,52 @@ class _PathInfoState extends State<PathInfoPage>{
     arrv_lng = widget.arrv_lng;
     screenheight = MediaQuery.of(context).size.height;
     screenwidth = MediaQuery.of(context).size.width;
-
-    for (int i=0; i<widget.corcolor.length; i++){
-      var cor = path.coordinate[i];
-      var tmpcor = [];
-      for (int j=0; j<cor.length; j++){
-        tmpcor.add([cor[j][2],cor[j][1]]);
+    var pastkind = path.coor[0][0];
+    var tmpcor = [];
+    kakaocor = [];
+    var subwaynum;
+    var pastsubwaynum;
+    var j = path.coor.length;
+    tmpcor.add([path.coor[0][2],path.coor[0][1]]);
+    for (int i=1; i<path.coor.length; i++){
+      var cor = path.coor[i];
+      var kind = cor[0];
+      print(cor.length);
+      if (cor.length == 4){
+        print(subwaynum);
+        subwaynum = cor[3];
+        if (i < j){
+          pastsubwaynum = subwaynum;
+          print(pastsubwaynum);
+        }
       }
-      kakaocor.add(tmpcor);
+      if (kind != pastkind){
+        kakaocor.add(tmpcor);
+        tmpcor = [];
+        tmpcor.add([cor[2],cor[1]]);
+        pastkind = kind;
+      } else{
+        if(cor.length == 4){
+          if(subwaynum != pastsubwaynum){
+            kakaocor.add(tmpcor);
+            tmpcor = [];
+            tmpcor.add([cor[2],cor[1]]);
+            pastsubwaynum = subwaynum;
+          }
+          else{
+            tmpcor.add([cor[2],cor[1]]);
+          }
+        }
+        else{
+          tmpcor.add([cor[2],cor[1]]);
+        }
+      }
+      if (i == path.coor.length -1 && tmpcor.length > 0){
+        kakaocor.add(tmpcor);
+      }
+
     }
+    print(kakaocor.length);
     return WillPopScope(
       child: Scaffold(
           backgroundColor: Color.fromARGB(255, 245, 245, 245),
@@ -85,6 +123,14 @@ class _PathInfoState extends State<PathInfoPage>{
               overflow: TextOverflow.ellipsis,
             ),
             centerTitle: true,
+            leading:  IconButton(
+                onPressed: () {
+                  _expanded = true;
+                  Navigator.pop(context);
+                },
+                color: Color.fromARGB(233, 94, 208, 184),
+                icon: Icon(Icons.arrow_back_ios)
+            ),
             actions: <Widget>[
               Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -94,6 +140,7 @@ class _PathInfoState extends State<PathInfoPage>{
                         arrv_ok = false;
                         startok = false;
                         stopok = false;
+                        _expanded = true;
                         depController.text= " ";
                         arrvController.text= " ";
                         Get.offAll(SelectCasePage());
@@ -328,7 +375,7 @@ class _detaildescription extends State<detaildescription>{
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
                   margin: EdgeInsets.fromLTRB(10, 10, 10, 3),
-                  child: Text("${_pathes.totaltime}분 ",
+                  child: Text("${_pathes.totaltime.toInt()}분 ",
                     style:TextStyle(fontSize: 30*fontsizescale,
                         fontFamily: "NotoSans",
                         color: Colors.black,
@@ -390,7 +437,7 @@ class _detaildescription extends State<detaildescription>{
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
                   margin: EdgeInsets.fromLTRB(10, 10, 10, 3),
-                  child: Text("${_pathes.totaltime}분 ",
+                  child: Text("${_pathes.totaltime.toInt()}분 ",
                     style:TextStyle(fontSize: 30*fontsizescale,
                         fontFamily: "NotoSans",
                         color: Colors.black,

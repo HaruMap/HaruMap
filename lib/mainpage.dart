@@ -43,7 +43,7 @@ class _MainPageState extends State<MainPage>{
   String stopText = "";
 
   List<AddrLoc> locs = [];
-  List<PathDetail> pathes = [];
+  List<WayDetail> pathes = [];
   String orders = "0";
 
   Future<String> _loadKeyAsset() async {
@@ -53,7 +53,7 @@ class _MainPageState extends State<MainPage>{
   _loadLoc(loc) async {
     String REST_API_KEY = await _loadKeyAsset();
     REST_API_KEY = REST_API_KEY.split(":")[1].split("}")[0].split("\"")[1];
-    String baseUrl = "";//"https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
+    String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${loc}";
     print(REST_API_KEY);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -70,7 +70,7 @@ class _MainPageState extends State<MainPage>{
   }
 
   _loadPath(deplat,deplng,arrvlat,arrvlng) async {
-    String baseUrl = "http://:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+    String baseUrl = "http:/haruapp/getPathes?user=${widget.selectedcase}&orders=${orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
     print(baseUrl);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -78,21 +78,16 @@ class _MainPageState extends State<MainPage>{
     print(response.statusCode);
     if (response.statusCode == 200) {
       setState(() {
-        pathes = parsePathes(convert.utf8.decode(response.bodyBytes));
+        pathes = parsewayPathes(convert.utf8.decode(response.bodyBytes));
       });
     }else{
       throw Exception("failed to load data");
     }
   }
-  // @override
-  // void dispose() {
-  //   _depController.dispose();
-  //   _arrvController.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context){
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     var fontsizescale = 1.0;
     if(widget.selectedcase == "0"){
       fontsizescale = 1.5;
@@ -116,6 +111,19 @@ class _MainPageState extends State<MainPage>{
               overflow: TextOverflow.ellipsis,
             ),
             centerTitle: true,
+            leading:  IconButton(
+                onPressed: () {
+                  dep_ok = false;
+                  arrv_ok = false;
+                  startok = false;
+                  stopok = false;
+                  depController.text= " ";
+                  arrvController.text= " ";
+                  Get.offAll(SelectCasePage());
+                },
+                color: Color.fromARGB(233, 94, 208, 184),
+                icon: Icon(Icons.arrow_back_ios)
+            ),
             actions: <Widget>[
               Container(
                 margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -301,7 +309,7 @@ class _MainPageState extends State<MainPage>{
                           ]
                       ),
                     ),
-                    // KakaoMapshow(),
+                    KakaoMapshow(),
                     Container(
                       margin: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
                       child:TextButton(
@@ -451,8 +459,8 @@ class KakaoMapshow extends StatelessWidget {
                   width: w,
                   height: h * 0.5,
                   kakaoMapKey: kakaoMapKey,
-                  lat: 33.450701,
-                  lng: 126.570667,
+                  lat: 37.56237254096218,
+                  lng: 126.94748270308213,
                   showMapTypeControl: true,
                   showZoomControl: true,
                   customScript: '''

@@ -12,7 +12,7 @@ import 'dart:convert' as convert;
 
 import 'selectcase.dart';
 
-List<PathDetail> path = [];
+List<WayDetail> path = [];
 String dep = "";
 double dep_lat = 0.0;
 double dep_lng = 0.0;
@@ -24,7 +24,7 @@ String orders = "";
 
 class TabPage extends StatefulWidget{
 
-  List<PathDetail> path;
+  List<WayDetail> path;
   String dep;
   double dep_lat;
   double dep_lng;
@@ -57,7 +57,7 @@ class TabPage extends StatefulWidget{
 var fontsizescale = 1.0;
 TextEditingController _selectController = TextEditingController(text: "추천순");
 class _TabState extends State<TabPage> with TickerProviderStateMixin {
-  final Map<int,String> _selectValue = {0:'추천순',1:'최소 시간순',2:'최소 환승순',3:'최소 도보순'};
+  final Map<int,String> _selectValue = {0:'추천순',1:'최소 시간순',2:'최소 도보순'};
 
   late TabController _tabController;
   @override
@@ -70,6 +70,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
   }
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     fontsizescale = 1.0;
     if(widget.selectedcase == "0"){
       fontsizescale = 1.2;
@@ -100,6 +101,16 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
               overflow: TextOverflow.ellipsis,
             ),
             centerTitle: true,
+            leading:  IconButton(
+                onPressed: () {
+                  Flag = false;
+                  Get.off(MainPage(
+                    selectedcase: selectedcase,
+                  ));
+                },
+                color: Color.fromARGB(233, 94, 208, 184),
+                icon: Icon(Icons.arrow_back_ios)
+            ),
             actions: <Widget>[
               Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -156,7 +167,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                               ),
                             ),
                             Tab(
-                              child: Text("버스",
+                              child: Text("지하철",
                                 style: TextStyle(
                                     fontFamily: "NotoSans"),
                                 textScaleFactor: 1.0,
@@ -164,7 +175,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                               ),
                             ),
                             Tab(
-                              child: Text("지하철",
+                              child: Text("버스",
                                 style: TextStyle(
                                     fontFamily: "NotoSans"),
                                 textScaleFactor: 1.0,
@@ -250,7 +261,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                                             Expanded(
                                               child: ListView.separated(
                                                 padding: EdgeInsets.all(8),
-                                                itemCount: 4,
+                                                itemCount: 3,
                                                 itemBuilder: (context,int index){
                                                   return _buildList(index,height,width,orders);
                                                 },
@@ -282,19 +293,19 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
                         children: [
                           Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: PathListPage()
+                              child: PathListPage(way: 0,)
                           ),
                           Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: PathListPage()
+                              child: PathListPage(way: 1,)
                           ),
                           Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: PathListPage()
+                              child: PathListPage(way: 2,)
                           ),
                           Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: PathListPage()
+                              child: PathListPage(way: 3,)
                           )
                         ],
                       )
@@ -315,9 +326,9 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
         }
     );
   }
-  List<PathDetail> newpathes = [];
-  _loadPath(deplat,deplng,arrvlat,arrvlng) async {
-    String baseUrl = "http://:8000/haruapp/getPathes?user=${widget.selectedcase}&orders=${widget.orders}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
+  List<WayDetail> newpathes = [];
+  _loadPath(deplat,deplng,arrvlat,arrvlng,order) async {
+    String baseUrl = "/haruapp/getPathes?user=${widget.selectedcase}&orders=${order}&deplat=${deplat}&deplng=${deplng}&arrvlat=${arrvlat}&arrvlng=${arrvlng}";
     print(baseUrl);
     final response = await http.get(
       Uri.parse(baseUrl),
@@ -325,7 +336,7 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
     print(response.statusCode);
     if (response.statusCode == 200) {
       setState(() {
-        newpathes = parsePathes(convert.utf8.decode(response.bodyBytes));
+        newpathes = parsewayPathes(convert.utf8.decode(response.bodyBytes));
       });
     }else{
       throw Exception("failed to load data");
@@ -333,7 +344,6 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
   }
   final List<String> _selectValueText = ["이동 불편 지수가 적은 최적의 경로를 추천합니다.",
   "시간이 적게 걸리는 순서로 경로를 추천합니다.",
-  "환승을 적게 하는 순서로 경로를 추천합니다.",
   "적게 걷는 순서로 경로를 추천합니다."];
   Widget _buildList(int index, double height, double width, String order) {
     return Container(
@@ -370,7 +380,8 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
           onPressed: (){
             _selectController.text = _selectValue[index]!;
             order = "${index}";
-            _loadPath(dep_lat,dep_lng,arrv_lat,arrv_lng).whenComplete((){
+            print("order: "+order);
+            _loadPath(dep_lat,dep_lng,arrv_lat,arrv_lng,index).whenComplete((){
               return Navigator.push(context,
                   MaterialPageRoute(
                       builder: (context) => TabPage(
@@ -458,6 +469,10 @@ class _TabState extends State<TabPage> with TickerProviderStateMixin {
 }
 
 class PathListPage extends StatefulWidget {
+
+  int way;
+
+  PathListPage({required this.way});
    @override
   _PathListPageState createState() => _PathListPageState();
 
@@ -469,56 +484,116 @@ bool Flag = false;
 String newstartText = "";
 String newstopText = "";
 
-
+List<PathDetail> waypathes = [];
 class _PathListPageState extends State<PathListPage>{
-
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    return WillPopScope(
-        child:Scaffold(
-          body: SingleChildScrollView(
-            child: Container(
-              height: height,
-              width: width,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    height: height,
-                    width: width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ListView.separated(
-                            padding: EdgeInsets.all(8),
-                            itemCount: path.length,
-                            itemBuilder: (context,int index){
-                              return _makepath(path[index], index);
-                            },
-                            separatorBuilder: (context, int index){
-                              return Divider();
-                            },
+    print(path);
+    if(path.length > 0){
+      if (widget.way == 0){
+        waypathes = parsePathes(path[0].tot);
+      }if (widget.way == 1){
+        waypathes = parsePathes(path[0].sub);
+      }if (widget.way == 2){
+        waypathes = parsePathes(path[0].bus);
+      }if (widget.way == 3){
+        waypathes = parsePathes(path[0].subbus);
+      }
+      var height = MediaQuery.of(context).size.height;
+      var width = MediaQuery.of(context).size.width;
+      return WillPopScope(
+          child:Scaffold(
+            body: SingleChildScrollView(
+              child: Container(
+                height: height,
+                width: width,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: height,
+                      width: width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ListView.separated(
+                              padding: EdgeInsets.all(8),
+                              itemCount: waypathes.length,
+                              itemBuilder: (context,int index){
+                                return _makepath(waypathes[index], index);
+                              },
+                              separatorBuilder: (context, int index){
+                                return Divider();
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                          Container(
+                            height: height*0.25,
+                            width: width,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        onWillPop: (){
-          Flag = false;
-          Get.off(MainPage(
-            selectedcase: selectedcase,
-          ));
-          return Future(() => true);
-        }
-    );
+          onWillPop: (){
+            Flag = false;
+            Get.off(MainPage(
+              selectedcase: selectedcase,
+            ));
+            return Future(() => true);
+          }
+      );
+    }else{
+      var height = MediaQuery.of(context).size.height;
+      var width = MediaQuery.of(context).size.width;
+      return WillPopScope(
+          child:Scaffold(
+            body: SingleChildScrollView(
+              child: Container(
+                height: height*0.4,
+                width: width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(width*0.1),
+                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("경로가 없어요ㅠㅠ",
+                      style: TextStyle(
+                          fontFamily: "NotoSans",
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: width*0.05*fontsizescale ),),
+                    IconButton(
+                      icon: Image.asset("assets/image/sad.png"),
+                      iconSize: width*0.2,
+                      onPressed: (){
+                        Get.off(MainPage(
+                          selectedcase: selectedcase,
+                        ));
+                      },
+                    ),
+                  ],
+                )
+              ),
+            ),
+          ),
+          onWillPop: (){
+            Flag = false;
+            Get.off(MainPage(
+              selectedcase: selectedcase,
+            ));
+            return Future(() => true);
+          }
+      );
+    }
+
   }
 
   Widget _makepath(PathDetail _pathes, int index) {
@@ -534,6 +609,7 @@ class _PathListPageState extends State<PathListPage>{
     List corcolors = [];
     for(int i=0; i<_pathes.totaldescription.length; i++){
       List<dynamic> totaldesc = _pathes.totaldescription[i];
+      print(totaldesc);
       var kind = totaldesc[0];
       var time = totaldesc[1];
       var color = Colors.white10;
@@ -609,7 +685,7 @@ class _PathListPageState extends State<PathListPage>{
                       Container(
                         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                         margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-                        child: Text("${_pathes.totaltime}분 ",
+                        child: Text("${_pathes.totaltime.toInt()}분 ",
                           style:TextStyle(fontSize: 30*fontsizescale ,
                             fontFamily: "NotoSans",
                             color: Colors.black,

@@ -21,6 +21,7 @@ class _StartPageState extends State<StartPage>{
   }
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       backgroundColor: Color.fromARGB(233, 104, 231, 205),
       body: Center(

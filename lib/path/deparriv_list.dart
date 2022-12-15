@@ -54,6 +54,7 @@ class _DepartureState extends State<Departure> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     fontsizescale = 1.0;
     if(widget.selectedcase == "0"){
       fontsizescale = 1.5;
@@ -77,6 +78,19 @@ class _DepartureState extends State<Departure> {
               overflow: TextOverflow.ellipsis,
             ),
             centerTitle: true,
+            leading:  IconButton(
+                onPressed: () {
+                  dep_ok = false;
+                  arrv_ok = false;
+                  startok = false;
+                  stopok = false;
+                  depController.text= " ";
+                  arrvController.text= " ";
+                  Navigator.pop(context); //뒤로가기
+                },
+                color: Color.fromARGB(233, 94, 208, 184),
+                icon: Icon(Icons.arrow_back_ios)
+            ),
             actions: <Widget>[
               Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 10, 0),

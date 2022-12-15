@@ -2,27 +2,47 @@
 import 'package:flutter/cupertino.dart';
 
 class PathDetail {
-  int totaltime;
+  double totaltime;
   List<dynamic> description;
   List<dynamic> totaldescription;
-  List<dynamic> coordinate;
-  int score;
+  List<dynamic> coor;
 
   PathDetail({
-    required this.totaltime, required this.score, required this.description, required this.totaldescription,required this.coordinate});
+    required this.totaltime, required this.description, required this.totaldescription,required this.coor});
 
   PathDetail.fromMap(Map<String, dynamic> map)
       : totaltime = map['totaltime'],
-        score = map["score"],
         description = map["description"],
         totaldescription = map["totaldescription"],
-        coordinate = map["coordinate"];
+        coor = map["coor"];
 
   PathDetail.fromJson(Map<String, dynamic> json)
       : totaltime = json["totaltime"],
-        score = json["score"],
         description = json["description"],
         totaldescription = json["totaldescription"],
-        coordinate = json["coordinate"];
+        coor = json["coor"];
+
+}
+
+class WayDetail {
+  List<dynamic> tot;
+  List<dynamic> sub;
+  List<dynamic> bus;
+  List<dynamic> subbus;
+
+  WayDetail({
+    required this.tot, required this.sub, required this.bus, required this.subbus});
+
+  WayDetail.fromMap(Map<String, dynamic> map)
+      : tot = map["tot"],
+        sub = map["sub"],
+        bus = map["bus"],
+        subbus = map["subbus"];
+
+  WayDetail.fromJson(Map<String, dynamic> json)
+      : tot = json["tot"],
+        sub = json["sub"],
+        bus = json["bus"],
+        subbus = json["subbus"];
 
 }

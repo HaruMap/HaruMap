@@ -3,6 +3,71 @@ import 'package:flutter/material.dart';
 
 import '../model/model_path.dart';
 
+class elevate extends StatefulWidget {
+  double fontsizescale;
+  String station;
+  double screenwidth;
+  List<Widget> ellist;
+  bool el_expanded;
+  IconData icon;
+  Color colors;
+  elevate({required this.fontsizescale, required this.station,required this.screenwidth,
+    required this.ellist, required this.el_expanded, required this.icon, required this.colors});
+  @override
+  _elevateState createState() => _elevateState();
+
+}
+
+class _elevateState extends State<elevate>{
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionPanelList(
+        animationDuration: Duration(milliseconds: 100),
+        children: [
+          ExpansionPanel(
+            headerBuilder: (context, isExpanded) {
+              return Row(
+                children: [
+                  Container(
+                    child: Icon(
+                      widget.icon,
+                      color: widget.colors,
+                      size: 30*widget.fontsizescale,
+                    ),
+                    margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                  ),
+                  SizedBox(width: 10,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("${widget.station}",
+                        style: TextStyle(fontSize: widget.screenwidth*0.035*widget.fontsizescale,
+                          fontFamily: "NotoSans",
+                          color: Colors.black,),
+                      ),
+                    ],
+                  )
+                ],
+              );
+            },
+            body: Column(
+                children: widget.ellist
+            ),
+            isExpanded: widget.el_expanded,
+            canTapOnHeader: true,
+          ),
+        ],
+        expansionCallback: (panelIndex, isExpanded) {
+          widget.el_expanded = !widget.el_expanded;
+          setState(() {
+
+          });
+        }
+    );
+  }
+}
+
+
 Widget make_description_horizontal(PathDetail _pathes, double height, double width,double fontsizescale){
   List<Widget> horizontalwidget = [];
   for (int index=0; index<_pathes.description.length; index++){
@@ -48,11 +113,11 @@ List sub_color = [Color(0xff0052a4),Color(0xff00a84d),Color(0xffef7c1c),Color(0x
   Color(0xff747f00),Color(0xffe6186c),Color(0xffbdb092)];
 
 Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidth, int index, double fontsizescale) {
-  var returndesc;
+  Widget returndesc = Container();
+  print(desc);
   var kind = desc[0];
   var color = Colors.white10;
   if (kind == "지하철"){
-    List<Widget> subwaystops = [];
     var subway = desc;
     var start = subway[2];
     var stop = subway[3];
@@ -61,11 +126,149 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
     var subway_color = subway[1]-1;
     color = sub_color[subway_color];
 
-    // var fastout = desc[1].split("(")[1].split(")")[0].split("/");
-    // var out = desc[1].split("(")[2].split(")")[0].split("/");
+    var fastout = subway[6];
+    var fasttrans = subway[7];
+    var out;
+    if (fasttrans.length == 0 || fasttrans.isEmpty){
+      out = Container(
+        child: Text("빠른 하차: ${fastout[0]}",
+          style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
+            fontFamily: "NotoSans",
+            color: Colors.black,),
+        ),
+        margin: EdgeInsets.fromLTRB(40, 5, 5, 10),
+      );
+    }
+    else if (fastout.length == 0 || fastout.isEmpty) {
+      out = Container(
+        child: Text("빠른 환승: ${fasttrans[0]}",
+          style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
+            fontFamily: "NotoSans",
+            color: Colors.black,),
+        ),
+        margin: EdgeInsets.fromLTRB(40, 5, 5, 10),
+      );
+    }
+    var startel = subway[8][0];
+    List<Widget> startellist = [];
+    for(var i=0; i<startel.length; i++){
+      var el = startel[i];
+      var eldes = "";
+      if (el[1] == null){
+        eldes = "${el[2].split("-")[0]}에서 ${el[2].split("-")[1]}까지 이동 가능한 ${el[0]}이/가 존재합니다.";
+      }
+      else{
+        eldes = "${el[1].split("-")[0]}에서 ${el[1].split("-")[1]}까지 이동 가능한 ${el[0]}이/가 ${el[2]}에 존재합니다.";
+      }
+      startellist.add(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+          margin: EdgeInsets.fromLTRB(3, 5, 3, 5),
+          child: Row(
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(3, 5, 8, 5),
+                child:
+                Icon(
+                  Icons.circle_outlined,
+                  color: Colors.grey,
+                  size: screenwidth*0.04*fontsizescale,
+                ),
+              ),
+              Flexible(
+                child: RichText(
+                  textAlign: TextAlign.start,
+                  maxLines: 3,
+                  text: TextSpan(
+                    text: "${eldes}",
+                    style: TextStyle(fontSize: screenwidth * 0.035*fontsizescale,
+                      fontFamily: "NotoSans",
+                      color: Colors.black,),
+                  ),
+                ),
+              )
+            ],
+          ),
+        )
+      );
+    }
+
+    StatefulWidget startelwidget = ExpansionPanelList();
+    if (startel.length >= 0) {
+      startelwidget = elevate(
+          fontsizescale: fontsizescale,
+          station: "${start}역 승강기 위치",
+          screenwidth: screenwidth,
+          ellist: startellist,
+          el_expanded: false,
+          icon: Icons.elevator,
+          colors: Colors.grey,
+      );
+    }
+
+
+    var stopel = subway[9][0];
+    List<Widget> stopellist = [];
+    for(var i=0; i<stopel.length; i++){
+      var el = stopel[i];
+      var eldes = "";
+      if (el[1] == null){
+        eldes = "${el[2].split("-")[0]}에서 ${el[2].split("-")[1]}까지 이동 가능한 ${el[0]}이/가 존재합니다.";
+      }
+      else{
+        eldes = "${el[1].split("-")[0]}에서 ${el[1].split("-")[1]}까지 이동 가능한 ${el[0]}이/가 ${el[2]}에 존재합니다.";
+      }
+      stopellist.add(
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            margin: EdgeInsets.fromLTRB(3, 5, 3, 5),
+            child: Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(3, 5, 8, 5),
+                  child:
+                  Icon(
+                    Icons.circle_outlined,
+                    color: Colors.grey,
+                    size: screenwidth*0.04*fontsizescale,
+                  ),
+                ),
+                Flexible(
+                  child: RichText(
+                    textAlign: TextAlign.start,
+                    maxLines: 3,
+                    text: TextSpan(
+                      text: "${eldes}",
+                      style: TextStyle(fontSize: screenwidth * 0.035*fontsizescale,
+                        fontFamily: "NotoSans",
+                        color: Colors.black,),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
+      );
+    }
+
+    StatefulWidget stopelwidget = ExpansionPanelList();
+    if (stopel.length >= 0) {
+      stopelwidget = elevate(
+          fontsizescale: fontsizescale,
+          station: "${stop}역 승강기 위치",
+          screenwidth: screenwidth,
+          ellist: stopellist,
+          el_expanded: false,
+          icon: Icons.elevator,
+          colors: Colors.grey,
+      );
+    }
+
     var stopby = subway[5];
     var stopbynum = stopby[0];
-    for (int i=2; i<stopbynum-1; i++){
+
+    List<Widget> subwaystops = [];
+    for (int i=2; i<stopbynum; i++){
       subwaystops.add(
         Row(
           children: [
@@ -116,7 +319,6 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
                               fontFamily: "NotoSans",
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
-
                         ),
                       ),
                       )
@@ -128,23 +330,24 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
               ],
             ),
             Container(
-              child: Text("${stopbynum}개 역 이동",
+              child: Text("총 ${stopbynum}개 역 이동",
                 style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
                   fontFamily: "NotoSans",
                   color: Colors.black,),
               ),
               margin: EdgeInsets.fromLTRB(40, 5, 5, 10),
             ),
-            // Container(
-            //   child: Text("빠른 하차: ${fastout}",
-            //     style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
-            //       fontFamily: "NotoSans",
-            //       color: Colors.black,),
-            //   ),
-            //   margin: EdgeInsets.fromLTRB(80, 5, 3, 5),
-            // ),
-            Column(
-              children: subwaystops,
+            out,
+            startelwidget,
+            if(stopbynum-2 > 0)
+            elevate(
+                fontsizescale: fontsizescale, 
+                station: "${stopbynum-2}개 역 경유",
+                screenwidth: screenwidth, 
+                ellist: subwaystops, 
+                el_expanded: false,
+                icon: Icons.access_time,
+                colors: color,
             ),
             Row(
               children: [
@@ -178,6 +381,7 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
                 ),
               ],
             ),
+            stopelwidget
             // Container(
             //   child: Text("출구: ${out}",
             //     style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
@@ -209,7 +413,7 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
           Row(
             children: [
               Container(
-                child: Text("${bus_soon_num}",
+                child: Text("버스: ${bus_soon_num}",
                   style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
                     fontFamily: "NotoSans",
                     color: Colors.black,),
@@ -229,7 +433,7 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
       );
     }
 
-    for (int i=2; i<bus_stopby_num+1; i++){
+    for (int i=2; i<bus_stopby_num; i++){
       busstops.add(
         Row(
           children: [
@@ -292,7 +496,7 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
               ],
             ),
             Container(
-              child: Text("${bus_stopby_num}개 정류소 이동",
+              child: Text("총 ${bus_stopby_num}개 정류소 이동",
                 style: TextStyle(fontSize: screenwidth*0.04*fontsizescale,
                   fontFamily: "NotoSans",
                   color: Colors.black,),
@@ -302,8 +506,15 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
             Row(
               children: bus_soons,
             ),
-            Column(
-              children: busstops,
+            if(bus_stopby_num-1 > 0)
+            elevate(
+              fontsizescale: fontsizescale,
+              station: "${bus_stopby_num-2}개 정류소 경유",
+              screenwidth: screenwidth,
+              ellist: busstops,
+              el_expanded: false,
+              icon: Icons.access_time,
+              colors: color,
             ),
             Row(
               children: [
@@ -354,7 +565,11 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
     if(walk.length == 2){
       direction = "직진";
       meter = walk[1];
-      walkdetail = "${meter} ${direction}하세요.";
+      if(meter == "0 m"){
+        walkdetail = "다음 호선으로 환승하세요.";
+      }else{
+        walkdetail = "${meter} ${direction}하세요.";
+      }
     }
     if (walk.length == 3){
       direction = walk[1];
@@ -425,7 +640,7 @@ Widget _builddescList(List<dynamic> desc, double screenheight, double screenwidt
 }
 
 Widget _builddescList_horizon(List<dynamic> desc, double screenheight, double screenwidth, int index, double fontsizescale) {
-  var returndesc;
+  Widget returndesc = Container();
   var kind = desc[0];
   var color = Colors.white10;
   if (kind == "지하철") {
@@ -692,5 +907,6 @@ Widget _builddescList_horizon(List<dynamic> desc, double screenheight, double sc
           ],
         );
   }
+  print(returndesc);
   return returndesc;
 }
