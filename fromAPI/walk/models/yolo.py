@@ -6,13 +6,13 @@ from copy import deepcopy
 sys.path.append('./')  # to run '$ python *.py' files in subdirectories
 logger = logging.getLogger(__name__)
 import torch
-from walk.models.common import *
-from walk.models.experimental import *
-from walk.utils.autoanchor import check_anchor_order
-from walk.utils.general import make_divisible, check_file, set_logging
-from walk.utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, scale_img, initialize_weights, \
+from fromAPI.walk.models.common import *
+from fromAPI.walk.models.experimental import *
+from fromAPI.walk.utils.autoanchor import check_anchor_order
+from fromAPI.walk.utils.general import make_divisible, check_file, set_logging
+from fromAPI.walk.utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, scale_img, initialize_weights, \
     select_device, copy_attr
-from walk.utils.loss import SigmoidBin
+from fromAPI.walk.utils.loss import SigmoidBin
 
 try:
     import thop  # for FLOPS computation

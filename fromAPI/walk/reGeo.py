@@ -11,7 +11,7 @@ from folium.plugins import MiniMap
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
-import API.api
+import fromAPI.API.api
 
 def reGeo_function():
     
@@ -20,7 +20,7 @@ def reGeo_function():
 
     url =  'https://dapi.kakao.com/v2/local/geo/coord2address.json?x={0}&y={1}&input_coord=WGS84'.format(x, y)
     headers = {
-        "Authorization": '{0}'.format(API.api.path_walk_key()),
+        "Authorization": '{0}'.format(fromAPI.API.api.path_walk_key()),
     }
     places = requests.get(url, headers = headers).json()['documents']
 
@@ -32,7 +32,7 @@ def getReGeo(x, y):
 
     url =  'https://dapi.kakao.com/v2/local/geo/coord2address.json?x={0}&y={1}&input_coord=WGS84'.format(x, y)
     headers = {
-        "Authorization": '{0}'.format(API.api.getReGeo_key()),
+        "Authorization": '{0}'.format(fromAPI.API.api.getReGeo_key()),
     }
 
     # print('Done. (url)')

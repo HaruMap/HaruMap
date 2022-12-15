@@ -7,12 +7,12 @@ import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
 
-from walk.models.experimental import attempt_load
-from walk.utils.datasets import LoadStreams, LoadImages
-from walk.utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
+from fromAPI.walk.models.experimental import attempt_load
+from fromAPI.walk.utils.datasets import LoadStreams, LoadImages
+from fromAPI.walk.utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
     scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path
-from walk.utils.plots import plot_one_box
-from walk.utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
+from fromAPI.walk.utils.plots import plot_one_box
+from fromAPI.walk.utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 #check_requirements(exclude=('pycocotools', 'thop'))
 class_list = {}
@@ -25,8 +25,8 @@ device = select_device("")
 half = device.type != 'cpu'  
 
 
-
 def detect(model, imageurl: str, save_img=False):
+    weights, view_img, save_txt, imgsz, trace,augment= 'last.pt',False,False,640,False,False
     stride = int(model.stride.max()) 
     imgsz = check_img_size(640, s=stride) 
 

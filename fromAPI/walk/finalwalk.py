@@ -1,5 +1,5 @@
-from walk.getRoadview import getImg
-from walk.detect import detect
+from fromAPI.walk.getRoadview import getImg
+from fromAPI.walk.detect import detect
     
 # =============================== 카카오 로드뷰 불러오기 =========================
 def coor2img(coor, imglist):

@@ -18,8 +18,8 @@ import yaml
 from PIL import Image, ImageDraw, ImageFont
 from scipy.signal import butter, filtfilt
 
-from walk.utils.general import xywh2xyxy, xyxy2xywh
-from walk.utils.metrics import fitness
+from fromAPI.walk.utils.general import xywh2xyxy, xyxy2xywh
+from fromAPI.walk.utils.metrics import fitness
 
 # Settings
 matplotlib.rc('font', **{'size': 11})

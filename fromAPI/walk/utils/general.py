@@ -18,9 +18,9 @@ import torch
 import torchvision
 import yaml
 
-from walk.utils.google_utils import gsutil_getsize
-from walk.utils.metrics import fitness
-from walk.utils.torch_utils import init_torch_seeds
+from fromAPI.walk.utils.google_utils import gsutil_getsize
+from fromAPI.walk.utils.metrics import fitness
+from fromAPI.walk.utils.torch_utils import init_torch_seeds
 
 # Settings
 torch.set_printoptions(linewidth=320, precision=5, profile='long')
