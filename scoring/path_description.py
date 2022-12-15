@@ -1,5 +1,5 @@
 import re
-import sub_extra_descrpt
+from fromAPI import sub_extra_descrpt
 
 # 경로 description 정보
 

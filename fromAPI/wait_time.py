@@ -1,5 +1,4 @@
-import API_bus_arrival
-import API_sub_arrival
+from fromAPI import API_sub_arrival, API_bus_arrival
 import pandas as pd
 from pandasql import sqldf
 from datetime import datetime, date

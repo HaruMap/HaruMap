@@ -5,7 +5,8 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import API.api
+
+from fromAPI.API import api
 
 # 사용자 위치 키워드 검색 (예 : 이대부고) -> 사용자 선택 -> 해당 지역 위경도 받아오기
 # 사용자 현위치 검색 -> 위경도 받아오기
@@ -18,7 +19,7 @@ import API.api
 
 def path_transport(SX, SY, EX, EY):
 
-    url = 'https://api.odsay.com/v1/api/searchPubTransPathT?SX={0}&SY={1}&EX={2}&EY={3}&apiKey={4}'.format(SX, SY, EX, EY, API.api.path_transport_key())
+    url = 'https://api.odsay.com/v1/api/searchPubTransPathT?SX={0}&SY={1}&EX={2}&EY={3}&apiKey={4}'.format(SX, SY, EX, EY, api.path_transport_key())
     
     return requests.get(url).json()
 

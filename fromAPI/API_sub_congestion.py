@@ -4,7 +4,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import API.api
+from fromAPI.API import api
 
 # SKopenAPI 지하철 혼잡도
 # station_id: 역사코드
@@ -39,7 +39,7 @@ def sub_congestion(station_id, dow, hh, updown, mm):
 
     headers = {
         "accept": "application/json",
-        "appkey": API.api.sub_congestion_key()
+        "appkey": api.sub_congestion_key()
     }
 
     response = requests.get(url, headers=headers)

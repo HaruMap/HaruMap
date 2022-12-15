@@ -11,7 +11,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import API.api
+from fromAPI.API import api
 
 def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
     
@@ -20,7 +20,7 @@ def path_walk(walk_sx, walk_sy, walk_ex, walk_ey, op):
 
     # 요청 : headers = 요청을 위한 필수값 입력
     headers = {
-        "appkey" : '{0}'.format(API.api.path_walk_key()),
+        "appkey" : '{0}'.format(api.path_walk_key()),
         "version" : "1",
         "callback" : ""
     }

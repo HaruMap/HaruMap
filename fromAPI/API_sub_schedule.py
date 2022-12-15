@@ -4,7 +4,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import API.api
+from fromAPI.API import api
 
 # 서울시 역코드로 지하철역별 열차 시간표 정보 검색
 # https://data.seoul.go.kr/dataList/OA-101/A/1/datasetView.do
@@ -31,7 +31,7 @@ def sub_schedule(station_cd, today, updown, current):
 
     if len(str(station_cd))==3:
         station_cd = '0'+str(station_cd)
-    API_KEY = API.api.get_sub_schedule_key()
+    API_KEY = api.get_sub_schedule_key()
     url = f"http://openapi.seoul.go.kr:8088/{API_KEY}/json/SearchSTNTimeTableByIDService/1/2/{station_cd}/{today}/{updown}/"
     re = requests.get(url)
     rjson = re.json()

@@ -1,8 +1,7 @@
 import datetime
-import day
-import API_sub_congestion
+from fromAPI import API_sub_congestion, day
 from datetime import date
-import classification
+import scoring.classification
 
 now = datetime.datetime.now()
 # print(now)

@@ -32,5 +32,3 @@ def is_holiday(current):
 
     return datedate
 
-
-# 필요.. 없을수도..?

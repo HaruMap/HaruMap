@@ -1,17 +1,5 @@
-import geocoding
-import path_time
-import wait_time
-import path_description 
-import score
-import classification
-import path_loop
-import coordinate
-import sort_path_by_score
-import sub_extra_descrpt
-import API_transport_poi
-import API_path_walk
-import API_path_transport
-import API_sub_congestion
+from fromAPI import geocoding,path_time,wait_time,coordinate,sub_extra_descrpt,API_transport_poi,API_path_walk,API_path_transport,API_sub_congestion
+from scoring import score,classification,sort_path_by_score,path_description
 
 import sys
 import os
@@ -19,15 +7,13 @@ import numpy as np
 import torch
 import math
 
-from walk import avg_slope_upgrade, finalwalk
-from bus_congestion import bus_cong
-from path_loop import sub_avg_congestion
-from for_sub_schedule import st_id_change
-from walk.category import *
-
+from fromAPI.walk import avg_slope_upgrade, finalwalk
+from fromAPI.bus_congestion import bus_cong
+from fromAPI.path_loop import sub_avg_congestion
+from fromAPI.for_sub_schedule import st_id_change
+from fromAPI.walk.category import *
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import API.api
 
 def walk_all(w_sx, w_sy, w_ex, w_ey, s_poi, e_poi):
     walk_all_dict = {}
@@ -100,8 +86,8 @@ def main(w_sx, w_sy, w_ex, w_ey, user, op_sort):
 
     # 출발지/도착지 주소 입력
     # 출발지, 도착지 샘플
-    # w_sx, w_sy = 126.94272978780354, 37.56132067013671 # 이대부고
-    # w_ex, w_ey = 126.95414246013237, 37.545715866461855 # 공덕 초등학교
+    w_sx, w_sy = 126.94272978780354, 37.56132067013671 # 이대부고
+    w_ex, w_ey = 126.95414246013237, 37.545715866461855 # 공덕 초등학교
 
     # ================================================ 주변 정류소 POI ================================================
 
@@ -863,3 +849,4 @@ def main_sorted(result,sort_path,user, op_sort):
         # print(send_drf)
 
         return send_drf
+
