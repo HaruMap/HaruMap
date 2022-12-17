@@ -9,8 +9,8 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(
 
 
 def getConBus_DT(arsId, busType): #시내 버스 busType = 1
-    client_id = '8e058fc8-c48c-4450-b7e1-bfc5b6558f70'
-    client_secret = '4764122a-4e57-4954-ad7f-2706a3100d44'
+    client_id = ''
+    client_secret = ''
     con_url = 'https://apigw.tmoney.co.kr:5556/gateway/saStationByArsIdGet/v1/stationinfo/getStationByUidCon?serviceKey=01234567890&arsId={0}&busRouteType={1}'.format(arsId, busType)
     headers = {
         "Accept": "application/xml",
@@ -28,8 +28,8 @@ def getConBus_DT(arsId, busType): #시내 버스 busType = 1
 
 
 def getConBus_T(arsId, busType): #마을 버스 busType = 2
-    client_id = 'f1bb0c84-f119-4aa1-b6d4-e5639ea42fb5'
-    client_secret = '961aa817-7c0c-4e50-be9b-635abc9b00d4'
+    client_id = ''
+    client_secret = ''
     con_url = 'https://apigw.tmoney.co.kr:5556/gateway/szStationByArsIdGet/v1/stationinfo/getStationByUidCon?serviceKey=01234567890&arsId={0}&busRouteType={1}'.format(arsId, busType)
     headers = {
         "Accept": "application/xml",
